@@ -179,7 +179,8 @@ input[type="checkbox"]{width:18px;height:18px;accent-color:var(--accent);cursor:
 .tplan-focus{font-family:var(--font-serif);font-size:14px;font-weight:700;color:var(--text);flex:1;outline:none;border-radius:4px;padding:2px 4px;cursor:text}
 .tplan-focus:focus{background:var(--bg3)}
 .tplan-exercises{padding-left:4px}
-.tplan-row{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)}
+.tplan-row{display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.tplan-cell-wrap{flex:1;min-width:160px}
 .tplan-row:last-of-type{border-bottom:none}
 .tplan-num{font-size:11px;color:var(--text3);min-width:14px;margin-top:3px;flex-shrink:0}
 .tplan-cell-wrap{flex:1;min-width:0}
@@ -191,7 +192,7 @@ input[type="checkbox"]{width:18px;height:18px;accent-color:var(--accent);cursor:
 .tplan-note:focus:before{display:none}
 [contenteditable][data-placeholder]:empty:before{content:attr(data-placeholder);color:var(--text3);pointer-events:none}
 [contenteditable][data-placeholder]:focus:empty:before{display:none}
-.tplan-log-col{display:flex;flex-direction:column;gap:3px;width:68px;flex-shrink:0}
+.tplan-log-col{display:flex;flex-direction:column;gap:3px;width:68px;flex-shrink:0;min-width:60px}
 .tplan-log-label{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);font-weight:600;text-align:center}
 .tplan-log-input{font-family:var(--font-sans);font-size:12px;color:var(--text);background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:6px 8px;resize:none;outline:none;line-height:1.5;transition:border-color .15s;width:100%;height:52px}
 .tplan-log-input:focus{border-color:var(--accent)}
@@ -201,7 +202,10 @@ input[type="checkbox"]{width:18px;height:18px;accent-color:var(--accent);cursor:
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:2px}
 @media(max-width:480px){
-  .tplan-log-col{display:none}
+  .tplan-log-col{width:100%}
+  .tplan-row{flex-wrap:wrap}
+  .tplan-cell-wrap{width:100%;min-width:0}
+  .tplan-week-logs{grid-template-columns:repeat(3,1fr);padding-left:0}
   .project-actions{flex-wrap:wrap;gap:5px}
   .project-actions .btn{font-size:11px;padding:5px 8px}
   .focus-input-wrap{flex-wrap:wrap}
@@ -406,26 +410,25 @@ input[type="checkbox"]{width:18px;height:18px;accent-color:var(--accent);cursor:
 
     <!-- ══ TRAINING ══ -->
     <div id="section-training" class="section">
-      <div style="margin-bottom:16px">
-        <div style="display:flex;gap:0;margin-bottom:14px;background:var(--bg4);border-radius:10px;padding:4px" id="plan-switcher">
-          <div class="tab active" id="plan-tab-pm2" onclick="switchPlan('pm2',this)">Primal Mastery 2</div>
-          <div class="tab" id="plan-tab-giant" onclick="switchPlan('giant',this)">The Giant</div>
-        </div>
-        <div id="pm2-header" style="margin-bottom:0">
-          <div class="card" style="background:var(--nav-bg);border-color:rgba(255,77,0,.2);margin-bottom:16px;width:100%">
-            <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:6px;flex-wrap:wrap">
-              <div style="font-family:var(--font-serif);font-size:17px;font-weight:700;color:#fff">Primal Mastery 2</div>
-              <div style="font-size:11px;color:rgba(255,255,255,.4);background:rgba(255,77,0,.2);padding:2px 8px;border-radius:20px;white-space:nowrap">12 Wochen · 6 Tage/Woche</div>
-            </div>
-            <div style="font-size:12px;color:rgba(255,255,255,.5);line-height:1.6;margin-bottom:12px">Push/Legs, Pull, Accessory & Full Body – täglich wechselnder Fokus. Alle 3 Wochen neue Übungsvarianten zur Progression.</div>
-            <div style="display:flex;align-items:center;gap:10px">
-              <label style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.4);white-space:nowrap">Startdatum:</label>
-              <input type="date" id="train-start-date" onchange="saveStartDate(this.value)" style="font-size:13px;padding:6px 10px;border-radius:8px;background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.15);outline:none">
-              <div id="train-save-hint" style="font-size:11px;color:rgba(255,255,255,.4);opacity:0;transition:opacity .4s">gespeichert</div>
-            </div>
+      <div style="display:flex;gap:0;margin-bottom:14px;background:var(--bg4);border-radius:10px;padding:4px" id="plan-switcher">
+        <div class="tab active" id="plan-tab-pm2" onclick="switchPlan('pm2',this)">Primal Mastery 2</div>
+        <div class="tab" id="plan-tab-giant" onclick="switchPlan('giant',this)">The Giant</div>
+      </div>
+
+      <div id="pm2-header">
+        <div class="card" style="background:var(--nav-bg);border-color:rgba(255,77,0,.2);margin-bottom:16px;width:100%">
+          <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:6px;flex-wrap:wrap">
+            <div style="font-family:var(--font-serif);font-size:17px;font-weight:700;color:#fff">Primal Mastery 2</div>
+            <div style="font-size:11px;color:rgba(255,255,255,.4);background:rgba(255,77,0,.2);padding:2px 8px;border-radius:20px;white-space:nowrap">12 Wochen · 6 Tage/Woche</div>
+          </div>
+          <div style="font-size:12px;color:rgba(255,255,255,.5);line-height:1.6;margin-bottom:12px">Push/Legs, Pull, Accessory & Full Body – täglich wechselnder Fokus. Alle 3 Wochen neue Übungsvarianten zur Progression.</div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <label style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.4);white-space:nowrap">Startdatum:</label>
+            <input type="date" id="train-start-date" onchange="saveStartDate(this.value)" style="font-size:13px;padding:6px 10px;border-radius:8px;background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.15);outline:none">
+            <div id="train-save-hint" style="font-size:11px;color:rgba(255,255,255,.4);opacity:0;transition:opacity .4s">gespeichert</div>
           </div>
         </div>
-
+      </div>
 
       <div id="pm2-content">
         <div style="display:flex;gap:0;margin-bottom:14px;background:var(--bg4);border-radius:10px;padding:4px" id="week-block-tabs">
@@ -436,10 +439,10 @@ input[type="checkbox"]{width:18px;height:18px;accent-color:var(--accent);cursor:
         </div>
         <div id="train-plan-list"></div>
       </div>
+
       <div id="giant-content" style="display:none">
         <div style="display:none" id="giant-prog-tabs"></div>
         <div id="giant-plan-list"></div>
-      </div>
       </div>
     </div>
 
@@ -532,17 +535,28 @@ function load(key,def){try{const v=localStorage.getItem(key);return v?JSON.parse
 function save(key,val){
   try{localStorage.setItem(key,JSON.stringify(val))}catch{}
   db.from('hub_data').upsert({key,value:val,updated_at:new Date().toISOString()},{onConflict:'key'})
-    .then(()=>showSyncDot('ok')).catch(()=>showSyncDot('err'));
+    .then(()=>{
+      db.from('hub_data').upsert({key:'__version__',value:DATA_VERSION,updated_at:new Date().toISOString()},{onConflict:'key'}).then(()=>{});
+      showSyncDot('ok');
+    }).catch(()=>showSyncDot('err'));
 }
+
+const DATA_VERSION = '2.1';
 
 async function syncFromSupabase(){
   showSyncDot('loading');
   try{
     const {data,error}=await db.from('hub_data').select('key,value');
     if(error||!data)throw error;
-    data.forEach(row=>{
-      try{localStorage.setItem(row.key,JSON.stringify(row.value))}catch{}
-    });
+    const versionRow=data.find(r=>r.key==='__version__');
+    if(versionRow&&versionRow.value===DATA_VERSION){
+      data.forEach(row=>{
+        if(row.key!=='__version__')try{localStorage.setItem(row.key,JSON.stringify(row.value))}catch{}
+      });
+    } else {
+      // Version mismatch – ignore stale Supabase data, save new version marker
+      db.from('hub_data').upsert({key:'__version__',value:DATA_VERSION,updated_at:new Date().toISOString()},{onConflict:'key'}).then(()=>{});
+    }
     showSyncDot('ok');
   }catch(e){
     showSyncDot('err');
@@ -869,17 +883,20 @@ function renderTodos(){
           <button onclick="addSubTodo('${cat}',${idx})" style="font-size:11px;color:var(--text3);background:none;border:none;cursor:pointer;padding:0;font-family:var(--font-sans);transition:color .15s" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text3)'">+ Unter-Aufgabe</button>
         </div>
         ${subs.length?`<ul style="list-style:none;margin:0 0 10px 42px;display:flex;flex-direction:column;gap:4px">
-          ${subs.map((s,si)=>`<li style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--bg4);border-radius:6px;border:1px solid var(--border)">
-            <input type="checkbox" ${s.done?'checked':''} onchange="toggleSubTodo('${cat}',${idx},${si})" style="width:15px;height:15px;flex-shrink:0">
-            <span contenteditable="true" spellcheck="false"
-              onblur="editSubTodo('${cat}',${idx},${si},this.textContent)"
-              onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}"
-              data-placeholder="Unter-Aufgabe …"
-              style="flex:1;font-size:13px;color:var(--text2);outline:none;border-radius:3px;padding:1px 3px;cursor:text;${s.done?'text-decoration:line-through;color:var(--text3)':''}"
-              onfocus="this.style.background='var(--bg3)'"
-            >${esc(s.text)}</span>
-            <button class="fi-del" style="font-size:16px" onclick="deleteSubTodo('${cat}',${idx},${si})">×</button>
-          </li>`).join('')}
+          ${subs.map((s,si)=>{
+            const subInFocus=s.text&&focusItems.some(f=>f.text===s.text&&!f.done);
+            return`<li style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:${subInFocus?'var(--accent-light)':'var(--bg4)'};border-radius:6px;border:1px solid ${subInFocus?'var(--accent)':'var(--border)'}">
+              <input type="checkbox" ${s.done?'checked':''} onchange="toggleSubTodo('${cat}',${idx},${si})" style="width:15px;height:15px;flex-shrink:0">
+              <span contenteditable="true" spellcheck="false"
+                onblur="editSubTodo('${cat}',${idx},${si},this.textContent)"
+                onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}"
+                data-placeholder="Unter-Aufgabe …"
+                style="flex:1;font-size:13px;color:${subInFocus?'var(--accent)':'var(--text2)'};outline:none;border-radius:3px;padding:1px 3px;cursor:text;${s.done?'text-decoration:line-through;color:var(--text3)':''}"
+                onfocus="this.style.background='var(--bg3)'"
+              >${esc(s.text)}</span>
+              <button class="focus-add-btn${subInFocus?' added':''}" onclick="addTodoToFocus('${esc(s.text)}','${cat}')" title="${subInFocus?'Im Tagesfokus':'Zum Tagesfokus'}" style="font-size:14px">${subInFocus?'✦':'⊕'}</button>
+              <button class="fi-del" style="font-size:16px" onclick="deleteSubTodo('${cat}',${idx},${si})">×</button>
+            </li>`;}).join('')}
         </ul>`:''}
       </li>`;}).join('');}
 
@@ -1243,14 +1260,32 @@ let activeTimer = null;
 let timerStart = null;
 let timerBlock = null;
 let timerDay = null;
-let trainStartDate = '';
+let trainStartDates = {};
+let trainDayOverrides = {};
 const WDAYS_FULL = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
 const MONTHS_SHORT = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
 function getTrainDayLabel(di){
-  if(!trainStartDate) return '';
-  const d = new Date(trainStartDate);
-  d.setDate(d.getDate() + di);
+  const overrideKey = currentBlock+'-'+di;
+  const override = trainDayOverrides[overrideKey];
+  if(override){
+    const d = new Date(override);
+    return WDAYS_FULL[d.getDay()] + ', ' + d.getDate() + '. ' + MONTHS_SHORT[d.getMonth()];
+  }
+  const sd = trainStartDates[String(currentBlock)] || '';
+  if(!sd) return '';
+  const d = new Date(sd);
+  d.setDate(d.getDate() + di*2);
   return WDAYS_FULL[d.getDay()] + ', ' + d.getDate() + '. ' + MONTHS_SHORT[d.getMonth()];
+}
+function getTrainDayISO(di){
+  const overrideKey = currentBlock+'-'+di;
+  const override = trainDayOverrides[overrideKey];
+  if(override) return override;
+  const sd = trainStartDates[String(currentBlock)] || '';
+  if(!sd) return '';
+  const d = new Date(sd);
+  d.setDate(d.getDate() + di*2);
+  return d.toISOString().split('T')[0];
 }
 
 function switchPlan(plan, el){
@@ -1262,6 +1297,7 @@ function switchPlan(plan, el){
   document.getElementById('giant-content').style.display = plan==='giant' ? '' : 'none';
   document.getElementById('pm2-header').style.display = plan==='pm2' ? 'flex' : 'none';
   if(plan==='giant') renderGiant();
+  if(plan==='pm2') renderTrainPlan();
 }
 
 function switchGiantProg(prog, el){
@@ -1302,7 +1338,7 @@ function renderGiant(){
         <div class="tplan-day-head" style="align-items:center">
           <div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:0">
             <span style="font-family:var(--font-serif);font-size:15px;font-weight:700;color:var(--text)">${esc(day.focus)}</span>
-            <span style="font-size:11px;color:var(--text3)">${esc(day.day)}${(()=>{const sd=giantStartDates[currentGiantProgram];if(!sd)return '';const d=new Date(sd);d.setDate(d.getDate()+di);return ' · '+WDAYS_FULL[d.getDay()]+', '+d.getDate()+'. '+MONTHS_SHORT[d.getMonth()];})()} </span>
+            <span style="font-size:11px;color:var(--text3)">${esc(day.day)}${(()=>{const sd=giantStartDates[currentGiantProgram];if(!sd)return '';const d=new Date(sd);d.setDate(d.getDate()+di*2);return ' · '+WDAYS_FULL[d.getDay()]+', '+d.getDate()+'. '+MONTHS_SHORT[d.getMonth()];})()} </span>
           </div>
           <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
             <span id="gtimer-${di}" style="font-size:13px;font-weight:600;color:var(--accent);font-variant-numeric:tabular-nums;display:none;min-width:48px">00:00</span>
@@ -1366,20 +1402,19 @@ function saveGiantLog(key,val){
 }
 
 function switchPlan_init(){
-  if(currentPlan==='giant'){
-    document.getElementById('pm2-content').style.display='none';
-    document.getElementById('giant-content').style.display='';
-    document.getElementById('pm2-header').style.display='none';
-    const pt=document.getElementById('plan-tab-giant');if(pt)pt.classList.add('active');
-    const pm=document.getElementById('plan-tab-pm2');if(pm)pm.classList.remove('active');
-    renderGiant();
-  }
+  const isGiant = currentPlan==='giant';
+  document.getElementById('pm2-content').style.display = isGiant ? 'none' : '';
+  document.getElementById('giant-content').style.display = isGiant ? '' : 'none';
+  document.getElementById('pm2-header').style.display = isGiant ? 'none' : 'block';
+  const pt=document.getElementById('plan-tab-giant');if(pt)pt.classList.toggle('active',isGiant);
+  const pm=document.getElementById('plan-tab-pm2');if(pm)pm.classList.toggle('active',!isGiant);
+  if(isGiant) renderGiant();
 }
 
 function renderTraining(){
   switchPlan_init();
   const inp = document.getElementById('train-start-date');
-  if(inp) inp.value = trainStartDate;
+  if(inp) inp.value = trainStartDates[String(currentBlock)] || '';
   renderTrainPlan();
 }
 
@@ -1401,7 +1436,13 @@ function renderTrainPlan(){
             onblur="savePlanField(${di},'focus',this.textContent)"
             onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}"
           >${esc(day.focus)}</span>
-          <span style="font-size:11px;color:var(--text3);font-family:var(--font-sans)">${getTrainDayLabel(di)}</span>
+          <div style="display:flex;align-items:center;gap:5px">
+            <span style="font-size:11px;color:var(--text3);font-family:var(--font-sans)">${getTrainDayLabel(di)}</span>
+            <button onclick="promptTrainDayOverride(${di})" title="Datum anpassen" style="background:none;border:none;cursor:pointer;padding:2px;opacity:.45;transition:opacity .15s;line-height:1" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.45">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </button>
+            ${(()=>{const k=currentBlock+'-'+di;return trainDayOverrides[k]?'<button onclick="clearTrainDayOverride('+di+')" style="font-size:9px;color:var(--text3);background:none;border:none;cursor:pointer;opacity:.5;padding:0" title="Zurücksetzen">↺</button>':''})()}
+          </div>
         </div>
         <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
           <span id="timer-${di}" style="font-size:13px;font-weight:600;color:var(--accent);font-variant-numeric:tabular-nums;display:none;min-width:48px">00:00</span>
@@ -1550,9 +1591,37 @@ function stopEmom(){
   document.getElementById('emom-running').style.display='none';
 }
 
+function promptTrainDayOverride(di){
+  const current=getTrainDayISO(di);
+  const val=prompt('Datum für diesen Tag eingeben (TT.MM.JJJJ):', current?formatDateDE(current):'');
+  if(val===null)return;
+  const parts=val.trim().split('.');
+  if(parts.length!==3)return alert('Bitte Format TT.MM.JJJJ verwenden.');
+  const iso=parts[2]+'-'+parts[1].padStart(2,'0')+'-'+parts[0].padStart(2,'0');
+  if(isNaN(new Date(iso)))return alert('Ungültiges Datum.');
+  setTrainDayOverride(di,iso);
+}
+function formatDateDE(iso){
+  if(!iso)return '';
+  const p=iso.split('-');
+  return p[2]+'.'+p[1]+'.'+p[0];
+}
+
+function setTrainDayOverride(di,val){
+  const k=currentBlock+'-'+di;
+  trainDayOverrides[k]=val;
+  save('trainDayOverrides',trainDayOverrides);
+  renderTrainPlan();
+}
+function clearTrainDayOverride(di){
+  const k=currentBlock+'-'+di;
+  delete trainDayOverrides[k];
+  save('trainDayOverrides',trainDayOverrides);
+  renderTrainPlan();
+}
 function saveStartDate(val){
-  trainStartDate = val;
-  save('trainStartDate', val);
+  trainStartDates[String(currentBlock)] = val;
+  save('trainStartDates','trainDayOverrides', trainStartDates);
   renderTrainPlan();
 }
 
@@ -1597,8 +1666,9 @@ function resetAllData(){
   if(!confirm('ACHTUNG: Alle Daten zurücksetzen?\n\nDas löscht unwiderruflich:\n• Alle To Dos (inkl. Archiv)\n• Alle Projekte\n• Alle Einkaufseinträge\n• Alle Trainingslogs und Zeiten\n\nDieser Schritt kann nicht rückgängig gemacht werden.'))return;
   const confirm2=prompt('Zur Bestätigung bitte "RESET" eintippen:');
   if(confirm2!=='RESET'){alert('Abgebrochen.');return;}
-  const keys=['focus','todos','projects','shop','trainDone','trainBlocks_v5','trainLogs','workoutTimes','giantLogs','giantWorkoutTimes','giantStartDates','trainStartDate','todoArchive','currentPlan','currentGiantProgram'];
+  const keys=['focus','todos','projects','shop','trainDone','trainBlocks_v5','trainLogs','workoutTimes','giantLogs','giantWorkoutTimes','giantStartDates','trainStartDates','todoArchive','currentPlan','currentGiantProgram'];
   keys.forEach(k=>localStorage.removeItem(k));
+  localStorage.removeItem('trainBlocks_v5');
   db.from('hub_data').delete().neq('key','__placeholder__').then(()=>{
     location.reload();
   }).catch(()=>{location.reload();});
@@ -1643,10 +1713,18 @@ syncFromSupabase().then(()=>{
   projects=load('projects',[]);
   shopItems=load('shop',[]);
   trainDone=load('trainDone',{});
-  trainBlocks=load('trainBlocks_v5',DEFAULT_BLOCKS);
+  const loadedBlocks=load('trainBlocks_v5',null);
+  trainBlocks=(loadedBlocks&&Array.isArray(loadedBlocks)&&loadedBlocks.length===4)?loadedBlocks:deepCopy(DEFAULT_BLOCKS);
   trainLogs=load('trainLogs',{});
   workoutTimes=load('workoutTimes',{});
-  trainStartDate=load('trainStartDate','');
+  trainStartDates=load('trainStartDates',{});
+  trainDayOverrides=load('trainDayOverrides',{});
+  todoArchive=load('todoArchive',{privat:[],beruflich:[]});
+  currentPlan=load('currentPlan','pm2');
+  currentGiantProgram=load('currentGiantProgram','1.0');
+  giantLogs=load('giantLogs',{});
+  giantWorkoutTimes=load('giantWorkoutTimes',{});
+  giantStartDates=load('giantStartDates',{});
   renderHeute();
   renderTodos();
 });
