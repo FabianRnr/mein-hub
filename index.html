@@ -49,7 +49,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 
 input[type="checkbox"]{width:18px;height:18px;accent-color:var(--accent);cursor:pointer;flex-shrink:0}
 ::placeholder{color:var(--text3)}
 #app{display:flex;flex-direction:column;height:100dvh;max-width:900px;margin:0 auto}
-#header{padding:calc(18px + env(safe-area-inset-top,0px)) 22px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg);border-bottom:1px solid var(--border)}
+#header{padding:calc(env(safe-area-inset-top,44px) + 14px) 22px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg);border-bottom:1px solid var(--border)}
 #header-left h1{font-family:var(--font-serif);font-size:21px;font-weight:700;letter-spacing:-.01em;color:var(--text)}
 #header-left h1 span{color:var(--accent)}
 #header-left .date{font-size:11px;color:var(--text3);margin-top:2px;letter-spacing:.06em;text-transform:uppercase}
@@ -195,9 +195,12 @@ input[type="checkbox"]{width:18px;height:18px;accent-color:var(--accent);cursor:
 [contenteditable][data-placeholder]:empty:before{content:attr(data-placeholder);color:var(--text3);pointer-events:none}
 [contenteditable][data-placeholder]:focus:empty:before{display:none}
 .tplan-log-col{display:flex;flex-direction:column;gap:3px;width:68px;flex-shrink:0;min-width:60px}
+.tplan-log-col .tplan-log-input{flex:1;height:auto;min-height:64px}
 .tplan-log-label{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);font-weight:600;text-align:center}
-.tplan-log-input{font-family:var(--font-sans);font-size:13px;color:var(--text);background:var(--bg3);border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;resize:none;outline:none;line-height:1.5;transition:border-color .15s;width:100%;height:64px}
+.tplan-log-input{font-family:var(--font-sans);font-size:13px;color:var(--text);background:var(--bg3);border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;resize:none;outline:none;line-height:1.5;transition:border-color .15s;width:100%;height:64px;box-sizing:border-box}
 .tplan-log-input:focus{border-color:var(--accent)}
+.tplan-row{display:flex;align-items:stretch;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.tplan-cell-wrap{flex:1;min-width:160px;display:flex;flex-direction:column;justify-content:flex-start}
 .tplan-log-input:focus{border-color:var(--accent)}
 .tplan-add-btn{font-size:11px;color:var(--text3);background:none;border:none;cursor:pointer;padding:6px 4px;opacity:.6}
 .tplan-add-btn:hover{color:var(--accent);opacity:1}
@@ -1279,7 +1282,7 @@ function getTrainDayLabel(di){
   const sd = trainStartDates[String(currentBlock)] || '';
   if(!sd) return '';
   const d = new Date(sd);
-  d.setDate(d.getDate() + di*2);
+  d.setDate(d.getDate() + di);
   return WDAYS_FULL[d.getDay()] + ', ' + d.getDate() + '. ' + MONTHS_SHORT[d.getMonth()];
 }
 function getTrainDayISO(di){
@@ -1289,7 +1292,7 @@ function getTrainDayISO(di){
   const sd = trainStartDates[String(currentBlock)] || '';
   if(!sd) return '';
   const d = new Date(sd);
-  d.setDate(d.getDate() + di*2);
+  d.setDate(d.getDate() + di);
   return d.toISOString().split('T')[0];
 }
 
@@ -1357,8 +1360,8 @@ function renderGiant(){
               <span class="tplan-num">${ei+1}</span>
               <div class="tplan-cell-wrap">
                 <div class="tplan-name">${esc(ex.name)}</div>
-                <div class="tplan-note">${esc(ex.note)}</div>
-              ${ex.note&&ex.note.length>80?`<button class="tplan-note-toggle" onclick="this.previousElementSibling.classList.toggle('expanded');this.textContent=this.previousElementSibling.classList.contains('expanded')?'weniger ▴':'mehr anzeigen ▾'">mehr anzeigen ▾</button>`:''}
+                <div class="tplan-note" id="gnote-${di}-${ei}">${esc(ex.note)}</div>
+              ${ex.note&&ex.note.length>80?`<button class="tplan-note-toggle" onclick="toggleNote(this,'gnote-${di}-${ei}')">mehr anzeigen ▾</button>`:''}
               </div>
               ${[1,2,3,4].map(w=>{
                 const lk='g-'+currentGiantProgram+'-'+di+'-'+ei+'-w'+w;
