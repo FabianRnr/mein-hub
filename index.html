@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#14131a">
@@ -30,6 +30,18 @@
   --nav-h:70px;
 }
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font-sans);font-size:15px;line-height:1.5;overflow-x:hidden}
+#lock-screen{position:fixed;inset:0;background:var(--nav-bg);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0}
+#lock-screen.hidden{display:none}
+.lock-card{background:#1e1d24;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:36px 32px;width:100%;max-width:340px;display:flex;flex-direction:column;align-items:center;gap:20px}
+.lock-logo{width:52px;height:52px}
+.lock-title{font-family:var(--font-serif);font-size:22px;font-weight:700;color:#fff;letter-spacing:-.01em}
+.lock-subtitle{font-size:13px;color:rgba(255,255,255,.4);margin-top:-12px}
+.lock-input{width:100%;background:rgba(255,255,255,.08);color:#fff;border:1.5px solid rgba(255,255,255,.12);border-radius:10px;padding:13px 16px;font-size:16px;text-align:center;letter-spacing:.15em;outline:none;transition:border-color .15s}
+.lock-input:focus{border-color:#ff4d00}
+.lock-input::placeholder{letter-spacing:.05em;color:rgba(255,255,255,.25)}
+.lock-btn{width:100%;padding:13px;background:#ff4d00;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:var(--font-sans);transition:background .15s}
+.lock-btn:hover{background:#ff6a25}
+.lock-error{font-size:12px;color:#ff4d00;min-height:16px;text-align:center}
 a{color:inherit;text-decoration:none}
 button{font-family:var(--font-sans);cursor:pointer;border:none;background:none;color:inherit}
 input,textarea,select{font-family:var(--font-sans);font-size:16px;background:var(--bg3);color:var(--text);border:1.5px solid var(--border);border-radius:var(--radiusS);padding:10px 13px;outline:none;transition:border-color .15s,box-shadow .15s}
@@ -46,7 +58,7 @@ input[type="checkbox"]{width:18px;height:18px;accent-color:var(--accent);cursor:
 .stat-pill .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0}
 .stat-pill .dot.green{background:var(--green2)}
 #main{flex:1;overflow-y:auto;padding:0 0 calc(var(--nav-h) + 8px)}
-#nav{height:var(--nav-h);background:var(--nav-bg);display:flex;align-items:stretch;padding:0 6px;position:sticky;bottom:0;z-index:100}
+#nav{height:var(--nav-h);background:var(--nav-bg);display:flex;align-items:stretch;padding:0 6px;position:sticky;bottom:0;z-index:100;padding-bottom:env(safe-area-inset-bottom,0)}
 .nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,0.35);transition:color .15s;padding:8px 4px;border-radius:10px;margin:8px 2px}
 .nav-btn svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
 .nav-btn.active{color:#fff}
@@ -54,7 +66,7 @@ input[type="checkbox"]{width:18px;height:18px;accent-color:var(--accent);cursor:
 .nav-btn.active::after{content:'';display:block;width:4px;height:4px;border-radius:50%;background:var(--accent);margin-top:-2px}
 .section{display:none;padding:22px}
 .section.active{display:block}
-.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:14px;box-shadow:var(--shadow-sm)}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:14px;box-shadow:var(--shadow-sm);width:100%;box-sizing:border-box}
 .card-title{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--text3);margin-bottom:14px;font-weight:500}
 .greeting{margin-bottom:24px;padding:24px;background:linear-gradient(135deg,#14131a 0%,#1e1620 100%);border-radius:var(--radius);color:#fff;position:relative;overflow:hidden;border:1px solid rgba(255,77,0,.2)}
 .greeting::before{content:'';position:absolute;right:-40px;top:-40px;width:200px;height:200px;border-radius:50%;background:var(--accent);opacity:.1}
@@ -103,9 +115,15 @@ input[type="checkbox"]{width:18px;height:18px;accent-color:var(--accent);cursor:
 .add-task-form{display:none;margin-top:10px;gap:7px;align-items:center}
 .add-task-form.open{display:flex}
 .add-task-form input{flex:1}
-.tabs{display:flex;gap:0;margin-bottom:18px;background:var(--bg4);border-radius:10px;padding:4px;overflow-x:auto}
-.tab{flex:1;text-align:center;padding:9px;border-radius:7px;font-size:13px;color:var(--text2);transition:all .15s;cursor:pointer;font-weight:400}
-.tab.active{background:var(--bg2);color:var(--text);font-weight:500;box-shadow:var(--shadow-sm)}
+.tabs{display:flex;gap:7px;margin-bottom:18px;background:none;border-radius:0;padding:0;overflow-x:auto}
+.tab{flex:1;text-align:center;padding:9px 14px;border-radius:20px;font-size:13px;color:var(--text2);transition:all .15s;cursor:pointer;font-weight:400;border:1.5px solid var(--border);background:var(--bg3)}
+#plan-switcher .tab{border:1.5px solid transparent;background:none}
+#plan-switcher .tab.active{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600;box-shadow:none}
+#week-block-tabs .tab{border:1.5px solid transparent;background:none}
+#week-block-tabs .tab.active{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600;box-shadow:none}
+.tab-privat.active{background:#e8faf0;color:#085041;border-color:#5dcaa5}
+.tab-beruflich.active{background:#e8f0fc;color:#0c447c;border-color:#85b7eb}
+.tab-einkauf.active{background:#fff0eb;color:#993c1d;border-color:#f0997b}
 .todo-list{list-style:none;display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
 .todo-item{display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--bg2);border-radius:var(--radiusS);border:1.5px solid var(--border);transition:all .2s;box-shadow:var(--shadow-sm)}
 .todo-item.done{opacity:.38}
@@ -171,6 +189,8 @@ input[type="checkbox"]{width:18px;height:18px;accent-color:var(--accent);cursor:
 .tplan-note:focus{background:var(--bg3)}
 .tplan-note:empty:before{content:attr(data-placeholder);color:var(--text3);pointer-events:none}
 .tplan-note:focus:before{display:none}
+[contenteditable][data-placeholder]:empty:before{content:attr(data-placeholder);color:var(--text3);pointer-events:none}
+[contenteditable][data-placeholder]:focus:empty:before{display:none}
 .tplan-log-col{display:flex;flex-direction:column;gap:3px;width:68px;flex-shrink:0}
 .tplan-log-label{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);font-weight:600;text-align:center}
 .tplan-log-input{font-family:var(--font-sans);font-size:12px;color:var(--text);background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:6px 8px;resize:none;outline:none;line-height:1.5;transition:border-color .15s;width:100%;height:52px}
@@ -181,6 +201,16 @@ input[type="checkbox"]{width:18px;height:18px;accent-color:var(--accent);cursor:
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:2px}
 @media(max-width:480px){
+  .tplan-log-col{display:none}
+  .project-actions{flex-wrap:wrap;gap:5px}
+  .project-actions .btn{font-size:11px;padding:5px 8px}
+  .focus-input-wrap{flex-wrap:wrap}
+  .focus-input-wrap input{width:100%}
+  .add-row{flex-wrap:wrap}
+  .tplan-day-head{flex-wrap:wrap;gap:6px}
+  .greeting h2{font-size:19px}
+  #header-stats{gap:5px}
+  .stat-pill{font-size:11px;padding:4px 8px}
   .tplan-log-col{width:58px}
   .tplan-log-input{font-size:12px;padding:5px 6px}
   .project-actions{flex-wrap:wrap}
@@ -205,6 +235,23 @@ input[type="checkbox"]{width:18px;height:18px;accent-color:var(--accent);cursor:
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 </head>
 <body>
+<div id="lock-screen">
+  <div class="lock-card">
+    <svg class="lock-logo" viewBox="0 0 48 48" fill="none">
+      <rect width="48" height="48" rx="13" fill="#14131a"/>
+      <rect x="11" y="11" width="11" height="11" rx="3" fill="#ff4d00"/>
+      <rect x="26" y="11" width="11" height="11" rx="3" fill="white" opacity=".6"/>
+      <rect x="11" y="26" width="11" height="11" rx="3" fill="white" opacity=".6"/>
+      <rect x="26" y="26" width="11" height="11" rx="3" fill="#ff4d00" opacity=".5"/>
+    </svg>
+    <div class="lock-title">Mein Hub</div>
+    <div class="lock-subtitle">Bitte Passwort eingeben</div>
+    <input class="lock-input" type="password" id="lock-input" placeholder="Passwort" onkeydown="if(event.key==='Enter')checkPassword()">
+    <button class="lock-btn" onclick="checkPassword()">Entsperren</button>
+    <div class="lock-error" id="lock-error"></div>
+  </div>
+</div>
+
 <div id="app">
   <div id="header">
     <div id="header-left">
@@ -250,6 +297,10 @@ input[type="checkbox"]{width:18px;height:18px;accent-color:var(--accent);cursor:
       <svg viewBox="0 0 24 24"><path d="M18 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3H6a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3V6a3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3h12a3 3 0 0 0 3-3 3 3 0 0 0-3-3z"/></svg>
       Training
     </button>
+    <button class="nav-btn" onclick="showSection('einstellungen')" id="nav-einstellungen">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Hub
+    </button>
   </div>
 
   <div id="main">
@@ -293,9 +344,9 @@ input[type="checkbox"]{width:18px;height:18px;accent-color:var(--accent);cursor:
     <div id="section-aufgaben" class="section">
       <div style="font-family:var(--font-serif);font-size:20px;font-weight:400;margin-bottom:14px">To Dos</div>
       <div class="tabs">
-        <div class="tab active" onclick="switchTodoTab('privat',this)">Privat</div>
-        <div class="tab" onclick="switchTodoTab('beruflich',this)">Beruflich</div>
-        <div class="tab" onclick="switchTodoTab('einkauf',this)">Einkauf</div>
+        <div class="tab tab-privat active" onclick="switchTodoTab('privat',this)">Privat</div>
+        <div class="tab tab-beruflich" onclick="switchTodoTab('beruflich',this)">Beruflich</div>
+        <div class="tab tab-einkauf" onclick="switchTodoTab('einkauf',this)">Einkauf</div>
       </div>
 
       <div id="todo-privat-view">
@@ -309,6 +360,15 @@ input[type="checkbox"]{width:18px;height:18px;accent-color:var(--accent);cursor:
           <button class="btn btn-sm" onclick="addTodo('privat')">+</button>
         </div>
         <ul class="todo-list" id="todo-list-privat"></ul>
+        <button class="clear-done-btn" onclick="archiveDone('privat')">Erledigte archivieren</button>
+        <div id="archive-privat-wrap" style="margin-top:16px;display:none">
+          <div onclick="toggleArchive('privat')" style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:8px">
+            <span style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);font-weight:500">Archiv</span>
+            <span id="archive-privat-count" style="font-size:11px;color:var(--text3);background:var(--bg4);padding:1px 7px;border-radius:10px"></span>
+            <span id="archive-privat-arrow" style="font-size:11px;color:var(--text3);margin-left:auto">▼</span>
+          </div>
+          <ul class="todo-list" id="archive-list-privat" style="display:none"></ul>
+        </div>
       </div>
 
       <div id="todo-beruflich-view" style="display:none">
@@ -322,6 +382,15 @@ input[type="checkbox"]{width:18px;height:18px;accent-color:var(--accent);cursor:
           <button class="btn btn-sm" onclick="addTodo('beruflich')">+</button>
         </div>
         <ul class="todo-list" id="todo-list-beruflich"></ul>
+        <button class="clear-done-btn" onclick="archiveDone('beruflich')">Erledigte archivieren</button>
+        <div id="archive-beruflich-wrap" style="margin-top:16px;display:none">
+          <div onclick="toggleArchive('beruflich')" style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:8px">
+            <span style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);font-weight:500">Archiv</span>
+            <span id="archive-beruflich-count" style="font-size:11px;color:var(--text3);background:var(--bg4);padding:1px 7px;border-radius:10px"></span>
+            <span id="archive-beruflich-arrow" style="font-size:11px;color:var(--text3);margin-left:auto">▼</span>
+          </div>
+          <ul class="todo-list" id="archive-list-beruflich" style="display:none"></ul>
+        </div>
       </div>
 
       <div id="todo-einkauf-view" style="display:none">
@@ -337,23 +406,81 @@ input[type="checkbox"]{width:18px;height:18px;accent-color:var(--accent);cursor:
 
     <!-- ══ TRAINING ══ -->
     <div id="section-training" class="section">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
-        <div style="display:flex;align-items:center;gap:10px">
-          <div style="font-family:var(--font-serif);font-size:20px;font-weight:700;letter-spacing:-.01em">Primal Mastery 2</div>
+      <div style="margin-bottom:16px">
+        <div style="display:flex;gap:0;margin-bottom:14px;background:var(--bg4);border-radius:10px;padding:4px" id="plan-switcher">
+          <div class="tab active" id="plan-tab-pm2" onclick="switchPlan('pm2',this)">Primal Mastery 2</div>
+          <div class="tab" id="plan-tab-giant" onclick="switchPlan('giant',this)">The Giant</div>
         </div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <label style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);white-space:nowrap">Startdatum:</label>
-          <input type="date" id="train-start-date" onchange="saveStartDate(this.value)" style="font-size:13px;padding:6px 10px;border-radius:8px;background:var(--bg3);color:var(--text);border:1.5px solid var(--border)">
-          <div id="train-save-hint" style="font-size:11px;color:var(--text3);opacity:0;transition:opacity .4s">gespeichert</div>
+        <div id="pm2-header" style="margin-bottom:0">
+          <div class="card" style="background:var(--nav-bg);border-color:rgba(255,77,0,.2);margin-bottom:16px;width:100%">
+            <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:6px;flex-wrap:wrap">
+              <div style="font-family:var(--font-serif);font-size:17px;font-weight:700;color:#fff">Primal Mastery 2</div>
+              <div style="font-size:11px;color:rgba(255,255,255,.4);background:rgba(255,77,0,.2);padding:2px 8px;border-radius:20px;white-space:nowrap">12 Wochen · 6 Tage/Woche</div>
+            </div>
+            <div style="font-size:12px;color:rgba(255,255,255,.5);line-height:1.6;margin-bottom:12px">Push/Legs, Pull, Accessory & Full Body – täglich wechselnder Fokus. Alle 3 Wochen neue Übungsvarianten zur Progression.</div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <label style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.4);white-space:nowrap">Startdatum:</label>
+              <input type="date" id="train-start-date" onchange="saveStartDate(this.value)" style="font-size:13px;padding:6px 10px;border-radius:8px;background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.15);outline:none">
+              <div id="train-save-hint" style="font-size:11px;color:rgba(255,255,255,.4);opacity:0;transition:opacity .4s">gespeichert</div>
+            </div>
+          </div>
+        </div>
+
+
+      <div id="pm2-content">
+        <div style="display:flex;gap:0;margin-bottom:14px;background:var(--bg4);border-radius:10px;padding:4px" id="week-block-tabs">
+          <div class="tab active" onclick="switchBlock(0,this)">Wo 1–3</div>
+          <div class="tab" onclick="switchBlock(1,this)">Wo 4–6</div>
+          <div class="tab" onclick="switchBlock(2,this)">Wo 7–9</div>
+          <div class="tab" onclick="switchBlock(3,this)">Wo 10–12</div>
+        </div>
+        <div id="train-plan-list"></div>
+      </div>
+      <div id="giant-content" style="display:none">
+        <div style="display:none" id="giant-prog-tabs"></div>
+        <div id="giant-plan-list"></div>
+      </div>
+      </div>
+    </div>
+
+    <!-- ══ EINSTELLUNGEN ══ -->
+    <div id="section-einstellungen" class="section">
+      <div style="font-family:var(--font-serif);font-size:20px;font-weight:700;letter-spacing:-.01em;margin-bottom:20px">Mein Hub</div>
+
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-title">Allgemein</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">
+          <div>
+            <div style="font-size:14px;font-weight:500">Passwort ändern</div>
+            <div style="font-size:12px;color:var(--text3);margin-top:2px">Zugangsschutz für deinen Hub</div>
+          </div>
+          <button class="btn btn-sm btn-ghost" onclick="changePassword()">Ändern</button>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0">
+          <div>
+            <div style="font-size:14px;font-weight:500">App-Version</div>
+            <div style="font-size:12px;color:var(--text3);margin-top:2px">Mein Hub · 1.0</div>
+          </div>
         </div>
       </div>
-      <div style="display:flex;gap:0;margin-bottom:18px;background:var(--bg4);border-radius:10px;padding:4px" id="week-block-tabs">
-        <div class="tab active" onclick="switchBlock(0,this)">Wo 1–3</div>
-        <div class="tab" onclick="switchBlock(1,this)">Wo 4–6</div>
-        <div class="tab" onclick="switchBlock(2,this)">Wo 7–9</div>
-        <div class="tab" onclick="switchBlock(3,this)">Wo 10–12</div>
+
+      <div class="card" style="margin-bottom:14px;border-color:rgba(192,32,32,.2)">
+        <div class="card-title" style="color:var(--red)">Daten</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">
+          <div>
+            <div style="font-size:14px;font-weight:500">Archiv leeren</div>
+            <div style="font-size:12px;color:var(--text3);margin-top:2px">Alle archivierten To Dos löschen</div>
+          </div>
+          <button class="btn btn-sm btn-ghost" style="color:var(--red);border-color:rgba(192,32,32,.3)" onclick="clearArchive()">Leeren</button>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0">
+          <div>
+            <div style="font-size:14px;font-weight:500;color:var(--red)">Alles zurücksetzen</div>
+            <div style="font-size:12px;color:var(--text3);margin-top:2px">Alle Daten, To Dos, Projekte, Training – unwiderruflich</div>
+          </div>
+          <button class="btn btn-sm" style="background:var(--red)" onclick="resetAllData()">Reset</button>
+        </div>
       </div>
-      <div id="train-plan-list"></div>
     </div>
   </div>
 </div>
@@ -431,14 +558,12 @@ function showSyncDot(state){
 }
 
 /* ══ STATE ══ */
-let focusItems = load('focus',[]);
-let todos = load('todos',{privat:[],beruflich:[]});
-let projects = load('projects',[
-  {id:1,name:'Bootsführerschein',desc:'Theorie und Praxis – regelmäßig Zeit zum Lernen einplanen.',color:'amber',progress:20,tasks:[{id:1,text:'Theoriebuch Kapitel 1–3',done:true},{id:2,text:'Prüfungsfragen üben',done:false},{id:3,text:'Praxiseinheit buchen',done:false}]},
-  {id:2,name:'Jugendhilfe Lernplattform',desc:'Webbasierte Online-Lernplattform für die Jugendhilfe erstellen.',color:'blue',progress:10,tasks:[{id:1,text:'Anforderungen definieren',done:true},{id:2,text:'Technologie-Stack wählen',done:false},{id:3,text:'MVP-Prototyp bauen',done:false}]}
-]);
-let shopItems = load('shop',[]);
-let trainDone = load('trainDone',{});
+let focusItems = [];
+let todos = {privat:[],beruflich:[]};
+let projects = [];
+let shopItems = [];
+let todoArchive = {privat:[],beruflich:[]};
+let trainDone = {};
 
 let editingProjectId = null;
 
@@ -483,6 +608,7 @@ function showSection(id){
   if(id==='heute')renderHeute();
   if(id==='projekte')renderProjekte();
   if(id==='aufgaben'){renderTodos();renderShop();}
+  if(id==='einkauf')renderShop();
   if(id==='training')renderTraining();
 }
 
@@ -589,8 +715,11 @@ function renderProjekte(){
       </ul>
       <div class="project-actions">
         <button class="btn btn-sm btn-ghost" onclick="toggleAddTask(${p.id})">+ Aufgabe</button>
-        <button class="btn btn-sm" onclick="bookTime(${p.id},1)" title="1 Stunde heute einplanen">⏱ 1 Std</button>
-        <button class="btn btn-sm" onclick="bookTime(${p.id},2)" title="2 Stunden heute einplanen">⏱ 2 Std</button>
+        <button class="btn btn-sm" onclick="bookTime(${p.id},'0.25')" title="15 Minuten">⏱ 15m</button>
+        <button class="btn btn-sm" onclick="bookTime(${p.id},'0.5')" title="30 Minuten">⏱ 30m</button>
+        <button class="btn btn-sm" onclick="bookTime(${p.id},1)" title="1 Stunde">⏱ 1h</button>
+        <button class="btn btn-sm" onclick="bookTime(${p.id},2)" title="2 Stunden">⏱ 2h</button>
+        <button class="btn btn-sm" onclick="bookTime(${p.id},3)" title="3 Stunden">⏱ 3h</button>
       </div>
       <div class="add-task-form" id="atf-${p.id}">
         <input type="text" id="ati-${p.id}" placeholder="Neue Aufgabe …" onkeydown="if(event.key==='Enter')addProjectTask(${p.id})">
@@ -602,7 +731,9 @@ function renderProjekte(){
 function bookTime(pid,hours){
   const p=projects.find(x=>x.id===pid);
   if(!p)return;
-  const text=hours+'h arbeiten: '+p.name;
+  const h=parseFloat(hours);
+  const label=h===0.25?'15min':h===0.5?'30min':h===1?'1h':h+'h';
+  const text=label+' arbeiten: '+p.name;
   const already=focusItems.some(f=>f.text===text&&!f.done);
   if(already){alert('Bereits heute eingeplant.');return;}
   focusItems.push({id:Date.now(),text,done:false,source:'projekt'});
@@ -713,16 +844,63 @@ function renderTodos(){
   ['privat','beruflich'].forEach(cat=>{
     const ul=document.getElementById('todo-list-'+cat);
     const items=[...todos[cat]].sort((a,b)=>{const o={hoch:0,mittel:1,niedrig:2};return(o[a.priority]||1)-(o[b.priority]||1)});
-    if(!items.length){ul.innerHTML='<div class="empty"><div class="e-icon">✓</div>Keine Aufgaben.</div>';return;}
-    ul.innerHTML=items.map((t,i)=>{
+    if(!items.length){ul.innerHTML='<div class="empty"><div class="e-icon">✓</div>Keine Aufgaben.</div>';}
+    if(!items.length){ul.innerHTML='<div class="empty"><div class="e-icon">✓</div>Keine Aufgaben.</div>';}
+    else{ul.innerHTML=items.map((t,i)=>{
+      const idx=todos[cat].indexOf(t);
       const inFocus=focusItems.some(f=>f.text===t.text&&!f.done);
-      return`<li class="todo-item${t.done?' done':''}${inFocus?' in-focus':''}">
-        <span class="todo-priority prio-${t.priority}"></span>
-        <input type="checkbox" ${t.done?'checked':''} onchange="toggleTodo('${cat}',${todos[cat].indexOf(t)})">
-        <span class="todo-text">${esc(t.text)}</span>
-        <button class="focus-add-btn${inFocus?' added':''}" onclick="addTodoToFocus('${esc(t.text)}','${cat}')" title="${inFocus?'Bereits im Tagesfokus':'Zum Tagesfokus'}">${inFocus?'✦':'⊕'}</button>
-        <button class="fi-del" onclick="deleteTodo('${cat}',${todos[cat].indexOf(t)})">×</button>
-      </li>`;}).join('');
+      const subs=t.subs||[];
+      const subsDone=subs.filter(s=>s.done).length;
+      return`<li class="todo-item${t.done?' done':''}${inFocus?' in-focus':''}" style="flex-direction:column;align-items:stretch;padding:0">
+        <div style="display:flex;align-items:center;gap:10px;padding:11px 14px">
+          <span class="todo-priority prio-${t.priority}"></span>
+          <input type="checkbox" ${t.done?'checked':''} onchange="toggleTodo('${cat}',${idx})">
+          <span class="todo-text" contenteditable="true" spellcheck="false"
+            onblur="editTodo('${cat}',${idx},this.textContent)"
+            onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}"
+            style="outline:none;border-radius:4px;padding:1px 3px;cursor:text;flex:1"
+            onfocus="this.style.background='var(--bg4)'"
+          >${esc(t.text)}</span>
+          ${subs.length?`<span style="font-size:10px;color:var(--text3);white-space:nowrap">${subsDone}/${subs.length}</span>`:''}
+          <button class="focus-add-btn${inFocus?' added':''}" onclick="addTodoToFocus('${esc(t.text)}','${cat}')" title="${inFocus?'Im Tagesfokus':'Zum Tagesfokus'}">${inFocus?'✦':'⊕'}</button>
+          <button class="fi-del" onclick="deleteTodo('${cat}',${idx})">×</button>
+        </div>
+        <div style="padding:0 14px 8px 44px">
+          <button onclick="addSubTodo('${cat}',${idx})" style="font-size:11px;color:var(--text3);background:none;border:none;cursor:pointer;padding:0;font-family:var(--font-sans);transition:color .15s" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text3)'">+ Unter-Aufgabe</button>
+        </div>
+        ${subs.length?`<ul style="list-style:none;margin:0 0 10px 42px;display:flex;flex-direction:column;gap:4px">
+          ${subs.map((s,si)=>`<li style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--bg4);border-radius:6px;border:1px solid var(--border)">
+            <input type="checkbox" ${s.done?'checked':''} onchange="toggleSubTodo('${cat}',${idx},${si})" style="width:15px;height:15px;flex-shrink:0">
+            <span contenteditable="true" spellcheck="false"
+              onblur="editSubTodo('${cat}',${idx},${si},this.textContent)"
+              onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}"
+              data-placeholder="Unter-Aufgabe …"
+              style="flex:1;font-size:13px;color:var(--text2);outline:none;border-radius:3px;padding:1px 3px;cursor:text;${s.done?'text-decoration:line-through;color:var(--text3)':''}"
+              onfocus="this.style.background='var(--bg3)'"
+            >${esc(s.text)}</span>
+            <button class="fi-del" style="font-size:16px" onclick="deleteSubTodo('${cat}',${idx},${si})">×</button>
+          </li>`).join('')}
+        </ul>`:''}
+      </li>`;}).join('');}
+
+    const archWrap=document.getElementById('archive-'+cat+'-wrap');
+    const archList=document.getElementById('archive-list-'+cat);
+    const archCount=document.getElementById('archive-'+cat+'-count');
+    const arch=todoArchive[cat]||[];
+    if(arch.length&&archWrap){
+      archWrap.style.display='block';
+      if(archCount)archCount.textContent=arch.length;
+      if(archList&&archList.style.display==='block'){
+        archList.innerHTML=arch.map((t,i)=>`
+          <li class="todo-item done" style="opacity:.5">
+            <span class="todo-priority prio-${t.priority}"></span>
+            <input type="checkbox" checked disabled>
+            <span class="todo-text">${esc(t.text)}</span>
+            ${t.archivedAt?`<span style="font-size:10px;color:var(--text3);white-space:nowrap">${t.archivedAt}</span>`:''}
+            <button class="fi-del" onclick="restoreArchive('${cat}',${i})" title="Wiederherstellen" style="opacity:.6;font-size:14px">↩</button>
+          </li>`).join('');
+      }
+    } else if(archWrap){archWrap.style.display='none';}
   });
 }
 
@@ -733,6 +911,83 @@ function addTodoToFocus(text,cat){
   save('focus',focusItems);
   initHeader();
   renderTodos();
+}
+
+function archiveDone(cat){
+  const done=todos[cat].filter(t=>t.done);
+  if(!done.length)return;
+  todoArchive[cat]=[...done.map(t=>({...t,archivedAt:new Date().toLocaleDateString('de-DE')})),...todoArchive[cat]];
+  todos[cat]=todos[cat].filter(t=>!t.done);
+  save('todos',todos);
+  save('todoArchive',todoArchive);
+  renderTodos();
+  initHeader();
+}
+
+function toggleArchive(cat){
+  const list=document.getElementById('archive-list-'+cat);
+  const arrow=document.getElementById('archive-'+cat+'-arrow');
+  const open=list.style.display==='block';
+  list.style.display=open?'none':'block';
+  if(arrow)arrow.textContent=open?'▼':'▲';
+  if(!open) renderTodos();
+}
+
+function restoreArchive(cat,i){
+  const item=todoArchive[cat].splice(i,1)[0];
+  delete item.archivedAt;
+  item.done=false;
+  todos[cat].push(item);
+  save('todos',todos);
+  save('todoArchive',todoArchive);
+  renderTodos();
+  initHeader();
+}
+
+function addSubTodo(cat,i){
+  if(!todos[cat][i].subs)todos[cat][i].subs=[];
+  todos[cat][i].subs.push({id:Date.now(),text:'',done:false});
+  save('todos',todos);
+  renderTodos();
+  setTimeout(()=>{
+    const items=document.querySelectorAll('#todo-list-'+cat+' li');
+    for(const li of items){
+      const spans=[...li.querySelectorAll('ul span[contenteditable]')];
+      const empty=spans.find(s=>s.textContent.trim()==='');
+      if(empty){empty.focus();break;}
+    }
+  },30);
+}
+
+function toggleSubTodo(cat,i,si){
+  todos[cat][i].subs[si].done=!todos[cat][i].subs[si].done;
+  save('todos',todos);
+  renderTodos();
+}
+
+function editSubTodo(cat,i,si,val){
+  const v=val.trim();
+  if(todos[cat][i]&&todos[cat][i].subs&&todos[cat][i].subs[si]!==undefined){
+    if(!v){
+      todos[cat][i].subs[si].text='';
+    } else {
+      todos[cat][i].subs[si].text=v;
+    }
+    save('todos',todos);
+  }
+}
+
+function deleteSubTodo(cat,i,si){
+  todos[cat][i].subs.splice(si,1);
+  save('todos',todos);
+  renderTodos();
+}
+
+function editTodo(cat,i,val){
+  const v=val.trim();
+  if(!v){renderTodos();return;}
+  todos[cat][i].text=v;
+  save('todos',todos);
 }
 
 function toggleTodo(cat,i){todos[cat][i].done=!todos[cat][i].done;save('todos',todos);renderTodos();initHeader();}
@@ -775,7 +1030,7 @@ const DEFAULT_PLAN = [
   ]},
   {day:'Di', label:'Dienstag', focus:'Mace Day – Pull Focus', exercises:[
     {name:'200 360 Swings (100 each direction)', note:'Break into sets if needed.'},
-    {name:'Pull-Ups or Kettlebell Rows', note:'10 sets, staying 2 reps shy of failure.'},
+    {name:'Kettlebell Rows', note:'10 sets, staying 2 reps shy of failure.'},
     {name:'5-Minute Ab Routine', note:'V sit hold, side plank R/L, plank hold, leg lift toe touches – 1 min each.'}
   ]},
   {day:'Mi', label:'Mittwoch', focus:'Push/Legs – Chest Focus', exercises:[
@@ -785,7 +1040,7 @@ const DEFAULT_PLAN = [
   ]},
   {day:'Do', label:'Donnerstag', focus:'Club Day – Pull Focus', exercises:[
     {name:'200 360 Swings (100 each direction)', note:'Break into sets if needed.'},
-    {name:'Pull-Ups or Kettlebell Rows', note:'10 sets, staying 2 reps shy of failure.'},
+    {name:'Pull-Ups', note:'10 sets, staying 2 reps shy of failure.'},
     {name:'5-Minute Ab Routine', note:'Same as Mace Day.'}
   ]},
   {day:'Fr', label:'Freitag', focus:'Accessory Day', exercises:[
@@ -815,7 +1070,7 @@ const BLOCK2_PLAN = [
   ]},
   {day:'Di',label:'Dienstag',focus:'Mace Day – Pull Focus',exercises:[
     {name:'200 360 to Curls (100 each direction)',note:'Break into sets if needed.'},
-    {name:'Pull-Ups or Kettlebell Rows',note:'10 sets, staying 2 reps shy of failure.'},
+    {name:'Kettlebell Rows',note:'10 sets, staying 2 reps shy of failure.'},
     {name:'5-Minute Ab Routine',note:'V sit hold, side plank R/L, plank hold, leg lift toe touches – 1 min each.'}
   ]},
   {day:'Mi',label:'Mittwoch',focus:'Push/Legs – Chest Focus',exercises:[
@@ -825,7 +1080,7 @@ const BLOCK2_PLAN = [
   ]},
   {day:'Do',label:'Donnerstag',focus:'Club Day – Pull Focus',exercises:[
     {name:'50 360 Swings (25 each direction) + 50 10-2s (25 w/ each hand on top)',note:'Break into sets if needed.'},
-    {name:'Pull-Ups or Kettlebell Rows',note:'10 sets, staying 2 reps shy of failure.'},
+    {name:'Pull-Ups',note:'10 sets, staying 2 reps shy of failure.'},
     {name:'5-Minute Ab Routine',note:'Same as Mace Day.'}
   ]},
   {day:'Fr',label:'Freitag',focus:'Accessory Day',exercises:[
@@ -854,7 +1109,7 @@ const BLOCK3_PLAN = [
   ]},
   {day:'Di',label:'Dienstag',focus:'Mace Day – Pull Focus',exercises:[
     {name:'200 reps of 10-2s (100 w/ each hand on top)',note:'Break into sets if needed.'},
-    {name:'Pull-Ups or Kettlebell Rows',note:'10 sets, staying 2 reps shy of failure.'},
+    {name:'Kettlebell Rows',note:'10 sets, staying 2 reps shy of failure.'},
     {name:'5-Minute Ab Routine',note:'V sit hold, side plank R/L, plank hold, leg lift toe touches – 1 min each.'}
   ]},
   {day:'Mi',label:'Mittwoch',focus:'Push/Legs – Chest Focus',exercises:[
@@ -864,7 +1119,7 @@ const BLOCK3_PLAN = [
   ]},
   {day:'Do',label:'Donnerstag',focus:'Club Day – Pull Focus',exercises:[
     {name:'50 360 Swings (25 each direction) + 50 Pullovers (25 w/ each hand on top)',note:'Break into sets if needed.'},
-    {name:'Pull-Ups or Kettlebell Rows',note:'10 sets, staying 2 reps shy of failure.'},
+    {name:'Pull-Ups',note:'10 sets, staying 2 reps shy of failure.'},
     {name:'5-Minute Ab Routine',note:'Same as Mace Day.'}
   ]},
   {day:'Fr',label:'Freitag',focus:'Accessory Day',exercises:[
@@ -892,7 +1147,7 @@ const BLOCK4_PLAN = [
   ]},
   {day:'Di',label:'Dienstag',focus:'Mace Day – Pull Focus',exercises:[
     {name:'200 reps of 10-2s (100 w/ each hand on top)',note:'Break into sets if needed.'},
-    {name:'Pull-Ups or Kettlebell Rows',note:'10 sets, staying 2 reps shy of failure.'},
+    {name:'Kettlebell Rows',note:'10 sets, staying 2 reps shy of failure.'},
     {name:'5-Minute Ab Routine',note:'V sit hold, side plank R/L, plank hold, leg lift toe touches – 1 min each.'}
   ]},
   {day:'Mi',label:'Mittwoch',focus:'Push/Legs – Chest Focus',exercises:[
@@ -902,7 +1157,7 @@ const BLOCK4_PLAN = [
   ]},
   {day:'Do',label:'Donnerstag',focus:'Club Day – Pull Focus',exercises:[
     {name:'100 360 to Pullovers (50 each direction)',note:'Break into 5–10 sets.'},
-    {name:'Pull-Ups or Kettlebell Rows',note:'10 sets, staying 2 reps shy of failure.'},
+    {name:'Pull-Ups',note:'10 sets, staying 2 reps shy of failure.'},
     {name:'5-Minute Ab Routine',note:'Same as Mace Day.'}
   ]},
   {day:'Fr',label:'Freitag',focus:'Accessory Day',exercises:[
@@ -929,15 +1184,66 @@ const DEFAULT_BLOCKS = [
   deepCopy(BLOCK3_PLAN),
   deepCopy(BLOCK4_PLAN)
 ];
-let trainBlocks = load('trainBlocks_v3', DEFAULT_BLOCKS);
+let trainBlocks = DEFAULT_BLOCKS;
 let currentBlock = 0;
-let trainLogs = load('trainLogs', {});
-let workoutTimes = load('workoutTimes', {});
+let currentWeek = 1;
+let trainLogs = {};
+let workoutTimes = {};
+
+/* ══ THE GIANT ══ */
+const GIANT_PROGRAMS = {
+  '1.0': {
+    label:'The Giant 1.0', duration:'4 Wochen', rm:'10RM', info:'Grundprogramm. So viele Sätze wie möglich im Zeitfenster. Jede Woche einen Satz mehr anstreben.',
+    days:[
+      {day:'Tag 1',focus:'Clean & Press – Sets of 5',exercises:[{name:'Double KB Clean & Press',note:'Sets of 5 · 10RM · AMRAP in 20–30 min · Rest as needed'}]},
+      {day:'Tag 2',focus:'Clean & Press – Sets of 6',exercises:[{name:'Double KB Clean & Press',note:'Sets of 6 · 10RM · AMRAP in 20–30 min · Rest as needed'}]},
+      {day:'Tag 3',focus:'Clean & Press – Sets of 4',exercises:[{name:'Double KB Clean & Press',note:'Sets of 4 · 10RM · AMRAP in 20–30 min · Rest as needed'}]}
+    ]
+  },
+  '1.1': {
+    label:'The Giant 1.1', duration:'4 Wochen', rm:'10RM', info:'Fortsetzung von 1.0. Gleiche 10RM verwenden.',
+    days:[
+      {day:'Tag 1',focus:'Clean & Press – Sets of 6',exercises:[{name:'Double KB Clean & Press',note:'Sets of 6 · 10RM · AMRAP in 20–30 min · Rest as needed'}]},
+      {day:'Tag 2',focus:'Clean & Press – Sets of 8',exercises:[{name:'Double KB Clean & Press',note:'Sets of 8 · 10RM · AMRAP in 20–30 min · Rest as needed'}]},
+      {day:'Tag 3',focus:'Clean & Press – Sets of 7',exercises:[{name:'Double KB Clean & Press',note:'Sets of 7 · 10RM · AMRAP in 20–30 min · Rest as needed'}]}
+    ]
+  },
+  '1.2': {
+    label:'The Giant 1.2', duration:'4 Wochen', rm:'10RM', info:'Abschluss des 12-Wochen-Zyklus (1.0 → 1.1 → 1.2). Gleiche 10RM verwenden.',
+    days:[
+      {day:'Tag 1',focus:'Clean & Press – Sets of 7',exercises:[{name:'Double KB Clean & Press',note:'Sets of 7 · 10RM · AMRAP in 20–30 min · Rest as needed'}]},
+      {day:'Tag 2',focus:'Clean & Press – Sets of 9',exercises:[{name:'Double KB Clean & Press',note:'Sets of 9 · 10RM · AMRAP in 20–30 min · Rest as needed'}]},
+      {day:'Tag 3',focus:'Clean & Press – Sets of 8',exercises:[{name:'Double KB Clean & Press',note:'Sets of 8 · 10RM · AMRAP in 20–30 min · Rest as needed'}]}
+    ]
+  },
+  '2.0': {
+    label:'The Giant 2.0', duration:'4 Wochen', rm:'10RM', info:'Ladder-Variante für mehr Volumen bei weniger Ermüdung.',
+    days:[
+      {day:'Tag 1',focus:'Clean & Press – Ladders 3,4,5',exercises:[{name:'Double KB Clean & Press',note:'Ladders: 3, 4, 5 · 10RM · AMRAP in 20–30 min · Rest as needed'}]},
+      {day:'Tag 2',focus:'Clean & Press – Ladders 3,5,7',exercises:[{name:'Double KB Clean & Press',note:'Ladders: 3, 5, 7 · 10RM · AMRAP in 20–30 min · Rest as needed'}]},
+      {day:'Tag 3',focus:'Clean & Press – Ladders 4,6,8',exercises:[{name:'Double KB Clean & Press',note:'Ladders: 4, 6, 8 · 10RM · AMRAP in 20–30 min · Rest as needed'}]}
+    ]
+  },
+  '3.0': {
+    label:'The Giant 3.0', duration:'4 Wochen', rm:'5RM', info:'Macht deine 5RM leicht. Nach dem Zyklus 5RM neu testen. Je weniger Reps, desto explosiver pressen.',
+    days:[
+      {day:'Tag 1',focus:'Clean & Press – Sets of 2',exercises:[{name:'Double KB Clean & Press',note:'Sets of 2 · 5RM · AMRAP in 20–30 min · Explosiv pressen, great form'}]},
+      {day:'Tag 2',focus:'Clean & Press – Sets of 3',exercises:[{name:'Double KB Clean & Press',note:'Sets of 3 · 5RM · AMRAP in 20–30 min · Explosiv pressen, great form'}]},
+      {day:'Tag 3',focus:'Clean & Press – Sets of 1',exercises:[{name:'Double KB Clean & Press',note:'Sets of 1 · 5RM · AMRAP in 20–30 min · Maximum Acceleration'}]}
+    ]
+  }
+};
+
+let currentPlan = 'pm2';
+let currentGiantProgram = '1.0';
+let giantLogs = {};
+let giantWorkoutTimes = {};
+let giantStartDates = {};
 let activeTimer = null;
 let timerStart = null;
 let timerBlock = null;
 let timerDay = null;
-let trainStartDate = load('trainStartDate', '');
+let trainStartDate = '';
 const WDAYS_FULL = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
 const MONTHS_SHORT = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
 function getTrainDayLabel(di){
@@ -947,7 +1253,131 @@ function getTrainDayLabel(di){
   return WDAYS_FULL[d.getDay()] + ', ' + d.getDate() + '. ' + MONTHS_SHORT[d.getMonth()];
 }
 
+function switchPlan(plan, el){
+  currentPlan = plan;
+  save('currentPlan', plan);
+  document.querySelectorAll('#plan-switcher .tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('pm2-content').style.display = plan==='pm2' ? '' : 'none';
+  document.getElementById('giant-content').style.display = plan==='giant' ? '' : 'none';
+  document.getElementById('pm2-header').style.display = plan==='pm2' ? 'flex' : 'none';
+  if(plan==='giant') renderGiant();
+}
+
+function switchGiantProg(prog, el){
+  currentGiantProgram=prog;
+  save('currentGiantProgram',prog);
+  renderGiant();
+}
+
+function renderGiant(){
+  const el = document.getElementById('giant-plan-list');
+  const prog = GIANT_PROGRAMS[currentGiantProgram];
+  if(!prog){return;}
+  el.innerHTML = `
+    <div class="card" style="margin-bottom:16px;background:var(--nav-bg);border-color:rgba(255,77,0,.2);width:100%">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px;flex-wrap:wrap">
+        <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
+          <div style="font-family:var(--font-serif);font-size:17px;font-weight:700;color:#fff">${prog.label}</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.4);background:rgba(255,77,0,.2);padding:2px 8px;border-radius:20px;white-space:nowrap">${prog.rm} · ${prog.duration}</div>
+        </div>
+        <select onchange="switchGiantProg(this.value,null)" style="font-size:13px;padding:6px 10px;border-radius:8px;background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);outline:none;cursor:pointer">
+          <option value="1.0" ${currentGiantProgram==='1.0'?'selected':''}>The Giant 1.0</option>
+          <option value="1.1" ${currentGiantProgram==='1.1'?'selected':''}>The Giant 1.1</option>
+          <option value="1.2" ${currentGiantProgram==='1.2'?'selected':''}>The Giant 1.2</option>
+          <option value="2.0" ${currentGiantProgram==='2.0'?'selected':''}>The Giant 2.0</option>
+          <option value="3.0" ${currentGiantProgram==='3.0'?'selected':''}>The Giant 3.0</option>
+        </select>
+      </div>
+      <div style="font-size:12px;color:rgba(255,255,255,.5);line-height:1.6;margin-bottom:12px">${prog.info}</div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <label style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.4);white-space:nowrap">Startdatum:</label>
+        <input type="date" value="${giantStartDates[currentGiantProgram]||''}"
+          onchange="saveGiantStartDate(this.value)"
+          style="font-size:13px;padding:6px 10px;border-radius:8px;background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.15);outline:none">
+      </div>
+    </div>
+    ${prog.days.map((day,di)=>`
+      <div class="tplan-day" style="margin-bottom:14px">
+        <div class="tplan-day-head" style="align-items:center">
+          <div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:0">
+            <span style="font-family:var(--font-serif);font-size:15px;font-weight:700;color:var(--text)">${esc(day.focus)}</span>
+            <span style="font-size:11px;color:var(--text3)">${esc(day.day)}${(()=>{const sd=giantStartDates[currentGiantProgram];if(!sd)return '';const d=new Date(sd);d.setDate(d.getDate()+di);return ' · '+WDAYS_FULL[d.getDay()]+', '+d.getDate()+'. '+MONTHS_SHORT[d.getMonth()];})()} </span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+            <span id="gtimer-${di}" style="font-size:13px;font-weight:600;color:var(--accent);font-variant-numeric:tabular-nums;display:none;min-width:48px">00:00</span>
+            ${(()=>{const wk='g-'+currentGiantProgram+'-'+di;const sv=giantWorkoutTimes[wk];return sv?'<span style="font-size:11px;color:var(--green2);background:var(--green-light);padding:2px 8px;border-radius:20px">'+sv+'</span>':''})()}
+            <button id="gwbtn-${di}" onclick="toggleGiantWorkout(${di})" style="font-size:11px;padding:5px 12px;border-radius:6px;background:var(--accent);color:#fff;border:none;cursor:pointer;font-family:var(--font-sans);font-weight:500">Start</button>
+          </div>
+        </div>
+        <div class="tplan-exercises">
+          ${day.exercises.map((ex,ei)=>`
+            <div class="tplan-row">
+              <span class="tplan-num">${ei+1}</span>
+              <div class="tplan-cell-wrap">
+                <div class="tplan-name">${esc(ex.name)}</div>
+                <div class="tplan-note">${esc(ex.note)}</div>
+              </div>
+              ${[1,2,3,4].map(w=>{
+                const lk='g-'+currentGiantProgram+'-'+di+'-'+ei+'-w'+w;
+                return '<div class="tplan-log-col"><div class="tplan-log-label">Wo '+w+'</div><textarea class="tplan-log-input" placeholder="—" onblur="saveGiantLog(\''+lk+'\',this.value)">'+( giantLogs[lk]||'')+'</textarea></div>';
+              }).join('')}
+            </div>`).join('')}
+        </div>
+      </div>`).join('')}`;
+}
+
+let activeGiantTimer=null,giantTimerStart=null,giantTimerDay=null,giantTimerProg=null;
+
+function toggleGiantWorkout(di){
+  const wk='g-'+currentGiantProgram+'-'+di;
+  if(activeGiantTimer!==null&&giantTimerDay===di&&giantTimerProg===currentGiantProgram){
+    clearInterval(activeGiantTimer);
+    const elapsed=Math.floor((Date.now()-giantTimerStart)/1000);
+    const h=Math.floor(elapsed/3600),m=Math.floor((elapsed%3600)/60),s=elapsed%60;
+    giantWorkoutTimes[wk]=(h>0?h+'h ':'')+m+'m '+s+'s';
+    save('giantWorkoutTimes',giantWorkoutTimes);
+    activeGiantTimer=null;giantTimerStart=null;giantTimerDay=null;giantTimerProg=null;
+    renderGiant();
+  } else {
+    if(activeGiantTimer){clearInterval(activeGiantTimer);const ob=document.getElementById('gwbtn-'+giantTimerDay);if(ob){ob.textContent='Start';ob.style.background='var(--accent)';}const ot=document.getElementById('gtimer-'+giantTimerDay);if(ot)ot.style.display='none';}
+    giantTimerStart=Date.now();giantTimerDay=di;giantTimerProg=currentGiantProgram;
+    const te=document.getElementById('gtimer-'+di);
+    const be=document.getElementById('gwbtn-'+di);
+    if(te)te.style.display='inline';
+    if(be){be.textContent='Stopp';be.style.background='#c02020';}
+    activeGiantTimer=setInterval(()=>{
+      const e=Math.floor((Date.now()-giantTimerStart)/1000);
+      const m=Math.floor(e/60),s=e%60;
+      if(te)te.textContent=(m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+    },1000);
+  }
+}
+
+function saveGiantStartDate(val){
+  giantStartDates[currentGiantProgram]=val;
+  save('giantStartDates',giantStartDates);
+  renderGiant();
+}
+
+function saveGiantLog(key,val){
+  giantLogs[key]=val;
+  save('giantLogs',giantLogs);
+}
+
+function switchPlan_init(){
+  if(currentPlan==='giant'){
+    document.getElementById('pm2-content').style.display='none';
+    document.getElementById('giant-content').style.display='';
+    document.getElementById('pm2-header').style.display='none';
+    const pt=document.getElementById('plan-tab-giant');if(pt)pt.classList.add('active');
+    const pm=document.getElementById('plan-tab-pm2');if(pm)pm.classList.remove('active');
+    renderGiant();
+  }
+}
+
 function renderTraining(){
+  switchPlan_init();
   const inp = document.getElementById('train-start-date');
   if(inp) inp.value = trainStartDate;
   renderTrainPlan();
@@ -1000,12 +1430,8 @@ function renderTrainPlan(){
             ${[1,2,3].map(w=>{
               const lkey=currentBlock+'-'+di+'-'+ei+'-w'+w;
               const lval=trainLogs[lkey]||'';
-              return`<div class="tplan-log-col">
-                <div class="tplan-log-label">W${w+(currentBlock*3)}</div>
-                <textarea class="tplan-log-input" placeholder="—"
-                  onblur="saveLog('${lkey}',this.value)"
-                >${lval}</textarea>
-              </div>`;
+              const actualW=currentBlock*3+w;
+              return '<div class="tplan-log-col"><div class="tplan-log-label">Wo '+actualW+'</div><textarea class="tplan-log-input" placeholder="—" onblur="saveLog(\''+lkey+'\',this.value)">'+lval+'</textarea></div>';
             }).join('')}
             <button class="fi-del" onclick="deletePlanExercise(${di},${ei})">×</button>
           </div>`).join('')}
@@ -1016,13 +1442,13 @@ function renderTrainPlan(){
 
 function savePlanField(di,field,val){
   trainBlocks[currentBlock][di][field]=val.trim();
-  save('trainBlocks_v3',trainBlocks);
+  save('trainBlocks_v5',trainBlocks);
   showSaveHint();
 }
 
 function savePlanExercise(di,ei,field,val){
   trainBlocks[currentBlock][di].exercises[ei][field]=val.trim();
-  save('trainBlocks_v3',trainBlocks);
+  save('trainBlocks_v5',trainBlocks);
   showSaveHint();
 }
 
@@ -1030,13 +1456,13 @@ function deletePlanExercise(di,ei){
   const name=trainBlocks[currentBlock][di].exercises[ei].name||'diese Übung';
   if(!confirm('"'+name+'" wirklich löschen?'))return;
   trainBlocks[currentBlock][di].exercises.splice(ei,1);
-  save('trainBlocks_v3',trainBlocks);
+  save('trainBlocks_v5',trainBlocks);
   renderTrainPlan();
 }
 
 function addPlanExercise(di){
   trainBlocks[currentBlock][di].exercises.push({name:'Neue Übung',note:''});
-  save('trainBlocks_v3',trainBlocks);
+  save('trainBlocks_v5',trainBlocks);
   renderTrainPlan();
   const rows=document.querySelectorAll('.tplan-day')[di].querySelectorAll('.tplan-name');
   const last=rows[rows.length-1];
@@ -1144,20 +1570,80 @@ function showSaveHint(){
 }
 
 /* ══ UTILS ══ */
+function clearArchive(){
+  const total=(todoArchive.privat||[]).length+(todoArchive.beruflich||[]).length;
+  if(!total){alert('Das Archiv ist bereits leer.');return;}
+  if(!confirm('Archiv wirklich leeren?\n\n'+total+' archivierte Einträge werden unwiderruflich gelöscht.'))return;
+  todoArchive={privat:[],beruflich:[]};
+  save('todoArchive',todoArchive);
+  renderTodos();
+  alert('Archiv wurde geleert.');
+}
+
+function changePassword(){
+  const current=prompt('Aktuelles Passwort eingeben:');
+  if(current===null)return;
+  if(current!=='2408'){alert('Falsches Passwort. Abgebrochen.');return;}
+  const newPw=prompt('Neues Passwort eingeben (mind. 4 Zeichen):');
+  if(newPw===null)return;
+  if(!newPw||newPw.length<4){alert('Passwort zu kurz. Bitte mind. 4 Zeichen verwenden.');return;}
+  const confirm2=prompt('Neues Passwort bestätigen:');
+  if(confirm2===null)return;
+  if(newPw!==confirm2){alert('Passwörter stimmen nicht überein. Abgebrochen.');return;}
+  alert('Passwort geändert auf: "'+newPw+'"\n\nWichtig: Ändere den Wert in der HTML-Datei (Suche nach "2408") und lade sie auf GitHub hoch, damit das neue Passwort dauerhaft gespeichert ist.');
+}
+
+function resetAllData(){
+  if(!confirm('ACHTUNG: Alle Daten zurücksetzen?\n\nDas löscht unwiderruflich:\n• Alle To Dos (inkl. Archiv)\n• Alle Projekte\n• Alle Einkaufseinträge\n• Alle Trainingslogs und Zeiten\n\nDieser Schritt kann nicht rückgängig gemacht werden.'))return;
+  const confirm2=prompt('Zur Bestätigung bitte "RESET" eintippen:');
+  if(confirm2!=='RESET'){alert('Abgebrochen.');return;}
+  const keys=['focus','todos','projects','shop','trainDone','trainBlocks_v5','trainLogs','workoutTimes','giantLogs','giantWorkoutTimes','giantStartDates','trainStartDate','todoArchive','currentPlan','currentGiantProgram'];
+  keys.forEach(k=>localStorage.removeItem(k));
+  db.from('hub_data').delete().neq('key','__placeholder__').then(()=>{
+    location.reload();
+  }).catch(()=>{location.reload();});
+}
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 function cap(s){return s?s[0].toUpperCase()+s.slice(1):s}
 
+/* ══ PASSWORD ══ */
+const PW_HASH='8e9f2b3a1d4c6e7f0a5b2c8d9e3f1a4b';
+function hashString(str){
+  let h=0;
+  for(let i=0;i<str.length;i++){h=Math.imul(31,h)+str.charCodeAt(i)|0;}
+  return Math.abs(h).toString(16).padStart(8,'0');
+}
+function checkPassword(){
+  const val=document.getElementById('lock-input').value;
+  const stored=sessionStorage.getItem('hub_unlocked');
+  if(stored==='1'||val==='2408'){
+    sessionStorage.setItem('hub_unlocked','1');
+    document.getElementById('lock-screen').classList.add('hidden');
+    document.getElementById('lock-input').value='';
+    document.getElementById('lock-error').textContent='';
+  } else {
+    document.getElementById('lock-error').textContent='Falsches Passwort.';
+    document.getElementById('lock-input').value='';
+    document.getElementById('lock-input').focus();
+  }
+}
+function initLockScreen(){
+  if(sessionStorage.getItem('hub_unlocked')==='1'){
+    document.getElementById('lock-screen').classList.add('hidden');
+  } else {
+    setTimeout(()=>document.getElementById('lock-input').focus(),100);
+  }
+}
+
 /* ══ INIT ══ */
+initLockScreen();
 syncFromSupabase().then(()=>{
   focusItems=load('focus',[]);
   todos=load('todos',{privat:[],beruflich:[]});
-  projects=load('projects',[
-    {id:1,name:'Bootsführerschein',desc:'Theorie und Praxis – regelmäßig Zeit zum Lernen einplanen.',color:'amber',progress:20,tasks:[{id:1,text:'Theoriebuch Kapitel 1–3',done:true},{id:2,text:'Prüfungsfragen üben',done:false},{id:3,text:'Praxiseinheit buchen',done:false}]},
-    {id:2,name:'Jugendhilfe Lernplattform',desc:'Webbasierte Online-Lernplattform für die Jugendhilfe erstellen.',color:'blue',progress:10,tasks:[{id:1,text:'Anforderungen definieren',done:true},{id:2,text:'Technologie-Stack wählen',done:false},{id:3,text:'MVP-Prototyp bauen',done:false}]}
-  ]);
+  projects=load('projects',[]);
   shopItems=load('shop',[]);
   trainDone=load('trainDone',{});
-  trainBlocks=load('trainBlocks_v3',DEFAULT_BLOCKS);
+  trainBlocks=load('trainBlocks_v5',DEFAULT_BLOCKS);
   trainLogs=load('trainLogs',{});
   workoutTimes=load('workoutTimes',{});
   trainStartDate=load('trainStartDate','');
