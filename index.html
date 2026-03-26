@@ -186,9 +186,8 @@ input[type="checkbox"]{width:18px;height:18px;accent-color:var(--accent);cursor:
 .tplan-cell-wrap{flex:1;min-width:0}
 .tplan-name{font-size:14px;color:var(--text);outline:none;border-radius:4px;padding:2px 4px;cursor:text;line-height:1.5}
 .tplan-name:focus{background:var(--bg3)}
-.tplan-note{font-size:12px;color:var(--text3);outline:none;border-radius:4px;padding:2px 4px;margin-top:2px;cursor:text;line-height:1.5;max-height:3.6em;overflow:hidden;transition:max-height .25s ease}
-.tplan-note.expanded{max-height:400px}
-.tplan-note-toggle{font-size:10px;color:var(--accent);background:none;border:none;cursor:pointer;padding:2px 0;font-family:var(--font-sans);opacity:.8}
+.tplan-note{font-size:12px;color:var(--text3);outline:none;border-radius:6px;padding:4px 6px;margin-top:2px;cursor:text;line-height:1.5;max-height:4.5em;overflow-y:auto;-webkit-overflow-scrolling:touch;background:var(--bg3);border:1px solid transparent}
+.tplan-note:focus{border-color:var(--accent);max-height:none}
 .tplan-note:focus{background:var(--bg3)}
 .tplan-note:empty:before{content:attr(data-placeholder);color:var(--text3);pointer-events:none}
 .tplan-note:focus:before{display:none}
@@ -1361,7 +1360,6 @@ function renderGiant(){
               <div class="tplan-cell-wrap">
                 <div class="tplan-name">${esc(ex.name)}</div>
                 <div class="tplan-note" id="gnote-${di}-${ei}">${esc(ex.note)}</div>
-              ${ex.note&&ex.note.length>80?`<button class="tplan-note-toggle" onclick="toggleNote(this,'gnote-${di}-${ei}')">mehr anzeigen ▾</button>`:''}
               </div>
               ${[1,2,3,4].map(w=>{
                 const lk='g-'+currentGiantProgram+'-'+di+'-'+ei+'-w'+w;
@@ -1482,9 +1480,7 @@ function renderTrainPlan(){
                 data-placeholder="Zusatzinfo, Ausführung, Notiz …"
                 onblur="savePlanExercise(${di},${ei},'note',this.textContent)"
                 onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();this.blur()}"
-                id="note-${di}-${ei}"
-              >${esc(ex.note||'')}</div>
-              ${ex.note&&ex.note.length>80?`<button class="tplan-note-toggle" onclick="toggleNote(this,'note-${di}-${ei}')">mehr anzeigen ▾</button>`:''}
+                >${esc(ex.note||'')</div>
               ${ex.name.toLowerCase().includes('snatch')?`<button onclick="openEmom()" style="margin-top:6px;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:5px 12px;border-radius:6px;background:var(--nav-bg);color:#fff;border:none;cursor:pointer;font-family:var(--font-sans)">⏱ EMOM Timer</button>`:''}
             </div>
             ${[1,2,3].map(w=>{
