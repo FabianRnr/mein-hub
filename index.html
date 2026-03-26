@@ -1700,9 +1700,9 @@ function hashString(str){
 }
 function checkPassword(){
   const val=document.getElementById('lock-input').value;
-  const stored=sessionStorage.getItem('hub_unlocked');
+  const stored=localStorage.getItem('hub_unlocked');
   if(stored==='1'||val==='2408'){
-    sessionStorage.setItem('hub_unlocked','1');
+    localStorage.setItem('hub_unlocked','1');
     document.getElementById('lock-screen').classList.add('hidden');
     document.getElementById('lock-input').value='';
     document.getElementById('lock-error').textContent='';
@@ -1713,7 +1713,7 @@ function checkPassword(){
   }
 }
 function initLockScreen(){
-  if(sessionStorage.getItem('hub_unlocked')==='1'){
+  if(localStorage.getItem('hub_unlocked')==='1'){
     document.getElementById('lock-screen').classList.add('hidden');
   } else {
     setTimeout(()=>document.getElementById('lock-input').focus(),100);
