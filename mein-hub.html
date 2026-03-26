@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#14131a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Mein Hub">
+<title>Mein Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#f2f0ec;--bg2:#ffffff;--bg3:#f7f6f3;--bg4:#eeece7;
+  --text:#111110;--text2:#5c5954;--text3:#a8a49e;
+  --accent:#ff4d00;--accent2:#ff6a25;--accent-light:#fff0eb;
+  --green:#1a8a50;--green2:#22b866;--green-light:#e8faf0;
+  --blue:#1a55a8;--blue-light:#e8f0fc;
+  --red:#c02020;
+  --border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.14);
+  --shadow:0 1px 3px rgba(0,0,0,0.08),0 4px 12px rgba(0,0,0,0.06);
+  --shadow-sm:0 1px 2px rgba(0,0,0,0.06),0 2px 6px rgba(0,0,0,0.04);
+  --nav-bg:#14131a;
+  --radius:14px;--radiusS:9px;--radiusL:18px;
+  --font-serif:'Libre Baskerville',Georgia,serif;
+  --font-sans:'DM Sans',system-ui,sans-serif;
+  --nav-h:70px;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font-sans);font-size:15px;line-height:1.5;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{font-family:var(--font-sans);cursor:pointer;border:none;background:none;color:inherit}
+input,textarea,select{font-family:var(--font-sans);font-size:16px;background:var(--bg3);color:var(--text);border:1.5px solid var(--border);border-radius:var(--radiusS);padding:10px 13px;outline:none;transition:border-color .15s,box-shadow .15s}
+input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(255,77,0,0.1)}
+input[type="checkbox"]{width:18px;height:18px;accent-color:var(--accent);cursor:pointer;flex-shrink:0}
+::placeholder{color:var(--text3)}
+#app{display:flex;flex-direction:column;height:100dvh;max-width:900px;margin:0 auto}
+#header{padding:18px 22px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg);border-bottom:1px solid var(--border)}
+#header-left h1{font-family:var(--font-serif);font-size:21px;font-weight:700;letter-spacing:-.01em;color:var(--text)}
+#header-left h1 span{color:var(--accent)}
+#header-left .date{font-size:11px;color:var(--text3);margin-top:2px;letter-spacing:.06em;text-transform:uppercase}
+#header-stats{display:flex;gap:7px;align-items:center;flex-shrink:0}
+.stat-pill{background:var(--bg2);border:1.5px solid var(--border);border-radius:20px;padding:5px 12px;font-size:12px;color:var(--text2);display:flex;align-items:center;gap:6px;white-space:nowrap;box-shadow:var(--shadow-sm)}
+.stat-pill .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0}
+.stat-pill .dot.green{background:var(--green2)}
+#main{flex:1;overflow-y:auto;padding:0 0 calc(var(--nav-h) + 8px)}
+#nav{height:var(--nav-h);background:var(--nav-bg);display:flex;align-items:stretch;padding:0 6px;position:sticky;bottom:0;z-index:100}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,0.35);transition:color .15s;padding:8px 4px;border-radius:10px;margin:8px 2px}
+.nav-btn svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.nav-btn.active{color:#fff}
+.nav-btn.active svg{stroke:var(--accent)}
+.nav-btn.active::after{content:'';display:block;width:4px;height:4px;border-radius:50%;background:var(--accent);margin-top:-2px}
+.section{display:none;padding:22px}
+.section.active{display:block}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:14px;box-shadow:var(--shadow-sm)}
+.card-title{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--text3);margin-bottom:14px;font-weight:500}
+.greeting{margin-bottom:24px;padding:24px;background:linear-gradient(135deg,#14131a 0%,#1e1620 100%);border-radius:var(--radius);color:#fff;position:relative;overflow:hidden;border:1px solid rgba(255,77,0,.2)}
+.greeting::before{content:'';position:absolute;right:-40px;top:-40px;width:200px;height:200px;border-radius:50%;background:var(--accent);opacity:.1}
+.greeting h2{font-family:var(--font-serif);font-size:24px;font-weight:700;color:#fff;line-height:1.3;position:relative}
+.greeting .subtitle{font-size:13px;color:rgba(255,255,255,.5);margin-top:5px;position:relative}
+.today-block{margin-bottom:20px}
+.today-block-title{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--text3);margin-bottom:10px;display:flex;align-items:center;gap:8px;font-weight:500}
+.today-block-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.focus-input-wrap{display:flex;gap:8px;margin-bottom:14px}
+.focus-input-wrap input{flex:1}
+.btn{background:var(--accent);color:#fff;border-radius:var(--radiusS);padding:10px 18px;font-size:13px;font-weight:500;transition:background .15s,transform .1s;white-space:nowrap}
+.btn:hover{background:var(--accent2)}
+.btn:active{transform:scale(.98)}
+.btn-sm{padding:7px 13px;font-size:12px;border-radius:7px}
+.btn-ghost{background:var(--bg3);color:var(--text2);border:1.5px solid var(--border)}
+.btn-ghost:hover{background:var(--bg4);color:var(--text)}
+.focus-list{list-style:none;display:flex;flex-direction:column;gap:7px}
+.focus-item{background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--radiusS);padding:11px 14px;display:flex;align-items:center;gap:10px;transition:opacity .2s;box-shadow:var(--shadow-sm)}
+.focus-item.done{opacity:.38}
+.focus-item.done .fi-text{text-decoration:line-through;color:var(--text3)}
+.fi-text{flex:1;font-size:14px}
+.fi-source{font-size:10px;padding:3px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0;font-weight:500;letter-spacing:.03em}
+.fi-cat-privat{background:var(--blue-light);color:var(--blue)}
+.fi-cat-beruflich{background:var(--green-light);color:var(--green)}
+.fi-cat-einkauf{background:var(--accent-light);color:var(--accent)}
+.fi-cat-projekt{background:#fde8e8;color:var(--red)}
+.fi-del{color:var(--text3);font-size:18px;line-height:1;width:24px;text-align:center;flex-shrink:0;opacity:.4;transition:opacity .2s}
+.fi-del:hover{opacity:1;color:var(--red)}
+.project-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:14px;position:relative;overflow:hidden;box-shadow:var(--shadow)}
+.project-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:2px 0 0 2px}
+.project-card.color-amber::before{background:var(--accent)}
+.project-card.color-blue::before{background:var(--blue)}
+.project-card.color-green::before{background:var(--green2)}
+.project-card.color-red::before{background:var(--red)}
+.project-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px}
+.project-name{font-family:var(--font-serif);font-size:17px;font-weight:700;color:var(--text);letter-spacing:-.01em}
+.project-badge{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;background:var(--bg3);color:var(--text2);white-space:nowrap;flex-shrink:0}
+.project-desc{font-size:13px;color:var(--text2);margin-bottom:13px;line-height:1.6}
+.progress-bar{height:5px;background:var(--bg4);border-radius:3px;margin-bottom:14px;overflow:hidden}
+.progress-fill{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease}
+.project-tasks{list-style:none;display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.pt-item{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2)}
+.pt-item.done{color:var(--text3)}
+.pt-item.done span{text-decoration:line-through}
+.project-actions{display:flex;gap:7px;flex-wrap:wrap}
+.add-task-form{display:none;margin-top:10px;gap:7px;align-items:center}
+.add-task-form.open{display:flex}
+.add-task-form input{flex:1}
+.tabs{display:flex;gap:0;margin-bottom:18px;background:var(--bg4);border-radius:10px;padding:4px;overflow-x:auto}
+.tab{flex:1;text-align:center;padding:9px;border-radius:7px;font-size:13px;color:var(--text2);transition:all .15s;cursor:pointer;font-weight:400}
+.tab.active{background:var(--bg2);color:var(--text);font-weight:500;box-shadow:var(--shadow-sm)}
+.todo-list{list-style:none;display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.todo-item{display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--bg2);border-radius:var(--radiusS);border:1.5px solid var(--border);transition:all .2s;box-shadow:var(--shadow-sm)}
+.todo-item.done{opacity:.38}
+.todo-item.done .todo-text{text-decoration:line-through;color:var(--text3)}
+.todo-item.in-focus{border-color:var(--accent);background:var(--accent-light)}
+.todo-item.in-focus .todo-text{color:var(--accent)}
+.todo-text{flex:1;font-size:14px}
+.todo-priority{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.prio-hoch{background:#e03030}
+.prio-mittel{background:var(--accent)}
+.prio-niedrig{background:var(--green2)}
+.focus-add-btn{color:var(--text3);font-size:16px;line-height:1;width:24px;text-align:center;flex-shrink:0;opacity:.4;transition:opacity .2s,color .2s}
+.focus-add-btn:hover{opacity:1;color:var(--accent)}
+.focus-add-btn.added{color:var(--accent);opacity:1}
+.add-row{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.add-row input{flex:1;min-width:140px}
+.add-row select{max-width:110px}
+.shop-list{list-style:none;display:flex;flex-direction:column;gap:5px}
+.shop-item{display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--bg2);border-radius:var(--radiusS);border:1.5px solid var(--border);font-size:14px;box-shadow:var(--shadow-sm)}
+.shop-item.done{opacity:.35}
+.shop-item.done .shop-text{text-decoration:line-through;color:var(--text3)}
+.shop-text{flex:1}
+.clear-done-btn{font-size:12px;color:var(--text3);margin-top:10px;text-decoration:underline;background:none;border:none;cursor:pointer}
+.clear-done-btn:hover{color:var(--text2)}
+.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:16px}
+.day-cell{display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 2px;background:var(--bg2);border-radius:var(--radiusS);border:1.5px solid var(--border);font-size:10px;text-align:center;cursor:pointer;transition:all .15s;box-shadow:var(--shadow-sm)}
+.day-cell.today-day{border-color:var(--accent);background:var(--accent-light)}
+.day-cell.today-day .day-name{color:var(--accent)}
+.day-cell.done-day{background:var(--accent);border-color:var(--accent)}
+.day-cell.done-day .day-name,.day-cell.done-day .day-icon{color:#fff}
+.day-name{font-weight:500;letter-spacing:.05em;text-transform:uppercase;font-size:9px;color:var(--text3)}
+.day-icon{font-size:16px;line-height:1}
+.train-plan{list-style:none;display:flex;flex-direction:column;gap:7px}
+.train-item{background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--radiusS);padding:13px 14px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow-sm)}
+.train-day-tag{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);font-weight:600;min-width:36px}
+.train-name{flex:1;font-size:14px;font-weight:500}
+.train-duration{font-size:12px;color:var(--text3);background:var(--bg3);padding:3px 9px;border-radius:20px}
+.train-notes{font-size:12px;color:var(--text2);margin-top:4px}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(2px)}
+.modal-overlay.open{display:flex}
+.modal{background:var(--bg2);border-radius:var(--radiusL) var(--radiusL) 0 0;padding:26px 22px;width:100%;max-width:600px;border-top:1px solid var(--border);max-height:85dvh;overflow-y:auto;box-shadow:0 -4px 30px rgba(0,0,0,0.15)}
+.modal h3{font-family:var(--font-serif);font-size:19px;font-weight:700;margin-bottom:18px;letter-spacing:-.01em}
+.form-group{margin-bottom:13px}
+.form-group label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--text3);margin-bottom:6px;font-weight:500}
+.form-group input,.form-group textarea,.form-group select{width:100%}
+.form-group textarea{resize:vertical;min-height:72px}
+.modal-actions{display:flex;gap:9px;margin-top:18px}
+.modal-actions .btn{flex:1;text-align:center;padding:12px}
+.empty{text-align:center;padding:36px 20px;color:var(--text3);font-size:13px;line-height:1.8}
+.empty .e-icon{font-size:30px;margin-bottom:8px;opacity:.35}
+.tplan-day-head{display:flex;align-items:baseline;gap:10px;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.tplan-day-tag{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);min-width:22px;flex-shrink:0}
+.tplan-focus{font-family:var(--font-serif);font-size:14px;font-weight:700;color:var(--text);flex:1;outline:none;border-radius:4px;padding:2px 4px;cursor:text}
+.tplan-focus:focus{background:var(--bg3)}
+.tplan-exercises{padding-left:4px}
+.tplan-row{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)}
+.tplan-row:last-of-type{border-bottom:none}
+.tplan-num{font-size:11px;color:var(--text3);min-width:14px;margin-top:3px;flex-shrink:0}
+.tplan-cell-wrap{flex:1;min-width:0}
+.tplan-name{font-size:14px;color:var(--text);outline:none;border-radius:4px;padding:2px 4px;cursor:text;line-height:1.5}
+.tplan-name:focus{background:var(--bg3)}
+.tplan-note{font-size:12px;color:var(--text3);outline:none;border-radius:4px;padding:2px 4px;margin-top:2px;cursor:text;line-height:1.5}
+.tplan-note:focus{background:var(--bg3)}
+.tplan-note:empty:before{content:attr(data-placeholder);color:var(--text3);pointer-events:none}
+.tplan-note:focus:before{display:none}
+.tplan-log-col{display:flex;flex-direction:column;gap:3px;width:68px;flex-shrink:0}
+.tplan-log-label{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);font-weight:600;text-align:center}
+.tplan-log-input{font-family:var(--font-sans);font-size:12px;color:var(--text);background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:6px 8px;resize:none;outline:none;line-height:1.5;transition:border-color .15s;width:100%;height:52px}
+.tplan-log-input:focus{border-color:var(--accent)}
+.tplan-add-btn{font-size:11px;color:var(--text3);background:none;border:none;cursor:pointer;padding:6px 4px;opacity:.6}
+.tplan-add-btn:hover{color:var(--accent);opacity:1}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:2px}
+@media(max-width:480px){
+  .tplan-log-col{width:58px}
+  .tplan-log-input{font-size:12px;padding:5px 6px}
+  .project-actions{flex-wrap:wrap}
+  .add-row{flex-wrap:wrap}
+  #header{padding:12px 16px 10px}
+  .section{padding:16px}
+  .greeting{padding:18px}
+  .greeting h2{font-size:20px}
+  .tplan-week-logs{display:none}
+}
+@media(min-width:700px){
+  #nav{position:sticky;top:0;bottom:auto;border-top:none;border-bottom:1px solid rgba(255,255,255,.06);flex-direction:row;height:54px;background:var(--nav-bg);padding:0 10px;z-index:100;order:-1}
+  .nav-btn{flex-direction:row;gap:8px;font-size:11px;text-transform:none;letter-spacing:.02em;border-radius:8px;margin:6px 3px}
+  .nav-btn.active::after{display:none}
+  .nav-btn svg{width:17px;height:17px}
+  #main{padding:0 0 24px}
+  .section{padding:26px 32px}
+  .greeting h2{font-size:28px}
+  #header{padding:16px 32px}
+}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+</head>
+<body>
+<div id="app">
+  <div id="header">
+    <div id="header-left">
+      <div style="display:flex;align-items:center;gap:11px">
+        <div id="hub-logo">
+          <svg width="36" height="36" viewBox="0 0 48 48" fill="none">
+            <rect width="48" height="48" rx="13" fill="#14131a"/>
+            <rect x="11" y="11" width="11" height="11" rx="3" fill="#ff4d00"/>
+            <rect x="26" y="11" width="11" height="11" rx="3" fill="white" opacity=".6"/>
+            <rect x="11" y="26" width="11" height="11" rx="3" fill="white" opacity=".6"/>
+            <rect x="26" y="26" width="11" height="11" rx="3" fill="#ff4d00" opacity=".5"/>
+          </svg>
+        </div>
+        <div>
+          <div style="display:flex;align-items:center;gap:8px">
+          <h1>Mein Hub<span>.</span></h1>
+          <div id="sync-dot" title="Synchronisiert" style="width:7px;height:7px;border-radius:50%;background:rgba(0,0,0,0);transition:background .4s;flex-shrink:0"></div>
+        </div>
+          <div class="date" id="header-date"></div>
+        </div>
+      </div>
+    </div>
+    <div id="header-stats">
+      <div class="stat-pill"><span class="dot"></span><span id="stat-open">0 offen</span></div>
+      <div class="stat-pill"><span class="dot green"></span><span id="stat-done">0 erledigt</span></div>
+    </div>
+  </div>
+
+  <div id="nav">
+    <button class="nav-btn active" onclick="showSection('heute')" id="nav-heute">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      Heute
+    </button>
+    <button class="nav-btn" onclick="showSection('projekte')" id="nav-projekte">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Projekte
+    </button>
+    <button class="nav-btn" onclick="showSection('aufgaben')" id="nav-aufgaben">
+      <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      To Dos
+    </button>
+    <button class="nav-btn" onclick="showSection('training')" id="nav-training">
+      <svg viewBox="0 0 24 24"><path d="M18 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3H6a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3V6a3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3h12a3 3 0 0 0 3-3 3 3 0 0 0-3-3z"/></svg>
+      Training
+    </button>
+  </div>
+
+  <div id="main">
+    <!-- ══ HEUTE ══ -->
+    <div id="section-heute" class="section active">
+      <div class="greeting">
+        <svg style="position:absolute;right:16px;top:16px;opacity:.18" width="64" height="64" viewBox="0 0 64 64" fill="none">
+          <circle cx="32" cy="32" r="20" stroke="white" stroke-width="1.5"/>
+          <circle cx="32" cy="32" r="10" stroke="white" stroke-width="1.5"/>
+          <line x1="32" y1="4" x2="32" y2="14" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="32" y1="50" x2="32" y2="60" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="4" y1="32" x2="14" y2="32" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="50" y1="32" x2="60" y2="32" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <h2 id="greeting-text">Guten Morgen.</h2>
+        <div class="subtitle" id="today-summary"></div>
+        <div id="daily-motto" style="margin-top:10px;font-size:13px;color:rgba(255,255,255,.55);font-family:var(--font-serif);font-style:italic;position:relative"></div>
+      </div>
+
+      <div class="today-block">
+        <div class="today-block-title">Fokus für heute</div>
+        <div class="focus-input-wrap">
+          <input type="text" id="focus-input" placeholder="Aufgabe für heute hinzufügen …" onkeydown="if(event.key==='Enter')addFocusItem()">
+          <button class="btn btn-sm" onclick="addFocusItem()">+ Hinzufügen</button>
+        </div>
+        <ul class="focus-list" id="focus-list"></ul>
+      </div>
+
+    </div>
+
+    <!-- ══ PROJEKTE ══ -->
+    <div id="section-projekte" class="section">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <div style="font-family:var(--font-serif);font-size:20px;font-weight:400">Projekte</div>
+        <button class="btn btn-sm" onclick="openProjectModal()">+ Neu</button>
+      </div>
+      <div id="projekte-list"></div>
+    </div>
+
+    <!-- ══ AUFGABEN / TO DOS ══ -->
+    <div id="section-aufgaben" class="section">
+      <div style="font-family:var(--font-serif);font-size:20px;font-weight:400;margin-bottom:14px">To Dos</div>
+      <div class="tabs">
+        <div class="tab active" onclick="switchTodoTab('privat',this)">Privat</div>
+        <div class="tab" onclick="switchTodoTab('beruflich',this)">Beruflich</div>
+        <div class="tab" onclick="switchTodoTab('einkauf',this)">Einkauf</div>
+      </div>
+
+      <div id="todo-privat-view">
+        <div class="add-row" style="margin-bottom:12px">
+          <input type="text" id="todo-privat-input" placeholder="Neue Aufgabe …" onkeydown="if(event.key==='Enter')addTodo('privat')">
+          <select id="todo-privat-prio">
+            <option value="mittel">Mittel</option>
+            <option value="hoch">Hoch</option>
+            <option value="niedrig">Niedrig</option>
+          </select>
+          <button class="btn btn-sm" onclick="addTodo('privat')">+</button>
+        </div>
+        <ul class="todo-list" id="todo-list-privat"></ul>
+      </div>
+
+      <div id="todo-beruflich-view" style="display:none">
+        <div class="add-row" style="margin-bottom:12px">
+          <input type="text" id="todo-beruflich-input" placeholder="Neue Aufgabe …" onkeydown="if(event.key==='Enter')addTodo('beruflich')">
+          <select id="todo-beruflich-prio">
+            <option value="mittel">Mittel</option>
+            <option value="hoch">Hoch</option>
+            <option value="niedrig">Niedrig</option>
+          </select>
+          <button class="btn btn-sm" onclick="addTodo('beruflich')">+</button>
+        </div>
+        <ul class="todo-list" id="todo-list-beruflich"></ul>
+      </div>
+
+      <div id="todo-einkauf-view" style="display:none">
+        <div class="add-row" style="margin-bottom:16px;flex-wrap:wrap;gap:6px">
+          <input type="text" id="shop-input" placeholder="Artikel hinzufügen …" onkeydown="if(event.key==='Enter')addShopItem()" style="flex:1">
+          <input type="hidden" id="shop-cat" value="Einkauf">
+          <button class="btn btn-sm" onclick="addShopItem()">+</button>
+        </div>
+        <div id="shop-categories"></div>
+        <button class="clear-done-btn" onclick="clearDoneShop()">Erledigte löschen</button>
+      </div>
+    </div>
+
+    <!-- ══ TRAINING ══ -->
+    <div id="section-training" class="section">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="font-family:var(--font-serif);font-size:20px;font-weight:700;letter-spacing:-.01em">Primal Mastery 2</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <label style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);white-space:nowrap">Startdatum:</label>
+          <input type="date" id="train-start-date" onchange="saveStartDate(this.value)" style="font-size:13px;padding:6px 10px;border-radius:8px;background:var(--bg3);color:var(--text);border:1.5px solid var(--border)">
+          <div id="train-save-hint" style="font-size:11px;color:var(--text3);opacity:0;transition:opacity .4s">gespeichert</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:0;margin-bottom:18px;background:var(--bg4);border-radius:10px;padding:4px" id="week-block-tabs">
+        <div class="tab active" onclick="switchBlock(0,this)">Wo 1–3</div>
+        <div class="tab" onclick="switchBlock(1,this)">Wo 4–6</div>
+        <div class="tab" onclick="switchBlock(2,this)">Wo 7–9</div>
+        <div class="tab" onclick="switchBlock(3,this)">Wo 10–12</div>
+      </div>
+      <div id="train-plan-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD PROJECT MODAL -->
+<div class="modal-overlay" id="project-modal" onclick="if(event.target===this)closeProjectModal()">
+  <div class="modal">
+    <h3 id="modal-title">Neues Projekt</h3>
+    <div class="form-group">
+      <label>Name</label>
+      <input type="text" id="proj-name" placeholder="z.B. Bootsführerschein">
+    </div>
+    <div class="form-group">
+      <label>Beschreibung</label>
+      <textarea id="proj-desc" placeholder="Kurze Notiz zum Projekt …"></textarea>
+    </div>
+    <div class="form-group">
+      <label>Farbe</label>
+      <select id="proj-color">
+        <option value="amber">Amber</option>
+        <option value="blue">Blau</option>
+        <option value="green">Grün</option>
+        <option value="red">Rot</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Fortschritt (%)</label>
+      <input type="number" id="proj-progress" min="0" max="100" value="0">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeProjectModal()">Abbrechen</button>
+      <button class="btn" onclick="saveProject()">Speichern</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+const DAYS = ['So','Mo','Di','Mi','Do','Fr','Sa'];
+const DAYS_FULL = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
+const MONTHS = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+
+/* ══ STORAGE ══ */
+const SUPA_URL='https://eotwdngzvgwbsdlriyin.supabase.co';
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVvdHdkbmd6dmd3YnNkbHJpeWluIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0OTA0OTksImV4cCI6MjA5MDA2NjQ5OX0.RA4wd_P-sYBRID5z1k9-AslYMr_qN9PxkWsbUxnze3Y';
+const db=supabase.createClient(SUPA_URL,SUPA_KEY);
+
+function load(key,def){try{const v=localStorage.getItem(key);return v?JSON.parse(v):def}catch{return def}}
+function save(key,val){
+  try{localStorage.setItem(key,JSON.stringify(val))}catch{}
+  db.from('hub_data').upsert({key,value:val,updated_at:new Date().toISOString()},{onConflict:'key'})
+    .then(()=>showSyncDot('ok')).catch(()=>showSyncDot('err'));
+}
+
+async function syncFromSupabase(){
+  showSyncDot('loading');
+  try{
+    const {data,error}=await db.from('hub_data').select('key,value');
+    if(error||!data)throw error;
+    data.forEach(row=>{
+      try{localStorage.setItem(row.key,JSON.stringify(row.value))}catch{}
+    });
+    showSyncDot('ok');
+  }catch(e){
+    showSyncDot('err');
+  }
+}
+
+function showSyncDot(state){
+  const el=document.getElementById('sync-dot');
+  if(!el)return;
+  if(state==='loading'){el.style.background='#f0b040';el.title='Synchronisiere…';}
+  else if(state==='ok'){el.style.background='#22b866';el.title='Synchronisiert';setTimeout(()=>{el.style.background='rgba(255,255,255,0)'},2000);}
+  else{el.style.background='#e03030';el.title='Sync fehlgeschlagen';}
+}
+
+/* ══ STATE ══ */
+let focusItems = load('focus',[]);
+let todos = load('todos',{privat:[],beruflich:[]});
+let projects = load('projects',[
+  {id:1,name:'Bootsführerschein',desc:'Theorie und Praxis – regelmäßig Zeit zum Lernen einplanen.',color:'amber',progress:20,tasks:[{id:1,text:'Theoriebuch Kapitel 1–3',done:true},{id:2,text:'Prüfungsfragen üben',done:false},{id:3,text:'Praxiseinheit buchen',done:false}]},
+  {id:2,name:'Jugendhilfe Lernplattform',desc:'Webbasierte Online-Lernplattform für die Jugendhilfe erstellen.',color:'blue',progress:10,tasks:[{id:1,text:'Anforderungen definieren',done:true},{id:2,text:'Technologie-Stack wählen',done:false},{id:3,text:'MVP-Prototyp bauen',done:false}]}
+]);
+let shopItems = load('shop',[]);
+let trainDone = load('trainDone',{});
+
+let editingProjectId = null;
+
+/* ══ HEADER ══ */
+const MOTTOS = [
+  'Fokus schlägt Talent.',
+  'Ein Tag, eine Entscheidung.',
+  'Konstanz ist die stärkste Kraft.',
+  'Kleine Schritte, große Wirkung.',
+  'Heute ist der Moment.',
+  'Du baust etwas auf.',
+  'Vertraue dem Prozess.',
+  'Stärke kommt von innen.',
+];
+
+function initHeader(){
+  const now=new Date();
+  const h=now.getHours();
+  const greet=h<12?'Guten Morgen.':h<18?'Guten Tag.':'Guten Abend.';
+  document.getElementById('greeting-text').textContent=greet;
+  const mottoEl=document.getElementById('daily-motto');
+  if(mottoEl){const idx=now.getDate()%MOTTOS.length;mottoEl.textContent=MOTTOS[idx];}
+  document.getElementById('header-date').textContent=DAYS_FULL[now.getDay()]+', '+now.getDate()+'. '+MONTHS[now.getMonth()]+' '+now.getFullYear();
+
+  // stats
+  const allTodos=[...todos.privat,...todos.beruflich];
+  const open=allTodos.filter(t=>!t.done).length;
+  const done=allTodos.filter(t=>t.done).length+focusItems.filter(f=>f.done).length;
+  document.getElementById('stat-open').textContent=open+' offen';
+  document.getElementById('stat-done').textContent=done+' erledigt';
+
+  const f=focusItems.filter(i=>!i.done).length;
+  document.getElementById('today-summary').textContent=f>0?f+' Fokus-Aufgaben für heute':'Alle Fokus-Aufgaben erledigt ✓';
+}
+
+/* ══ SECTION NAV ══ */
+function showSection(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('section-'+id).classList.add('active');
+  document.getElementById('nav-'+id).classList.add('active');
+  if(id==='heute')renderHeute();
+  if(id==='projekte')renderProjekte();
+  if(id==='aufgaben'){renderTodos();renderShop();}
+  if(id==='training')renderTraining();
+}
+
+/* ══ HEUTE ══ */
+function renderHeute(){
+  initHeader();
+  renderFocusList();
+}
+
+function renderFocusList(){
+  const ul=document.getElementById('focus-list');
+  ul.innerHTML='';
+  if(!focusItems.length){ul.innerHTML='<div class="empty"><div class="e-icon">✦</div>Noch nichts geplant für heute.</div>';return;}
+  focusItems.forEach((item,i)=>{
+    const li=document.createElement('li');
+    li.className='focus-item'+(item.done?' done':'');
+    li.innerHTML=`<input type="checkbox" ${item.done?'checked':''} onchange="toggleFocus(${i})">
+      <span class="fi-text">${esc(item.text)}</span>
+      <span class="fi-source fi-cat-${item.cat||item.source}">${item.source==='projekt'?'Projekt':item.source==='todo'?cap(item.cat||'privat'):'Fokus'}</span>
+      <button class="fi-del" onclick="deleteFocus(${i})">×</button>`;
+    ul.appendChild(li);
+  });
+}
+
+function addFocusItem(){
+  const inp=document.getElementById('focus-input');
+  const t=inp.value.trim();
+  if(!t)return;
+  focusItems.push({id:Date.now(),text:t,done:false});
+  save('focus',focusItems);
+  inp.value='';
+  renderHeute();
+}
+
+function toggleFocus(i){
+  focusItems[i].done=!focusItems[i].done;
+  save('focus',focusItems);
+  renderHeute();
+}
+
+function deleteFocus(i){
+  focusItems.splice(i,1);
+  save('focus',focusItems);
+  renderHeute();
+}
+
+function renderHeuteTodos(){
+  ['privat','beruflich'].forEach(cat=>{
+    const el=document.getElementById('heute-'+cat);
+    const items=todos[cat].filter(t=>!t.done).slice(0,5);
+    if(!items.length){el.innerHTML='<div style="color:var(--text3);font-size:13px;padding:4px 0">Keine offenen Aufgaben.</div>';return;}
+    el.innerHTML=items.map((t,i)=>`
+      <li class="focus-item">
+        <input type="checkbox" onchange="quickDoneTodo('${cat}',${todos[cat].indexOf(t)})">
+        <span class="fi-text">${esc(t.text)}</span>
+        <span class="fi-source fi-source-${t.priority}">${cap(t.priority)}</span>
+      </li>`).join('');
+  });
+}
+
+function quickDoneTodo(cat,i){
+  todos[cat][i].done=true;
+  save('todos',todos);
+  renderHeute();
+  renderTodos();
+}
+
+function renderHeuteProjekte(){
+  const el=document.getElementById('heute-projekte');
+  if(!projects.length){el.innerHTML='<div class="empty"><div class="e-icon">◈</div>Keine Projekte.</div>';return;}
+  el.innerHTML=projects.map(p=>`
+    <div style="margin-bottom:12px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+        <span style="font-size:14px">${esc(p.name)}</span>
+        <span style="font-size:12px;color:var(--text3)">${p.progress}%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${p.progress}%"></div></div>
+    </div>`).join('');
+}
+
+/* ══ PROJEKTE ══ */
+function renderProjekte(){
+  const el=document.getElementById('projekte-list');
+  if(!projects.length){el.innerHTML='<div class="empty"><div class="e-icon">◈</div>Noch keine Projekte.<br>Lege dein erstes Projekt an.</div>';return;}
+  el.innerHTML=projects.map(p=>`
+    <div class="project-card color-${p.color}" id="proj-card-${p.id}">
+      <div class="project-head">
+        <div class="project-name">${esc(p.name)}</div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <span class="project-badge">${p.progress}%</span>
+          <button class="fi-del" onclick="editProject(${p.id})" style="opacity:.6;font-size:14px" title="Bearbeiten">✎</button>
+          <button class="fi-del" onclick="deleteProject(${p.id})" title="Löschen">×</button>
+        </div>
+      </div>
+      ${p.desc?`<div class="project-desc">${esc(p.desc)}</div>`:''}
+      <div class="progress-bar"><div class="progress-fill" style="width:${p.progress}%"></div></div>
+      <ul class="project-tasks">
+        ${(p.tasks||[]).map((t,ti)=>`
+          <li class="pt-item${t.done?' done':''}">
+            <input type="checkbox" ${t.done?'checked':''} onchange="toggleProjectTask(${p.id},${ti})">
+            <span>${esc(t.text)}</span>
+            <button class="fi-del" onclick="deleteProjectTask(${p.id},${ti})">×</button>
+          </li>`).join('')}
+      </ul>
+      <div class="project-actions">
+        <button class="btn btn-sm btn-ghost" onclick="toggleAddTask(${p.id})">+ Aufgabe</button>
+        <button class="btn btn-sm" onclick="bookTime(${p.id},1)" title="1 Stunde heute einplanen">⏱ 1 Std</button>
+        <button class="btn btn-sm" onclick="bookTime(${p.id},2)" title="2 Stunden heute einplanen">⏱ 2 Std</button>
+      </div>
+      <div class="add-task-form" id="atf-${p.id}">
+        <input type="text" id="ati-${p.id}" placeholder="Neue Aufgabe …" onkeydown="if(event.key==='Enter')addProjectTask(${p.id})">
+        <button class="btn btn-sm" onclick="addProjectTask(${p.id})">+</button>
+      </div>
+    </div>`).join('');
+}
+
+function bookTime(pid,hours){
+  const p=projects.find(x=>x.id===pid);
+  if(!p)return;
+  const text=hours+'h arbeiten: '+p.name;
+  const already=focusItems.some(f=>f.text===text&&!f.done);
+  if(already){alert('Bereits heute eingeplant.');return;}
+  focusItems.push({id:Date.now(),text,done:false,source:'projekt'});
+  save('focus',focusItems);
+  showSection('heute');
+}
+
+function toggleAddTask(pid){
+  const f=document.getElementById('atf-'+pid);
+  f.classList.toggle('open');
+  if(f.classList.contains('open'))document.getElementById('ati-'+pid).focus();
+}
+
+function addProjectTask(pid){
+  const inp=document.getElementById('ati-'+pid);
+  const t=inp.value.trim();
+  if(!t)return;
+  const p=projects.find(x=>x.id===pid);
+  if(!p)return;
+  if(!p.tasks)p.tasks=[];
+  p.tasks.push({id:Date.now(),text:t,done:false});
+  save('projects',projects);
+  inp.value='';
+  renderProjekte();
+}
+
+function toggleProjectTask(pid,ti){
+  const p=projects.find(x=>x.id===pid);
+  p.tasks[ti].done=!p.tasks[ti].done;
+  const doneTasks=p.tasks.filter(t=>t.done).length;
+  p.progress=p.tasks.length?Math.round(doneTasks/p.tasks.length*100):p.progress;
+  save('projects',projects);
+  renderProjekte();
+  renderHeute();
+}
+
+function deleteProjectTask(pid,ti){
+  const p=projects.find(x=>x.id===pid);
+  p.tasks.splice(ti,1);
+  save('projects',projects);
+  renderProjekte();
+}
+
+function deleteProject(pid){
+  if(!confirm('Projekt wirklich löschen?'))return;
+  projects=projects.filter(p=>p.id!==pid);
+  save('projects',projects);
+  renderProjekte();
+  renderHeute();
+}
+
+function editProject(pid){
+  const p=projects.find(x=>x.id===pid);
+  editingProjectId=pid;
+  document.getElementById('proj-name').value=p.name;
+  document.getElementById('proj-desc').value=p.desc||'';
+  document.getElementById('proj-color').value=p.color||'amber';
+  document.getElementById('proj-progress').value=p.progress||0;
+  document.getElementById('modal-title').textContent='Projekt bearbeiten';
+  document.getElementById('project-modal').classList.add('open');
+}
+
+function openProjectModal(){editingProjectId=null;document.getElementById('proj-name').value='';document.getElementById('proj-desc').value='';document.getElementById('proj-color').value='amber';document.getElementById('proj-progress').value=0;document.getElementById('modal-title').textContent='Neues Projekt';document.getElementById('project-modal').classList.add('open');}
+function closeProjectModal(){document.getElementById('project-modal').classList.remove('open');}
+
+function saveProject(){
+  const name=document.getElementById('proj-name').value.trim();
+  if(!name)return;
+  if(editingProjectId){
+    const p=projects.find(x=>x.id===editingProjectId);
+    p.name=name;p.desc=document.getElementById('proj-desc').value.trim();
+    p.color=document.getElementById('proj-color').value;
+    p.progress=parseInt(document.getElementById('proj-progress').value)||0;
+  } else {
+    projects.push({id:Date.now(),name,desc:document.getElementById('proj-desc').value.trim(),color:document.getElementById('proj-color').value,progress:parseInt(document.getElementById('proj-progress').value)||0,tasks:[]});
+  }
+  save('projects',projects);
+  closeProjectModal();
+  renderProjekte();
+  renderHeute();
+}
+
+/* ══ AUFGABEN ══ */
+let currentTodoTab='privat';
+function switchTodoTab(tab,el){
+  currentTodoTab=tab;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('todo-privat-view').style.display=tab==='privat'?'':'none';
+  document.getElementById('todo-beruflich-view').style.display=tab==='beruflich'?'':'none';
+  document.getElementById('todo-einkauf-view').style.display=tab==='einkauf'?'':'none';
+  if(tab==='einkauf')renderShop();
+}
+
+function addTodo(cat){
+  const inp=document.getElementById('todo-'+cat+'-input');
+  const prio=document.getElementById('todo-'+cat+'-prio').value;
+  const t=inp.value.trim();
+  if(!t)return;
+  todos[cat].push({id:Date.now(),text:t,done:false,priority:prio});
+  save('todos',todos);
+  inp.value='';
+  renderTodos();
+  initHeader();
+}
+
+function renderTodos(){
+  ['privat','beruflich'].forEach(cat=>{
+    const ul=document.getElementById('todo-list-'+cat);
+    const items=[...todos[cat]].sort((a,b)=>{const o={hoch:0,mittel:1,niedrig:2};return(o[a.priority]||1)-(o[b.priority]||1)});
+    if(!items.length){ul.innerHTML='<div class="empty"><div class="e-icon">✓</div>Keine Aufgaben.</div>';return;}
+    ul.innerHTML=items.map((t,i)=>{
+      const inFocus=focusItems.some(f=>f.text===t.text&&!f.done);
+      return`<li class="todo-item${t.done?' done':''}${inFocus?' in-focus':''}">
+        <span class="todo-priority prio-${t.priority}"></span>
+        <input type="checkbox" ${t.done?'checked':''} onchange="toggleTodo('${cat}',${todos[cat].indexOf(t)})">
+        <span class="todo-text">${esc(t.text)}</span>
+        <button class="focus-add-btn${inFocus?' added':''}" onclick="addTodoToFocus('${esc(t.text)}','${cat}')" title="${inFocus?'Bereits im Tagesfokus':'Zum Tagesfokus'}">${inFocus?'✦':'⊕'}</button>
+        <button class="fi-del" onclick="deleteTodo('${cat}',${todos[cat].indexOf(t)})">×</button>
+      </li>`;}).join('');
+  });
+}
+
+function addTodoToFocus(text,cat){
+  const idx=focusItems.findIndex(f=>f.text===text&&!f.done);
+  if(idx>=0){focusItems.splice(idx,1);}
+  else{focusItems.push({id:Date.now(),text,done:false,source:'todo',cat:cat||'privat'});}
+  save('focus',focusItems);
+  initHeader();
+  renderTodos();
+}
+
+function toggleTodo(cat,i){todos[cat][i].done=!todos[cat][i].done;save('todos',todos);renderTodos();initHeader();}
+function deleteTodo(cat,i){todos[cat].splice(i,1);save('todos',todos);renderTodos();initHeader();}
+
+/* ══ EINKAUF ══ */
+function addShopItem(){
+  const inp=document.getElementById('shop-input');
+  const cat=document.getElementById('shop-cat').value;
+  const t=inp.value.trim();
+  if(!t)return;
+  shopItems.push({id:Date.now(),text:t,cat,done:false});
+  save('shop',shopItems);
+  inp.value='';
+  renderShop();
+}
+
+function renderShop(){
+  const el=document.getElementById('shop-categories');
+  if(!shopItems.length){el.innerHTML='<div class="empty"><div class="e-icon">⊕</div>Liste ist leer.</div>';return;}
+  el.innerHTML=`<ul class="shop-list">${shopItems.map((item,i)=>`
+    <li class="shop-item${item.done?' done':''}">
+      <input type="checkbox" ${item.done?'checked':''} onchange="toggleShop(${i})">
+      <span class="shop-text">${esc(item.text)}</span>
+      <button class="fi-del" onclick="deleteShop(${i})">×</button>
+    </li>`).join('')}
+  </ul>`;
+}
+
+function toggleShop(i){shopItems[i].done=!shopItems[i].done;save('shop',shopItems);renderShop();}
+function deleteShop(i){shopItems.splice(i,1);save('shop',shopItems);renderShop();}
+function clearDoneShop(){shopItems=shopItems.filter(i=>!i.done);save('shop',shopItems);renderShop();}
+
+/* ══ TRAINING ══ */
+const DEFAULT_PLAN = [
+  {day:'Mo', label:'Montag', focus:'Push/Legs – Shoulder Focus', exercises:[
+    {name:'100 Snatches', note:'Use KB 4kg heavier than last snatch test. Complete at own pace.'},
+    {name:'Double Clean and Press + Push-Ups (Superset)', note:'6 sets, AMRAP. Rest as needed, log your reps.'},
+    {name:'Leg Circuit + Push Circuit', note:'LEG: 5 Reverse Lunges/side · 10 Goblet Squats · 5 Single-Hand Swings/side || PUSH: 5 Snatch-to-Press/side · 10 Bottom-Up Presses · 25 Push-Ups'}
+  ]},
+  {day:'Di', label:'Dienstag', focus:'Mace Day – Pull Focus', exercises:[
+    {name:'200 360 Swings (100 each direction)', note:'Break into sets if needed.'},
+    {name:'Pull-Ups or Kettlebell Rows', note:'10 sets, staying 2 reps shy of failure.'},
+    {name:'5-Minute Ab Routine', note:'V sit hold, side plank R/L, plank hold, leg lift toe touches – 1 min each.'}
+  ]},
+  {day:'Mi', label:'Mittwoch', focus:'Push/Legs – Chest Focus', exercises:[
+    {name:'100 Swings + 100 Push-Ups', note:'Split into sets as needed.'},
+    {name:'Double Bell Squat Superset with Push-Ups', note:'6 sets, AMRAP. Rest as needed, log reps.'},
+    {name:'Leg Circuit + Push Circuit', note:'LEG: 5 Reverse Lunges/side · 10 Goblet Squats · 5 Single-Hand Swings/side || PUSH: 5 Snatch-to-Press/side · 10 Bottom-Up Presses · 25 Push-Ups'}
+  ]},
+  {day:'Do', label:'Donnerstag', focus:'Club Day – Pull Focus', exercises:[
+    {name:'200 360 Swings (100 each direction)', note:'Break into sets if needed.'},
+    {name:'Pull-Ups or Kettlebell Rows', note:'10 sets, staying 2 reps shy of failure.'},
+    {name:'5-Minute Ab Routine', note:'Same as Mace Day.'}
+  ]},
+  {day:'Fr', label:'Freitag', focus:'Accessory Day', exercises:[
+    {name:'100 Kettlebell Curls', note:'Break into sets to total 100 reps.'},
+    {name:'100 Tricep Extensions', note:'Break into sets as needed.'},
+    {name:'100 Leg Raises', note:'Weighted or non-weighted.'},
+    {name:'Optional: 5-Minute Ab Routine', note:''}
+  ]},
+  {day:'Sa', label:'Samstag', focus:'Full Body / Metabolic Conditioning', exercises:[
+    {name:'Mobility Flow', note:'2 rounds: 1 snatch, windmill, overhead squat per side.'},
+    {name:'Clean-Squat-Press Circuit', note:'2 rounds: 1 clean, 3 squats, 2 presses (5 reps/round).'},
+    {name:'Clean-Press-Squat Circuit', note:'2 rounds: 1 clean, 3 presses, 2 squats (5 reps/round).'},
+    {name:'Swing-Clean-Thruster Circuit', note:'2 rounds: 1 swing, 1 clean, 3 thrusters (5 reps/round).'},
+    {name:'Optional: 100 Snatches + 200 Push-Ups', note:''}
+  ]},
+  {day:'So', label:'Sonntag', focus:'Rest & Recovery', exercises:[
+    {name:'Ruhetag', note:'Leichte Aktivität oder Mobility – kein Pflichttraining.'}
+  ]}
+];
+
+function deepCopy(obj){return JSON.parse(JSON.stringify(obj))}
+const BLOCK2_PLAN = [
+  {day:'Mo',label:'Montag',focus:'Push/Legs – Shoulder Focus',exercises:[
+    {name:'100 Snatches',note:'KB 4kg heavier than last snatch test. Complete at own pace.'},
+    {name:'Double Clean and Press + Push-Ups (Superset)',note:'6 sets, AMRAP. Rest as needed, log your reps.'},
+    {name:'Leg Circuit 2 + Push Circuit 2',note:'LEG: 10 Squat-to-Lunge/side (one side, then switch) || PUSH: 10 Clean-to-Press (alternate sides, switch in air) · 25 Push-Ups finisher'}
+  ]},
+  {day:'Di',label:'Dienstag',focus:'Mace Day – Pull Focus',exercises:[
+    {name:'200 360 to Curls (100 each direction)',note:'Break into sets if needed.'},
+    {name:'Pull-Ups or Kettlebell Rows',note:'10 sets, staying 2 reps shy of failure.'},
+    {name:'5-Minute Ab Routine',note:'V sit hold, side plank R/L, plank hold, leg lift toe touches – 1 min each.'}
+  ]},
+  {day:'Mi',label:'Mittwoch',focus:'Push/Legs – Chest Focus',exercises:[
+    {name:'100 Swings + 100 Push-Ups',note:'Split into sets as needed.'},
+    {name:'Double Bell Squat Superset with Push-Ups',note:'6 sets, AMRAP. Rest as needed, log reps.'},
+    {name:'Leg Circuit 2 + Push Circuit 2',note:'LEG: 10 Squat-to-Lunge/side (one side, then switch) || PUSH: 10 Clean-to-Press (alternate sides, switch in air) · 25 Push-Ups finisher'}
+  ]},
+  {day:'Do',label:'Donnerstag',focus:'Club Day – Pull Focus',exercises:[
+    {name:'50 360 Swings (25 each direction) + 50 10-2s (25 w/ each hand on top)',note:'Break into sets if needed.'},
+    {name:'Pull-Ups or Kettlebell Rows',note:'10 sets, staying 2 reps shy of failure.'},
+    {name:'5-Minute Ab Routine',note:'Same as Mace Day.'}
+  ]},
+  {day:'Fr',label:'Freitag',focus:'Accessory Day',exercises:[
+    {name:'100 Kettlebell Curls',note:'Break into sets to total 100 reps.'},
+    {name:'100 Tricep Extensions',note:'Break into sets as needed.'},
+    {name:'100 Leg Raises',note:'Weighted or non-weighted.'},
+    {name:'Optional: 5-Minute Ab Routine',note:''}
+  ]},
+  {day:'Sa',label:'Samstag',focus:'Full Body / Metabolic Conditioning',exercises:[
+    {name:'Mobility Flow',note:'10 reps each side. Each rep: 1 snatch + 1 windmill + 1 overhead squat. Alternate sides every rep (5 reps per side total).'},
+    {name:'Clean/Squat Ladder',note:'2 rounds: 1 clean, 1 squat, 2 cleans, 2 squats … up to 5 cleans, 5 squats.'},
+    {name:'Clean/Press Ladder',note:'2 rounds: 1 clean, 1 press … up to 5 cleans, 5 presses.'},
+    {name:'Swing-Clean-Thruster Circuit',note:'2 rounds: 1 swing, 1 clean, 3 thrusters (5 reps per round).'},
+    {name:'Optional: 100 Snatches + 200 Push-Ups',note:''}
+  ]},
+  {day:'So',label:'Sonntag',focus:'Rest & Recovery',exercises:[
+    {name:'Ruhetag',note:'Leichte Aktivität oder Mobility – kein Pflichttraining.'}
+  ]}
+];
+
+const BLOCK3_PLAN = [
+  {day:'Mo',label:'Montag',focus:'Push/Legs – Shoulder Focus',exercises:[
+    {name:'100 Snatches',note:'KB 4kg heavier than last snatch test. Complete at own pace.'},
+    {name:'Double Clean and Press + Push-Ups (Superset)',note:'6 sets, AMRAP. Rest as needed, log your reps.'},
+    {name:'Overhead Squats + Pushups',note:'4 sets of 5 reps overhead squats per side, 4 sets of 20 pushups. Superset these movements.'}
+  ]},
+  {day:'Di',label:'Dienstag',focus:'Mace Day – Pull Focus',exercises:[
+    {name:'200 reps of 10-2s (100 w/ each hand on top)',note:'Break into sets if needed.'},
+    {name:'Pull-Ups or Kettlebell Rows',note:'10 sets, staying 2 reps shy of failure.'},
+    {name:'5-Minute Ab Routine',note:'V sit hold, side plank R/L, plank hold, leg lift toe touches – 1 min each.'}
+  ]},
+  {day:'Mi',label:'Mittwoch',focus:'Push/Legs – Chest Focus',exercises:[
+    {name:'100 Swings + 100 Push-Ups',note:'Split into sets as needed.'},
+    {name:'Double Bell Squat Superset with Push-Ups',note:'6 sets, AMRAP. Rest as needed, log reps.'},
+    {name:'Windmills + Pushups',note:'4 sets of 5 reps windmills per side, 4 sets of 20 pushups. Superset these movements.'}
+  ]},
+  {day:'Do',label:'Donnerstag',focus:'Club Day – Pull Focus',exercises:[
+    {name:'50 360 Swings (25 each direction) + 50 Pullovers (25 w/ each hand on top)',note:'Break into sets if needed.'},
+    {name:'Pull-Ups or Kettlebell Rows',note:'10 sets, staying 2 reps shy of failure.'},
+    {name:'5-Minute Ab Routine',note:'Same as Mace Day.'}
+  ]},
+  {day:'Fr',label:'Freitag',focus:'Accessory Day',exercises:[
+    {name:'100 Kettlebell Curls',note:'Break into sets to total 100 reps.'},
+    {name:'100 Tricep Extensions',note:'Break into sets as needed.'},
+    {name:'100 Leg Raises',note:'Weighted or non-weighted.'},
+    {name:'Optional: 5-Minute Ab Routine',note:''}
+  ]},
+  {day:'Sa',label:'Samstag',focus:'Full Body / Metabolic Conditioning',exercises:[
+    {name:'Mobility Flow',note:'10 reps each side. Each rep: 1 snatch + 1 windmill + 1 overhead squat. Alternate sides every rep (5 reps per side total).'},
+    {name:'Clean/Squat Ladder',note:'3 rounds: 1 clean, 1 squat, 2 cleans, 2 squats … up to 5 cleans, 5 squats.'},
+    {name:'Clean/Press Ladder',note:'3 rounds: 1 clean, 1 press … up to 5 cleans, 5 presses.'},
+    {name:'Optional: 100 Snatches + 200 Push-Ups',note:''}
+  ]},
+  {day:'So',label:'Sonntag',focus:'Rest & Recovery',exercises:[
+    {name:'Ruhetag',note:'Leichte Aktivität oder Mobility – kein Pflichttraining.'}
+  ]}
+];
+
+const BLOCK4_PLAN = [
+  {day:'Mo',label:'Montag',focus:'Push/Legs – Shoulder Focus',exercises:[
+    {name:'100 Snatches',note:'KB 4kg heavier than last snatch test. Complete at own pace.'},
+    {name:'Double Clean and Press + Push-Ups (Superset)',note:'6 sets, AMRAP. Rest as needed, log your reps.'},
+    {name:'Windmills + Presses',note:'4 sets of 5 reps overhead squats per side, 4 sets of 20 pushups. Superset these movements.'}
+  ]},
+  {day:'Di',label:'Dienstag',focus:'Mace Day – Pull Focus',exercises:[
+    {name:'200 reps of 10-2s (100 w/ each hand on top)',note:'Break into sets if needed.'},
+    {name:'Pull-Ups or Kettlebell Rows',note:'10 sets, staying 2 reps shy of failure.'},
+    {name:'5-Minute Ab Routine',note:'V sit hold, side plank R/L, plank hold, leg lift toe touches – 1 min each.'}
+  ]},
+  {day:'Mi',label:'Mittwoch',focus:'Push/Legs – Chest Focus',exercises:[
+    {name:'100 Swings + 100 Push-Ups',note:'Split into sets as needed.'},
+    {name:'Double Bell Squat Superset with Push-Ups',note:'6 sets, AMRAP. Rest as needed, log reps.'},
+    {name:'Overhead Squats + Lunges',note:'4 sets of 8 reps overhead squats per side, 4 sets of 10 lunges per side. Superset these movements.'}
+  ]},
+  {day:'Do',label:'Donnerstag',focus:'Club Day – Pull Focus',exercises:[
+    {name:'100 360 to Pullovers (50 each direction)',note:'Break into 5–10 sets.'},
+    {name:'Pull-Ups or Kettlebell Rows',note:'10 sets, staying 2 reps shy of failure.'},
+    {name:'5-Minute Ab Routine',note:'Same as Mace Day.'}
+  ]},
+  {day:'Fr',label:'Freitag',focus:'Accessory Day',exercises:[
+    {name:'50 Double Bell Curls',note:'Break into 10 sets of 5 reps.'},
+    {name:'100 Tricep Extensions',note:'Break into 10 sets of 10 reps.'},
+    {name:'100 Leg Raises',note:'Break into 10 sets of 10 reps.'},
+    {name:'Optional: 5-Minute Ab Routine',note:''}
+  ]},
+  {day:'Sa',label:'Samstag',focus:'Full Body / Metabolic Conditioning',exercises:[
+    {name:'Mobility Flow',note:'10 reps each side. Each rep: 1 snatch + 1 windmill + 1 overhead squat. Alternate sides every rep (5 reps per side total).'},
+    {name:'Clean & Thruster Ladder',note:'2 rounds: 1 clean, 1 thruster, 2 cleans, 2 thrusters … up to 5 cleans, 5 thrusters.'},
+    {name:'Clean/Press Ladder',note:'2 rounds: 1 clean, 1 press … up to 5 cleans, 5 presses.'},
+    {name:'Clean/Squat Ladder',note:'2 rounds: 1 clean, 1 squat … up to 5 cleans, 5 squats.'},
+    {name:'Optional: 100 Snatches (50 each arm) + 200 Push-Ups',note:'Done at whichever pace you choose.'}
+  ]},
+  {day:'So',label:'Sonntag',focus:'Rest & Recovery',exercises:[
+    {name:'Ruhetag',note:'Leichte Aktivität oder Mobility – kein Pflichttraining.'}
+  ]}
+];
+
+const DEFAULT_BLOCKS = [
+  deepCopy(DEFAULT_PLAN),
+  deepCopy(BLOCK2_PLAN),
+  deepCopy(BLOCK3_PLAN),
+  deepCopy(BLOCK4_PLAN)
+];
+let trainBlocks = load('trainBlocks_v3', DEFAULT_BLOCKS);
+let currentBlock = 0;
+let trainLogs = load('trainLogs', {});
+let workoutTimes = load('workoutTimes', {});
+let activeTimer = null;
+let timerStart = null;
+let timerBlock = null;
+let timerDay = null;
+let trainStartDate = load('trainStartDate', '');
+const WDAYS_FULL = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
+const MONTHS_SHORT = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
+function getTrainDayLabel(di){
+  if(!trainStartDate) return '';
+  const d = new Date(trainStartDate);
+  d.setDate(d.getDate() + di);
+  return WDAYS_FULL[d.getDay()] + ', ' + d.getDate() + '. ' + MONTHS_SHORT[d.getMonth()];
+}
+
+function renderTraining(){
+  const inp = document.getElementById('train-start-date');
+  if(inp) inp.value = trainStartDate;
+  renderTrainPlan();
+}
+
+function switchBlock(idx,el){
+  currentBlock=idx;
+  document.querySelectorAll('#week-block-tabs .tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderTrainPlan();
+}
+
+function renderTrainPlan(){
+  const el=document.getElementById('train-plan-list');
+  const plan=trainBlocks[currentBlock];
+  el.innerHTML=plan.map((day,di)=>`
+    <div class="tplan-day" style="margin-bottom:14px">
+      <div class="tplan-day-head" style="align-items:center">
+        <div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:0">
+          <span class="tplan-focus" contenteditable="true" spellcheck="false"
+            onblur="savePlanField(${di},'focus',this.textContent)"
+            onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}"
+          >${esc(day.focus)}</span>
+          <span style="font-size:11px;color:var(--text3);font-family:var(--font-sans)">${getTrainDayLabel(di)}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+          <span id="timer-${di}" style="font-size:13px;font-weight:600;color:var(--accent);font-variant-numeric:tabular-nums;display:none;min-width:48px">00:00</span>
+          ${(()=>{const wkey=currentBlock+'-'+di;const saved=workoutTimes[wkey];return saved?'<span style="font-size:11px;color:var(--green2);background:var(--green-light);padding:2px 8px;border-radius:20px">'+saved+'</span>':''})()}
+          <button id="wbtn-${di}" onclick="toggleWorkout(${di})" style="font-size:11px;padding:5px 12px;border-radius:6px;background:var(--accent);color:#fff;border:none;cursor:pointer;font-family:var(--font-sans);font-weight:500">Start</button>
+        </div>
+      </div>
+      <div class="tplan-exercises">
+        ${day.exercises.map((ex,ei)=>`
+          <div class="tplan-row">
+            <span class="tplan-num">${ei+1}</span>
+            <div class="tplan-cell-wrap">
+              <div style="display:flex;align-items:center;gap:8px">
+                <div class="tplan-name" contenteditable="true" spellcheck="false"
+                  onblur="savePlanExercise(${di},${ei},'name',this.textContent)"
+                  onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}"
+                >${esc(ex.name)}</div>
+                ${ex.name.toLowerCase().includes('snatch')?'<button onclick="openEmom()" style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:5px;background:var(--nav-bg);color:#fff;border:none;cursor:pointer;white-space:nowrap;font-family:var(--font-sans);flex-shrink:0">EMOM</button>':''}
+              </div>
+              <div class="tplan-note" contenteditable="true" spellcheck="false"
+                data-placeholder="Zusatzinfo, Ausführung, Notiz …"
+                onblur="savePlanExercise(${di},${ei},'note',this.textContent)"
+                onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();this.blur()}"
+              >${esc(ex.note||'')}</div>
+            </div>
+            ${[1,2,3].map(w=>{
+              const lkey=currentBlock+'-'+di+'-'+ei+'-w'+w;
+              const lval=trainLogs[lkey]||'';
+              return`<div class="tplan-log-col">
+                <div class="tplan-log-label">W${w+(currentBlock*3)}</div>
+                <textarea class="tplan-log-input" placeholder="—"
+                  onblur="saveLog('${lkey}',this.value)"
+                >${lval}</textarea>
+              </div>`;
+            }).join('')}
+            <button class="fi-del" onclick="deletePlanExercise(${di},${ei})">×</button>
+          </div>`).join('')}
+        <button class="tplan-add-btn" onclick="addPlanExercise(${di})">+ Übung</button>
+      </div>
+    </div>`).join('');
+}
+
+function savePlanField(di,field,val){
+  trainBlocks[currentBlock][di][field]=val.trim();
+  save('trainBlocks_v3',trainBlocks);
+  showSaveHint();
+}
+
+function savePlanExercise(di,ei,field,val){
+  trainBlocks[currentBlock][di].exercises[ei][field]=val.trim();
+  save('trainBlocks_v3',trainBlocks);
+  showSaveHint();
+}
+
+function deletePlanExercise(di,ei){
+  const name=trainBlocks[currentBlock][di].exercises[ei].name||'diese Übung';
+  if(!confirm('"'+name+'" wirklich löschen?'))return;
+  trainBlocks[currentBlock][di].exercises.splice(ei,1);
+  save('trainBlocks_v3',trainBlocks);
+  renderTrainPlan();
+}
+
+function addPlanExercise(di){
+  trainBlocks[currentBlock][di].exercises.push({name:'Neue Übung',note:''});
+  save('trainBlocks_v3',trainBlocks);
+  renderTrainPlan();
+  const rows=document.querySelectorAll('.tplan-day')[di].querySelectorAll('.tplan-name');
+  const last=rows[rows.length-1];
+  if(last){last.focus();document.execCommand('selectAll',false,null);}
+}
+
+function toggleWorkout(di){
+  const wkey=currentBlock+'-'+di;
+  if(activeTimer!==null&&timerDay===di&&timerBlock===currentBlock){
+    clearInterval(activeTimer);
+    const elapsed=Math.floor((Date.now()-timerStart)/1000);
+    const h=Math.floor(elapsed/3600),m=Math.floor((elapsed%3600)/60),s=elapsed%60;
+    const label=(h>0?h+'h ':'')+m+'m '+s+'s';
+    workoutTimes[wkey]=label;
+    save('workoutTimes',workoutTimes);
+    activeTimer=null;timerStart=null;timerDay=null;timerBlock=null;
+    renderTrainPlan();
+  } else {
+    if(activeTimer!==null){
+      clearInterval(activeTimer);
+      document.getElementById('wbtn-'+timerDay).textContent='Start';
+      document.getElementById('timer-'+timerDay).style.display='none';
+    }
+    timerStart=Date.now();timerDay=di;timerBlock=currentBlock;
+    const timerEl=document.getElementById('timer-'+di);
+    const btnEl=document.getElementById('wbtn-'+di);
+    timerEl.style.display='inline';
+    btnEl.textContent='Stopp';
+    btnEl.style.background='#c02020';
+    activeTimer=setInterval(()=>{
+      const e=Math.floor((Date.now()-timerStart)/1000);
+      const m=Math.floor(e/60),s=e%60;
+      timerEl.textContent=(m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+    },1000);
+  }
+}
+
+/* ══ EMOM ══ */
+let emomTimer=null,emomRound=0,emomTotalRounds=0,emomSecsPerRound=60,emomSecsLeft=0,emomPaused=false;
+
+function openEmom(){
+  document.getElementById('emom-overlay').style.display='flex';
+  document.getElementById('emom-setup').style.display='block';
+  document.getElementById('emom-running').style.display='none';
+}
+function closeEmom(){
+  stopEmom();
+  document.getElementById('emom-overlay').style.display='none';
+}
+function startEmom(){
+  emomTotalRounds=parseInt(document.getElementById('emom-rounds').value)||10;
+  emomSecsPerRound=parseInt(document.getElementById('emom-secs').value)||60;
+  emomRound=1;emomSecsLeft=emomSecsPerRound;emomPaused=false;
+  document.getElementById('emom-setup').style.display='none';
+  document.getElementById('emom-running').style.display='block';
+  updateEmomDisplay();
+  emomTimer=setInterval(tickEmom,1000);
+}
+function tickEmom(){
+  if(emomPaused)return;
+  emomSecsLeft--;
+  if(emomSecsLeft<=0){
+    emomRound++;
+    if(emomRound>emomTotalRounds){stopEmom();return;}
+    emomSecsLeft=emomSecsPerRound;
+    try{new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAA').play();}catch(e){}
+  }
+  updateEmomDisplay();
+}
+function updateEmomDisplay(){
+  document.getElementById('emom-round-label').textContent='Runde '+emomRound+' / '+emomTotalRounds;
+  document.getElementById('emom-clock').textContent=emomSecsLeft<10?'0'+emomSecsLeft:emomSecsLeft;
+  const pct=((emomSecsPerRound-emomSecsLeft)/emomSecsPerRound*100).toFixed(1);
+  document.getElementById('emom-progress').style.width=pct+'%';
+  document.getElementById('emom-clock').style.color=emomSecsLeft<=5?'#ff4d00':'#fff';
+}
+function pauseEmom(){
+  emomPaused=!emomPaused;
+  document.getElementById('emom-pause-btn').textContent=emomPaused?'Weiter':'Pause';
+}
+function stopEmom(){
+  if(emomTimer){clearInterval(emomTimer);emomTimer=null;}
+  emomRound=0;emomPaused=false;
+  document.getElementById('emom-setup').style.display='block';
+  document.getElementById('emom-running').style.display='none';
+}
+
+function saveStartDate(val){
+  trainStartDate = val;
+  save('trainStartDate', val);
+  renderTrainPlan();
+}
+
+function saveLog(key,val){
+  trainLogs[key]=val;
+  save('trainLogs',trainLogs);
+}
+
+function showSaveHint(){
+  const h=document.getElementById('train-save-hint');
+  if(!h)return;
+  h.style.opacity='1';
+  clearTimeout(window._saveHintTimer);
+  window._saveHintTimer=setTimeout(()=>h.style.opacity='0',1800);
+}
+
+/* ══ UTILS ══ */
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function cap(s){return s?s[0].toUpperCase()+s.slice(1):s}
+
+/* ══ INIT ══ */
+syncFromSupabase().then(()=>{
+  focusItems=load('focus',[]);
+  todos=load('todos',{privat:[],beruflich:[]});
+  projects=load('projects',[
+    {id:1,name:'Bootsführerschein',desc:'Theorie und Praxis – regelmäßig Zeit zum Lernen einplanen.',color:'amber',progress:20,tasks:[{id:1,text:'Theoriebuch Kapitel 1–3',done:true},{id:2,text:'Prüfungsfragen üben',done:false},{id:3,text:'Praxiseinheit buchen',done:false}]},
+    {id:2,name:'Jugendhilfe Lernplattform',desc:'Webbasierte Online-Lernplattform für die Jugendhilfe erstellen.',color:'blue',progress:10,tasks:[{id:1,text:'Anforderungen definieren',done:true},{id:2,text:'Technologie-Stack wählen',done:false},{id:3,text:'MVP-Prototyp bauen',done:false}]}
+  ]);
+  shopItems=load('shop',[]);
+  trainDone=load('trainDone',{});
+  trainBlocks=load('trainBlocks_v3',DEFAULT_BLOCKS);
+  trainLogs=load('trainLogs',{});
+  workoutTimes=load('workoutTimes',{});
+  trainStartDate=load('trainStartDate','');
+  renderHeute();
+  renderTodos();
+});
+</script>
+
+<div id="emom-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:600;align-items:flex-end;justify-content:center;backdrop-filter:blur(2px)" onclick="if(event.target===this)closeEmom()">
+  <div style="background:var(--nav-bg);border-radius:var(--radiusL) var(--radiusL) 0 0;padding:28px 24px;width:100%;max-width:480px;color:#fff">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <div style="font-family:var(--font-serif);font-size:19px;font-weight:700">EMOM Timer</div>
+      <button onclick="closeEmom()" style="color:rgba(255,255,255,.5);font-size:22px;background:none;border:none;cursor:pointer;line-height:1">×</button>
+    </div>
+
+    <div id="emom-setup">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+        <div>
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);margin-bottom:6px">Runden</div>
+          <input type="number" id="emom-rounds" value="10" min="1" max="60" style="width:100%;background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:10px 12px;font-size:18px;font-weight:600;text-align:center">
+        </div>
+        <div>
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);margin-bottom:6px">Sek. / Minute</div>
+          <input type="number" id="emom-secs" value="60" min="10" max="300" style="width:100%;background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:10px 12px;font-size:18px;font-weight:600;text-align:center">
+        </div>
+      </div>
+      <button onclick="startEmom()" style="width:100%;padding:14px;background:#ff4d00;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:var(--font-sans)">Starten</button>
+    </div>
+
+    <div id="emom-running" style="display:none;text-align:center">
+      <div id="emom-round-label" style="font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.4);margin-bottom:8px">Runde 1 / 10</div>
+      <div id="emom-clock" style="font-size:72px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em;line-height:1;margin-bottom:4px">00</div>
+      <div id="emom-progress-wrap" style="height:4px;background:rgba(255,255,255,.12);border-radius:2px;margin:16px 0 20px">
+        <div id="emom-progress" style="height:100%;background:#ff4d00;border-radius:2px;transition:width .9s linear;width:0%"></div>
+      </div>
+      <div style="display:flex;gap:10px">
+        <button onclick="pauseEmom()" id="emom-pause-btn" style="flex:1;padding:12px;background:rgba(255,255,255,.1);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;font-family:var(--font-sans)">Pause</button>
+        <button onclick="stopEmom()" style="flex:1;padding:12px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.5);border:none;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;font-family:var(--font-sans)">Beenden</button>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
