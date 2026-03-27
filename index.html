@@ -193,12 +193,20 @@ input[type="checkbox"]{width:18px;height:18px;accent-color:var(--accent);cursor:
 .tplan-note:focus:before{display:none}
 [contenteditable][data-placeholder]:empty:before{content:attr(data-placeholder);color:var(--text3);pointer-events:none}
 [contenteditable][data-placeholder]:focus:empty:before{display:none}
-.tplan-log-col{display:flex;flex-direction:column;gap:3px;width:68px;flex-shrink:0;min-width:60px}
-.tplan-log-label{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);font-weight:600;text-align:center}
-.tplan-log-input{font-family:var(--font-sans);font-size:13px;color:var(--text);background:var(--bg3);border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;resize:none;outline:none;line-height:1.5;transition:border-color .15s;width:100%;height:64px;box-sizing:border-box}
+.tplan-log-col{display:flex;flex-direction:column;gap:4px;width:120px;flex-shrink:0;min-width:110px}
+.tplan-log-label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);font-weight:600;text-align:center}
+.tplan-log-input{font-family:var(--font-sans);font-size:14px;color:var(--text);background:var(--bg3);border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;resize:none;outline:none;line-height:1.6;transition:border-color .15s;width:100%;min-height:100px;box-sizing:border-box}
 .tplan-log-input:focus{border-color:var(--accent)}
-.tplan-log-input:focus{border-color:var(--accent)}
+
 .tplan-add-btn{font-size:11px;color:var(--text3);background:none;border:none;cursor:pointer;padding:6px 4px;opacity:.6}
+.mobile-week-tabs{display:none;gap:4px;margin-bottom:12px}
+.mobile-week-tab{flex:1;text-align:center;padding:8px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;background:var(--bg4);color:var(--text2);border:1.5px solid transparent;transition:all .15s}
+.mobile-week-tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+@media(max-width:600px){
+  .mobile-week-tabs{display:flex}
+  .tplan-log-col{display:none}
+  .tplan-log-col.mobile-active{display:flex}
+}
 .tplan-add-btn:hover{color:var(--accent);opacity:1}
 ::-webkit-scrollbar{width:3px}
 ::-webkit-scrollbar-track{background:transparent}
@@ -527,15 +535,17 @@ async function syncFromSupabase(){
   try{
     const {data,error}=await db.from('hub_data').select('key,value');
     if(error||!data)throw error;
-    const versionRow=data.find(r=>r.key==='__version__');
-    if(versionRow&&versionRow.value===DATA_VERSION){
-      data.forEach(row=>{
-        if(row.key!=='__version__')try{localStorage.setItem(row.key,JSON.stringify(row.value))}catch{}
-      });
-    } else {
-      // Version mismatch – ignore stale Supabase data, save new version marker
-      db.from('hub_data').upsert({key:'__version__',value:DATA_VERSION,updated_at:new Date().toISOString()},{onConflict:'key'}).then(()=>{});
-    }
+    data.forEach(row=>{
+      if(row.key==='__version__')return;
+      if(row.key==='trainBlocks_v5'){
+        const val=row.value;
+        if(val&&Array.isArray(val)&&val.length===4){
+          try{localStorage.setItem(row.key,JSON.stringify(val))}catch{}
+        }
+        return;
+      }
+      try{localStorage.setItem(row.key,JSON.stringify(row.value))}catch{}
+    });
     showSyncDot('ok');
   }catch(e){
     showSyncDot('err');
@@ -1183,6 +1193,8 @@ const DEFAULT_BLOCKS = [
 let trainBlocks = DEFAULT_BLOCKS;
 let currentBlock = 0;
 let currentWeek = 1;
+let mobileWeekPM2 = 1;
+let mobileWeekGiant = 1;
 let trainLogs = {};
 let workoutTimes = {};
 
@@ -1326,16 +1338,20 @@ function renderGiant(){
           </div>
         </div>
         <div class="tplan-exercises">
+          <div class="mobile-week-tabs">
+            ${[1,2,3,4].map(w=>'<div class="mobile-week-tab'+(mobileWeekGiant===w?' active':'')+'" onclick="setMobileWeekGiant('+w+')">Wo '+w+'</div>').join('')}
+          </div>
           ${day.exercises.map((ex,ei)=>`
             <div class="tplan-row">
               <span class="tplan-num">${ei+1}</span>
               <div class="tplan-cell-wrap">
                 <div class="tplan-name">${esc(ex.name)}</div>
                 <div class="tplan-note">${esc(ex.note)}</div>
+                ${ex.note&&ex.note.length>80?`<button class="tplan-note-toggle" onclick="toggleNote(this,'gnote-${di}-${ei}')">mehr anzeigen ▾</button>`:''}
               </div>
               ${[1,2,3,4].map(w=>{
                 const lk='g-'+currentGiantProgram+'-'+di+'-'+ei+'-w'+w;
-                return '<div class="tplan-log-col"><div class="tplan-log-label">Wo '+w+'</div><textarea class="tplan-log-input" placeholder="—" onblur="saveGiantLog(\''+lk+'\',this.value)">'+( giantLogs[lk]||'')+'</textarea></div>';
+                return '<div class="tplan-log-col'+(w===mobileWeekGiant?' mobile-active':'')+'" ><div class="tplan-log-label">Wo '+w+'</div><textarea class="tplan-log-input" placeholder="—" onblur="saveGiantLog(\''+lk+'\',this.value)">'+( giantLogs[lk]||'')+'</textarea></div>';
               }).join('')}
             </div>`).join('')}
         </div>
@@ -1430,6 +1446,9 @@ function renderTrainPlan(){
         </div>
       </div>
       <div class="tplan-exercises">
+        <div class="mobile-week-tabs" id="pm2-week-tabs-${di}">
+          ${[1,2,3].map(w=>{const actualW=currentBlock*3+w;return'<div class="mobile-week-tab'+(mobileWeekPM2===w?' active':'')+'" onclick="setMobileWeekPM2('+w+')">Wo '+actualW+'</div>';}).join('')}
+        </div>
         ${day.exercises.map((ex,ei)=>`
           <div class="tplan-row">
             <span class="tplan-num">${ei+1}</span>
@@ -1451,7 +1470,7 @@ function renderTrainPlan(){
               const lkey=currentBlock+'-'+di+'-'+ei+'-w'+w;
               const lval=trainLogs[lkey]||'';
               const actualW=currentBlock*3+w;
-              return '<div class="tplan-log-col"><div class="tplan-log-label">Wo '+actualW+'</div><textarea class="tplan-log-input" placeholder="—" onblur="saveLog(\''+lkey+'\',this.value)">'+lval+'</textarea></div>';
+              return '<div class="tplan-log-col'+(w===mobileWeekPM2?' mobile-active':'')+'"><div class="tplan-log-label">Wo '+actualW+'</div><textarea class="tplan-log-input" placeholder="—" onblur="saveLog(\''+lkey+'\',this.value)">'+lval+'</textarea></div>';
             }).join('')}
             <button class="fi-del" onclick="deletePlanExercise(${di},${ei})">×</button>
           </div>`).join('')}
@@ -1604,6 +1623,15 @@ function saveStartDate(val){
   renderTrainPlan();
 }
 
+function setMobileWeekPM2(w){
+  mobileWeekPM2=w;
+  renderTrainPlan();
+}
+function setMobileWeekGiant(w){
+  mobileWeekGiant=w;
+  renderGiant();
+}
+
 function saveLog(key,val){
   trainLogs[key]=val;
   save('trainLogs',trainLogs);
@@ -1645,12 +1673,9 @@ function resetAllData(){
   if(!confirm('ACHTUNG: Alle Daten zurücksetzen?\n\nDas löscht unwiderruflich:\n• Alle To Dos (inkl. Archiv)\n• Alle Projekte\n• Alle Einkaufseinträge\n• Alle Trainingslogs und Zeiten\n\nDieser Schritt kann nicht rückgängig gemacht werden.'))return;
   const confirm2=prompt('Zur Bestätigung bitte "RESET" eintippen:');
   if(confirm2!=='RESET'){alert('Abgebrochen.');return;}
-  const keys=['focus','todos','projects','shop','trainDone','trainBlocks_v5','trainLogs','workoutTimes','giantLogs','giantWorkoutTimes','giantStartDates','trainStartDates','todoArchive','currentPlan','currentGiantProgram'];
+  const keys=['focus','todos','projects','shop','trainDone','trainBlocks_v5','trainLogs','workoutTimes','giantLogs','giantWorkoutTimes','giantStartDates','trainStartDates','trainDayOverrides','todoArchive','currentPlan','currentGiantProgram','__version__'];
   keys.forEach(k=>localStorage.removeItem(k));
-  localStorage.removeItem('trainBlocks_v5');
-  db.from('hub_data').delete().neq('key','__placeholder__').then(()=>{
-    location.reload();
-  }).catch(()=>{location.reload();});
+  location.reload();
 }
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 function cap(s){return s?s[0].toUpperCase()+s.slice(1):s}
