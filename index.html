@@ -1265,7 +1265,7 @@ function getTrainDayLabel(di){
   const sd = trainStartDates[String(currentBlock)] || '';
   if(!sd) return '';
   const d = new Date(sd);
-  d.setDate(d.getDate() + di*2);
+  d.setDate(d.getDate() + di);
   return WDAYS_FULL[d.getDay()] + ', ' + d.getDate() + '. ' + MONTHS_SHORT[d.getMonth()];
 }
 function getTrainDayISO(di){
@@ -1275,7 +1275,7 @@ function getTrainDayISO(di){
   const sd = trainStartDates[String(currentBlock)] || '';
   if(!sd) return '';
   const d = new Date(sd);
-  d.setDate(d.getDate() + di*2);
+  d.setDate(d.getDate() + di);
   return d.toISOString().split('T')[0];
 }
 
