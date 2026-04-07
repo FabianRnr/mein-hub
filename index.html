@@ -29,7 +29,7 @@
   --font-sans:'DM Sans',system-ui,sans-serif;
   --nav-h:70px;
 }
-html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font-sans);font-size:15px;line-height:1.5;overflow-x:hidden}
+html,body{height:100%;background:var(--bg);padding:0;margin:0;color:var(--text);font-family:var(--font-sans);font-size:15px;line-height:1.5;overflow-x:hidden}
 
 
 
@@ -49,7 +49,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 
 input[type="checkbox"]{width:18px;height:18px;accent-color:var(--accent);cursor:pointer;flex-shrink:0}
 ::placeholder{color:var(--text3)}
 #app{display:flex;flex-direction:column;height:100dvh;max-width:900px;margin:0 auto}
-#header{padding:18px 22px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg);border-bottom:1px solid var(--border)}
+#header{padding:18px 22px 14px;padding-top:calc(env(safe-area-inset-top,0px) + 18px);display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg);border-bottom:1px solid var(--border)}
 #header-left h1{font-family:var(--font-serif);font-size:21px;font-weight:700;letter-spacing:-.01em;color:var(--text)}
 #header-left h1 span{color:var(--accent)}
 #header-left .date{font-size:11px;color:var(--text3);margin-top:2px;letter-spacing:.06em;text-transform:uppercase}
@@ -58,7 +58,7 @@ input[type="checkbox"]{width:18px;height:18px;accent-color:var(--accent);cursor:
 .stat-pill .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0}
 .stat-pill .dot.green{background:var(--green2)}
 #main{flex:1;overflow-y:auto;padding:0 0 calc(var(--nav-h) + 8px)}
-#nav{height:var(--nav-h);background:var(--nav-bg);display:flex;align-items:stretch;padding:0 6px;position:sticky;bottom:0;z-index:100;padding-bottom:env(safe-area-inset-bottom,0)}
+#nav{height:calc(var(--nav-h) + env(safe-area-inset-bottom,0px));background:var(--nav-bg);display:flex;align-items:flex-start;padding:0 6px;padding-bottom:env(safe-area-inset-bottom,0px);position:sticky;bottom:0;z-index:100}
 .nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,0.35);transition:color .15s;padding:8px 4px;border-radius:10px;margin:8px 2px}
 .nav-btn svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
 .nav-btn.active{color:#fff}
@@ -229,7 +229,7 @@ input[type="checkbox"]{width:18px;height:18px;accent-color:var(--accent);cursor:
   .tplan-log-input{font-size:12px;padding:5px 6px}
   .project-actions{flex-wrap:wrap}
   .add-row{flex-wrap:wrap}
-  #header{padding:12px 16px 10px}
+  #header{padding:12px 16px 10px;padding-top:calc(env(safe-area-inset-top,0px) + 12px)}
   .section{padding:16px}
   .greeting{padding:18px}
   .greeting h2{font-size:20px}
@@ -415,10 +415,10 @@ input[type="checkbox"]{width:18px;height:18px;accent-color:var(--accent);cursor:
             <div style="font-size:11px;color:rgba(255,255,255,.4);background:rgba(255,77,0,.2);padding:2px 8px;border-radius:20px;white-space:nowrap">12 Wochen · 6 Tage/Woche</div>
           </div>
           <div style="font-size:12px;color:rgba(255,255,255,.5);line-height:1.6;margin-bottom:12px">Push/Legs, Pull, Accessory & Full Body – täglich wechselnder Fokus. Alle 3 Wochen neue Übungsvarianten zur Progression.</div>
-          <div style="display:flex;align-items:center;gap:10px">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
             <label style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.4);white-space:nowrap">Startdatum:</label>
-            <input type="date" id="train-start-date" onchange="saveStartDate(this.value)" style="font-size:13px;padding:6px 10px;border-radius:8px;background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.15);outline:none">
-            <div id="train-save-hint" style="font-size:11px;color:rgba(255,255,255,.4);opacity:0;transition:opacity .4s">gespeichert</div>
+            <input type="date" id="train-start-date" oninput="saveStartDate(this.value)" onchange="saveStartDate(this.value)" style="font-size:13px;padding:6px 10px;border-radius:8px;background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.15);outline:none;color-scheme:dark">
+            <button onclick="clearTrainStartDate()" style="font-size:11px;color:rgba(255,255,255,.35);background:none;border:none;cursor:pointer;padding:0;white-space:nowrap" onmouseover="this.style.color='#ff6b6b'" onmouseout="this.style.color='rgba(255,255,255,.35)'">Datum löschen</button>
           </div>
         </div>
       </div>
@@ -446,6 +446,7 @@ input[type="checkbox"]{width:18px;height:18px;accent-color:var(--accent);cursor:
       <div class="card" style="margin-bottom:14px">
         <div class="card-title">Allgemein</div>
 
+
         <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0">
           <div>
             <div style="font-size:14px;font-weight:500">App-Version</div>
@@ -454,23 +455,7 @@ input[type="checkbox"]{width:18px;height:18px;accent-color:var(--accent);cursor:
         </div>
       </div>
 
-      <div class="card" style="margin-bottom:14px;border-color:rgba(192,32,32,.2)">
-        <div class="card-title" style="color:var(--red)">Daten</div>
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">
-          <div>
-            <div style="font-size:14px;font-weight:500">Archiv leeren</div>
-            <div style="font-size:12px;color:var(--text3);margin-top:2px">Alle archivierten To Dos löschen</div>
-          </div>
-          <button class="btn btn-sm btn-ghost" style="color:var(--red);border-color:rgba(192,32,32,.3)" onclick="clearArchive()">Leeren</button>
-        </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0">
-          <div>
-            <div style="font-size:14px;font-weight:500;color:var(--red)">Alles zurücksetzen</div>
-            <div style="font-size:12px;color:var(--text3);margin-top:2px">Alle Daten, To Dos, Projekte, Training – unwiderruflich</div>
-          </div>
-          <button class="btn btn-sm" style="background:var(--red)" onclick="resetAllData()">Reset</button>
-        </div>
-      </div>
+
     </div>
   </div>
 </div>
@@ -534,7 +519,7 @@ async function syncFromSupabase(){
   showSyncDot('loading');
   try{
     const {data,error}=await db.from('hub_data').select('key,value');
-    if(error||!data)throw error;
+    if(error||!data){showSyncDot('err');return;}
     data.forEach(row=>{
       if(row.key==='__version__')return;
       if(row.key==='trainBlocks_v5'){
@@ -1252,31 +1237,15 @@ let timerStart = null;
 let timerBlock = null;
 let timerDay = null;
 let trainStartDates = {};
-let trainDayOverrides = {};
 const WDAYS_FULL = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
 const MONTHS_SHORT = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
 function getTrainDayLabel(di){
-  const overrideKey = currentBlock+'-'+di;
-  const override = trainDayOverrides[overrideKey];
-  if(override){
-    const d = new Date(override);
-    return WDAYS_FULL[d.getDay()] + ', ' + d.getDate() + '. ' + MONTHS_SHORT[d.getMonth()];
-  }
-  const sd = trainStartDates[String(currentBlock)] || '';
+  const sd=load('pm2_start_'+currentBlock,'')||'';
   if(!sd) return '';
-  const d = new Date(sd);
-  d.setDate(d.getDate() + di);
-  return WDAYS_FULL[d.getDay()] + ', ' + d.getDate() + '. ' + MONTHS_SHORT[d.getMonth()];
-}
-function getTrainDayISO(di){
-  const overrideKey = currentBlock+'-'+di;
-  const override = trainDayOverrides[overrideKey];
-  if(override) return override;
-  const sd = trainStartDates[String(currentBlock)] || '';
-  if(!sd) return '';
-  const d = new Date(sd);
-  d.setDate(d.getDate() + di);
-  return d.toISOString().split('T')[0];
+  const d=new Date(sd);
+  if(isNaN(d.getTime())) return '';
+  d.setDate(d.getDate()+di);
+  return WDAYS_FULL[d.getDay()]+', '+d.getDate()+'. '+MONTHS_SHORT[d.getMonth()];
 }
 
 function switchPlan(plan, el){
@@ -1308,20 +1277,18 @@ function renderGiant(){
           <div style="font-family:var(--font-serif);font-size:17px;font-weight:700;color:#fff">${prog.label}</div>
           <div style="font-size:11px;color:rgba(255,255,255,.4);background:rgba(255,77,0,.2);padding:2px 8px;border-radius:20px;white-space:nowrap">${prog.rm} · ${prog.duration}</div>
         </div>
-        <select onchange="switchGiantProg(this.value,null)" style="font-size:13px;padding:6px 10px;border-radius:8px;background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);outline:none;cursor:pointer">
-          <option value="1.0" ${currentGiantProgram==='1.0'?'selected':''}>The Giant 1.0</option>
-          <option value="1.1" ${currentGiantProgram==='1.1'?'selected':''}>The Giant 1.1</option>
-          <option value="1.2" ${currentGiantProgram==='1.2'?'selected':''}>The Giant 1.2</option>
-          <option value="2.0" ${currentGiantProgram==='2.0'?'selected':''}>The Giant 2.0</option>
-          <option value="3.0" ${currentGiantProgram==='3.0'?'selected':''}>The Giant 3.0</option>
+        <select onchange="switchGiantProg(this.value,null)" style="font-size:13px;padding:6px 10px;border-radius:8px;background:var(--nav-bg);color:#fff;border:1px solid rgba(255,255,255,.2);outline:none;cursor:pointer;color-scheme:dark">
+          <option value="1.0" ${currentGiantProgram==='1.0'?'selected':''} style="background:var(--nav-bg);color:#fff">The Giant 1.0</option>
+          <option value="1.1" ${currentGiantProgram==='1.1'?'selected':''} style="background:var(--nav-bg);color:#fff">The Giant 1.1</option>
+          <option value="1.2" ${currentGiantProgram==='1.2'?'selected':''} style="background:var(--nav-bg);color:#fff">The Giant 1.2</option>
+          <option value="2.0" ${currentGiantProgram==='2.0'?'selected':''} style="background:var(--nav-bg);color:#fff">The Giant 2.0</option>
+          <option value="3.0" ${currentGiantProgram==='3.0'?'selected':''} style="background:var(--nav-bg);color:#fff">The Giant 3.0</option>
         </select>
       </div>
       <div style="font-size:12px;color:rgba(255,255,255,.5);line-height:1.6;margin-bottom:12px">${prog.info}</div>
       <div style="display:flex;align-items:center;gap:10px">
         <label style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.4);white-space:nowrap">Startdatum:</label>
-        <input type="date" value="${giantStartDates[currentGiantProgram]||''}"
-          onchange="saveGiantStartDate(this.value)"
-          style="font-size:13px;padding:6px 10px;border-radius:8px;background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.15);outline:none">
+        <input type="date" value="${giantStartDates[currentGiantProgram]||''}" oninput="saveGiantStartDate(this.value)" onchange="saveGiantStartDate(this.value)" style="font-size:13px;padding:6px 10px;border-radius:8px;background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.15);outline:none;color-scheme:dark">
       </div>
     </div>
     ${prog.days.map((day,di)=>`
@@ -1409,14 +1376,16 @@ function switchPlan_init(){
 function renderTraining(){
   switchPlan_init();
   const inp = document.getElementById('train-start-date');
-  if(inp) inp.value = trainStartDates[String(currentBlock)] || '';
-  renderTrainPlan();
+  if(inp) inp.value=load('pm2_start_'+currentBlock,'')||'';
+  if(currentPlan==='pm2') renderTrainPlan();
 }
 
 function switchBlock(idx,el){
   currentBlock=idx;
   document.querySelectorAll('#week-block-tabs .tab').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
+  const inp = document.getElementById('train-start-date');
+  if(inp) inp.value=load('pm2_start_'+currentBlock,'')||'';
   renderTrainPlan();
 }
 
@@ -1431,13 +1400,12 @@ function renderTrainPlan(){
             onblur="savePlanField(${di},'focus',this.textContent)"
             onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}"
           >${esc(day.focus)}</span>
-          <div style="display:flex;align-items:center;gap:5px">
-            <span style="font-size:11px;color:var(--text3);font-family:var(--font-sans)">${getTrainDayLabel(di)}</span>
-            <button onclick="promptTrainDayOverride(${di})" title="Datum anpassen" style="background:none;border:none;cursor:pointer;padding:2px;opacity:.45;transition:opacity .15s;line-height:1" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.45">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-            </button>
-            ${(()=>{const k=currentBlock+'-'+di;return trainDayOverrides[k]?'<button onclick="clearTrainDayOverride('+di+')" style="font-size:9px;color:var(--text3);background:none;border:none;cursor:pointer;opacity:.5;padding:0" title="Zurücksetzen">↺</button>':''})()}
-          </div>
+          <input type="text"
+            value="${getDayDisplayValue(di)}"
+            placeholder="${getTrainDayLabel(di)||'TT.MM.JJJJ'}"
+            onblur="savePM2DayOverride(${di},this.value)"
+            onkeydown="if(event.key==='Enter')this.blur()"
+            style="font-size:11px;color:var(--text3);background:none;border:none;border-bottom:1px solid rgba(128,128,128,.3);outline:none;width:108px;padding:1px 2px;font-family:var(--font-sans);cursor:text">
         </div>
         <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
           <span id="timer-${di}" style="font-size:13px;font-weight:600;color:var(--accent);font-variant-numeric:tabular-nums;display:none;min-width:48px">00:00</span>
@@ -1589,37 +1557,51 @@ function stopEmom(){
   document.getElementById('emom-running').style.display='none';
 }
 
-function promptTrainDayOverride(di){
-  const current=getTrainDayISO(di);
-  const val=prompt('Datum für diesen Tag eingeben (TT.MM.JJJJ):', current?formatDateDE(current):'');
-  if(val===null)return;
-  const parts=val.trim().split('.');
-  if(parts.length!==3)return alert('Bitte Format TT.MM.JJJJ verwenden.');
-  const iso=parts[2]+'-'+parts[1].padStart(2,'0')+'-'+parts[0].padStart(2,'0');
-  if(isNaN(new Date(iso)))return alert('Ungültiges Datum.');
-  setTrainDayOverride(di,iso);
-}
-function formatDateDE(iso){
-  if(!iso)return '';
+function isoToDE(iso){
+  if(!iso) return '';
   const p=iso.split('-');
+  if(p.length!==3) return iso;
   return p[2]+'.'+p[1]+'.'+p[0];
 }
+function deToISO(de){
+  if(!de||!de.trim()) return '';
+  const p=de.trim().split('.');
+  if(p.length!==3||!p[2]) return '';
+  return p[2]+'-'+p[1].padStart(2,'0')+'-'+p[0].padStart(2,'0');
+}
+function getDayDisplayValue(di){
+  const override=load('pm2_day_'+currentBlock+'_'+di,'');
+  if(override) return override;
+  return getTrainDayLabel(di);
+}
+function savePM2DayOverride(di,val){
+  const key='pm2_day_'+currentBlock+'_'+di;
+  const trimmed=val.trim();
+  if(!trimmed){
+    save(key,'');
+    localStorage.removeItem('pm2_day_'+currentBlock+'_'+di);
+  } else {
+    // validate basic format
+    const parts=trimmed.split('.');
+    if(parts.length===3&&parts[2].length===4){
+      save(key,trimmed);
+    }
+  }
+  renderTrainPlan();
+}
 
-function setTrainDayOverride(di,val){
-  const k=currentBlock+'-'+di;
-  trainDayOverrides[k]=val;
-  save('trainDayOverrides',trainDayOverrides);
+function clearTrainStartDate(){
+  save('pm2_start_'+currentBlock,'');
+  localStorage.removeItem('pm2_start_'+currentBlock);
+  const inp=document.getElementById('train-start-date');
+  if(inp) inp.value='';
   renderTrainPlan();
 }
-function clearTrainDayOverride(di){
-  const k=currentBlock+'-'+di;
-  delete trainDayOverrides[k];
-  save('trainDayOverrides',trainDayOverrides);
-  renderTrainPlan();
-}
+
 function saveStartDate(val){
-  trainStartDates[String(currentBlock)] = val;
-  save('trainStartDates','trainDayOverrides', trainStartDates);
+  save('pm2_start_'+currentBlock, val);
+  // clear day overrides so auto-dates take effect
+  for(let i=0;i<6;i++){save('pm2_day_'+currentBlock+'_'+i,'');localStorage.removeItem('pm2_day_'+currentBlock+'_'+i);}
   renderTrainPlan();
 }
 
@@ -1646,16 +1628,6 @@ function showSaveHint(){
 }
 
 /* ══ UTILS ══ */
-function clearArchive(){
-  const total=(todoArchive.privat||[]).length+(todoArchive.beruflich||[]).length;
-  if(!total){alert('Das Archiv ist bereits leer.');return;}
-  if(!confirm('Archiv wirklich leeren?\n\n'+total+' archivierte Einträge werden unwiderruflich gelöscht.'))return;
-  todoArchive={privat:[],beruflich:[]};
-  save('todoArchive',todoArchive);
-  renderTodos();
-  alert('Archiv wurde geleert.');
-}
-
 function changePassword(){
   const current=prompt('Aktuelles Passwort eingeben:');
   if(current===null)return;
@@ -1669,34 +1641,39 @@ function changePassword(){
   alert('Passwort geändert auf: "'+newPw+'"\n\nWichtig: Ändere den Wert in der HTML-Datei (Suche nach "2408") und lade sie auf GitHub hoch, damit das neue Passwort dauerhaft gespeichert ist.');
 }
 
-function resetAllData(){
-  if(!confirm('ACHTUNG: Alle Daten zurücksetzen?\n\nDas löscht unwiderruflich:\n• Alle To Dos (inkl. Archiv)\n• Alle Projekte\n• Alle Einkaufseinträge\n• Alle Trainingslogs und Zeiten\n\nDieser Schritt kann nicht rückgängig gemacht werden.'))return;
-  const confirm2=prompt('Zur Bestätigung bitte "RESET" eintippen:');
-  if(confirm2!=='RESET'){alert('Abgebrochen.');return;}
-  const keys=['focus','todos','projects','shop','trainDone','trainBlocks_v5','trainLogs','workoutTimes','giantLogs','giantWorkoutTimes','giantStartDates','trainStartDates','trainDayOverrides','todoArchive','currentPlan','currentGiantProgram','__version__'];
-  keys.forEach(k=>localStorage.removeItem(k));
-  location.reload();
-}
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 function cap(s){return s?s[0].toUpperCase()+s.slice(1):s}
 
 
 /* ══ INIT ══ */
-syncFromSupabase().then(()=>{
+window.addEventListener('unhandledrejection', e=>{ e.preventDefault(); });
+window.addEventListener('error', e=>{ e.preventDefault(); });
+
+function initApp(){
   focusItems=load('focus',[]);
   todos=load('todos',{privat:[],beruflich:[]});
   projects=load('projects',[]);
   shopItems=load('shop',[]);
   trainDone=load('trainDone',{});
   const loadedBlocks=load('trainBlocks_v5',null);
-  trainBlocks=(loadedBlocks&&loadedBlocks.length===4)?loadedBlocks:DEFAULT_BLOCKS;
+  trainBlocks=(loadedBlocks&&loadedBlocks.length===4)?loadedBlocks:deepCopy(DEFAULT_BLOCKS);
   trainLogs=load('trainLogs',{});
   workoutTimes=load('workoutTimes',{});
-  trainStartDates=load('trainStartDates',{});
-  trainDayOverrides=load('trainDayOverrides',{});
+  giantLogs=load('giantLogs',{});
+  giantWorkoutTimes=load('giantWorkoutTimes',{});
+  giantStartDates=load('giantStartDates',{});
+  todoArchive=load('todoArchive',{privat:[],beruflich:[]});
+  currentPlan=load('currentPlan','pm2')||'pm2';
+  currentGiantProgram=load('currentGiantProgram','1.0')||'1.0';
   renderHeute();
   renderTodos();
-});
+}
+
+try {
+  syncFromSupabase().then(()=>{ try{initApp()}catch(e){} }).catch(()=>{ try{initApp()}catch(e){} });
+} catch(e) {
+  try{initApp()}catch(e2){}
+}
 </script>
 
 <div id="emom-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:600;align-items:flex-end;justify-content:center;backdrop-filter:blur(2px)" onclick="if(event.target===this)closeEmom()">
