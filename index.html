@@ -310,7 +310,7 @@ const DEFAULT_PLAN = [
     {name:'5-Minute Ab Routine', note:'V sit hold, side plank R/L, plank hold, leg lift toe touches – 1 min each.'}
   ]},
   {day:'Mi', label:'Mittwoch', focus:'Push/Legs – Chest Focus', exercises:[
-    {name:'100 Swings + 100 Push-Ups', note:'Split into sets as needed.'},
+    {name:'100 Swings + Dips',note:'10 Runden: 10 Swings + 4–5 Dips im Wechsel. Nicht ans Versagen – sauber und kontrolliert, nur bis Oberarm parallel, Ellbogen körpernah, leichte Vorlage. Einstieg (Wo 1–2): 5 Runden Dips, 5 Runden Push-Ups. Wenn 10x5 leicht wird: z.B. 8 Runden à 12 Swings + 6 Dips.'},
     {name:'Double Bell Squat Superset with Push-Ups', note:'6 sets, AMRAP. Rest as needed, log reps.'},
     {name:'Leg Circuit + Push Circuit', note:'LEG: 5 Reverse Lunges/side · 10 Goblet Squats · 5 Single-Hand Swings/side || PUSH: 5 Snatch-to-Press/side · 10 Bottom-Up Presses · 25 Push-Ups'}
   ]},
@@ -346,7 +346,7 @@ const BLOCK2_PLAN = [
     {name:'5-Minute Ab Routine',note:'V sit hold, side plank R/L, plank hold, leg lift toe touches – 1 min each.'}
   ]},
   {day:'Mi',label:'Mittwoch',focus:'Push/Legs – Chest Focus',exercises:[
-    {name:'100 Swings + 100 Push-Ups',note:'Split into sets as needed.'},
+    {name:'100 Swings + Dips',note:'10 Runden: 10 Swings + 4–5 Dips im Wechsel. Nicht ans Versagen – sauber und kontrolliert, nur bis Oberarm parallel, Ellbogen körpernah, leichte Vorlage. Einstieg (Wo 1–2): 5 Runden Dips, 5 Runden Push-Ups. Wenn 10x5 leicht wird: z.B. 8 Runden à 12 Swings + 6 Dips.'},
     {name:'Double Bell Squat Superset with Push-Ups',note:'6 sets, AMRAP. Rest as needed, log reps.'},
     {name:'Leg Circuit 2 + Push Circuit 2',note:'LEG: 10 Squat-to-Lunge/side (one side, then switch) || PUSH: 10 Clean-to-Press (alternate sides, switch in air) · 25 Push-Ups finisher'}
   ]},
@@ -381,7 +381,7 @@ const BLOCK3_PLAN = [
     {name:'5-Minute Ab Routine',note:'V sit hold, side plank R/L, plank hold, leg lift toe touches – 1 min each.'}
   ]},
   {day:'Mi',label:'Mittwoch',focus:'Push/Legs – Chest Focus',exercises:[
-    {name:'100 Swings + 100 Push-Ups',note:'Split into sets as needed.'},
+    {name:'100 Swings + Dips',note:'10 Runden: 10 Swings + 4–5 Dips im Wechsel. Nicht ans Versagen – sauber und kontrolliert, nur bis Oberarm parallel, Ellbogen körpernah, leichte Vorlage. Einstieg (Wo 1–2): 5 Runden Dips, 5 Runden Push-Ups. Wenn 10x5 leicht wird: z.B. 8 Runden à 12 Swings + 6 Dips.'},
     {name:'Double Bell Squat Superset with Push-Ups',note:'6 sets, AMRAP. Rest as needed, log reps.'},
     {name:'Windmills + Pushups',note:'4 sets of 5 reps windmills per side, 4 sets of 20 pushups. Superset these movements.'}
   ]},
@@ -416,7 +416,7 @@ const BLOCK4_PLAN = [
     {name:'5-Minute Ab Routine',note:'V sit hold, side plank R/L, plank hold, leg lift toe touches – 1 min each.'}
   ]},
   {day:'Mi',label:'Mittwoch',focus:'Push/Legs – Chest Focus',exercises:[
-    {name:'100 Swings + 100 Push-Ups',note:'Split into sets as needed.'},
+    {name:'100 Swings + Dips',note:'10 Runden: 10 Swings + 4–5 Dips im Wechsel. Nicht ans Versagen – sauber und kontrolliert, nur bis Oberarm parallel, Ellbogen körpernah, leichte Vorlage. Einstieg (Wo 1–2): 5 Runden Dips, 5 Runden Push-Ups. Wenn 10x5 leicht wird: z.B. 8 Runden à 12 Swings + 6 Dips.'},
     {name:'Double Bell Squat Superset with Push-Ups',note:'6 sets, AMRAP. Rest as needed, log reps.'},
     {name:'Overhead Squats + Lunges',note:'4 sets of 8 reps overhead squats per side, 4 sets of 10 lunges per side. Superset these movements.'}
   ]},
@@ -520,6 +520,7 @@ function phFor(ex,focus){
   if(t.indexOf('amrap')>-1)return 'z.B. 7 7 6 6 5 5 @ 2x24kg';
   if(n.indexOf('mobility')>-1)return 'z.B. 3 Runden @12kg, 15 min';
   if(n.indexOf('ab routine')>-1||n.indexOf('ruhetag')>-1)return 'z.B. erledigt';
+  if(n.indexOf('swings + dips')>-1)return 'z.B. 10 Rd: 10 Sw + 5 Dips';
   if(n.indexOf('curl')>-1)return 'z.B. 10x10 @16kg';
   if(f.indexOf('mace')>-1&&(n.indexOf('swing')>-1||n.indexOf('360')>-1||n.indexOf('pullover')>-1))return 'z.B. 10x20 @10kg';
   if(f.indexOf('club')>-1&&(n.indexOf('swing')>-1||n.indexOf('360')>-1||n.indexOf('pullover')>-1))return 'z.B. 10x20 @6kg';
@@ -1055,6 +1056,18 @@ function initApp(){
         if((ex.name==='Kettlebell Rows'||ex.name==='Pull-Ups')&&(ex.note||'').indexOf('10 sets')===0){
           ex.name='Pull-Ups + Kettlebell Rows';
           ex.note='5 Sätze Pull-Ups, danach 5 Sätze Rows – jeweils 2 Wdh vor Muskelversagen. Pull-Ups zuerst, solange du frisch bist; Rows verzeihen Ermüdung besser. Alternativ im Wechsel: 1 Satz Pull-Ups, Pause, 1 Satz Rows.';
+          migrated=true;
+        }
+      });
+    });
+  });
+  /* Migration 3: 100 Swings + 100 Push-Ups wird zu 100 Swings + Dips (Runden-Struktur). */
+  trainBlocks.forEach(blk=>{
+    (blk||[]).forEach(day=>{
+      (day.exercises||[]).forEach(ex=>{
+        if(ex.name==='100 Swings + 100 Push-Ups'&&(ex.note||'')==='Split into sets as needed.'){
+          ex.name='100 Swings + Dips';
+          ex.note='10 Runden: 10 Swings + 4–5 Dips im Wechsel. Nicht ans Versagen – sauber und kontrolliert, nur bis Oberarm parallel, Ellbogen körpernah, leichte Vorlage. Einstieg (Wo 1–2): 5 Runden Dips, 5 Runden Push-Ups. Wenn 10x5 leicht wird: z.B. 8 Runden à 12 Swings + 6 Dips.';
           migrated=true;
         }
       });
