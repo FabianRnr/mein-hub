@@ -517,10 +517,12 @@ function saveLog(key,val){
 function phFor(ex,focus){
   const n=(ex.name||'').toLowerCase(), t=(ex.note||'').toLowerCase(), f=(focus||'').toLowerCase();
   if(n.indexOf('pull-ups + kettlebell rows')>-1)return 'z.B. PU 5x5 / Rows 5x8 @24kg';
+  if(n.indexOf('clean and press')>-1)return 'z.B. CP 6 6 6 5 5 5 @ 2x16kg / PU 90';
+  if(n.indexOf('squat superset')>-1)return 'z.B. SQ 8 8 8 7 7 7 @ 2x16kg / PU 90';
   if(t.indexOf('amrap')>-1)return 'z.B. 7 7 6 6 5 5 @ 2x24kg';
   if(n.indexOf('mobility')>-1)return 'z.B. 3 Runden @12kg, 15 min';
   if(n.indexOf('ab routine')>-1||n.indexOf('ruhetag')>-1)return 'z.B. erledigt';
-  if(n.indexOf('swings + dips')>-1)return 'z.B. 10 Rd: 10 Sw + 5 Dips';
+  if(n.indexOf('swings + dips')>-1)return 'z.B. Dips 10x5 / Sw 10x10 @24kg';
   if(n.indexOf('curl')>-1)return 'z.B. 10x10 @16kg';
   if(f.indexOf('mace')>-1&&(n.indexOf('swing')>-1||n.indexOf('360')>-1||n.indexOf('pullover')>-1))return 'z.B. 10x20 @10kg';
   if(f.indexOf('club')>-1&&(n.indexOf('swing')>-1||n.indexOf('360')>-1||n.indexOf('pullover')>-1))return 'z.B. 10x20 @6kg';
@@ -851,20 +853,78 @@ function ptLabel(p){
   return p.raw.length>26?p.raw.slice(0,25)+'\u2026':p.raw;
 }
 
+/* Kombi-Übungen in ihre Bestandteile zerlegen (z.B. "PU 5x5 / Rows 5x8 @24kg") */
+function componentsFor(ex){
+  const n=(ex.name||'').toLowerCase();
+  if(n.indexOf('clean and press')>-1)return[{label:'Clean & Press',keys:['cp','c&p','clean','press']},{label:'Push-Ups',keys:['pu','push','liege']}];
+  if(n.indexOf('squat superset')>-1)return[{label:'Squats',keys:['sq','squat','kniebeuge']},{label:'Push-Ups',keys:['pu','push','liege']}];
+  if(n.indexOf('swings + dips')>-1)return[{label:'Dips',keys:['dip']},{label:'Swings',keys:['sw','swing']}];
+  if(n.indexOf('pull-ups + kettlebell rows')>-1)return[{label:'Pull-Ups',keys:['pu','pull','klimm']},{label:'Rows',keys:['row','ruder']}];
+  return null;
+}
+function segTag(seg,comps){
+  const s=seg.toLowerCase();
+  for(const c of comps){
+    for(const k of c.keys){
+      if(new RegExp('(^|[^a-zäöüß])'+k.replace('&','\\&')).test(s))return c;
+    }
+  }
+  return null;
+}
+function parseComponents(raw,ex){
+  if(!raw||!raw.trim())return null;
+  const comps=componentsFor(ex);
+  if(!comps){
+    const p=parseLog(raw);
+    return p?[{label:null,p:p}]:null;
+  }
+  const segs=raw.split(/[\/|;·]+/).map(s=>s.trim()).filter(Boolean);
+  const found={};
+  let untagged=null;
+  segs.forEach(seg=>{
+    const target=segTag(seg,comps);
+    let p=parseLog(seg);
+    if(target&&p&&p.totalReps==null&&p.weight==null){
+      /* Einzelzahl mit Kürzel gilt als Gesamt-Wdh, z.B. "PU 90" */
+      const nums=(seg.match(/\d+/g)||[]).map(Number).filter(n=>n>0&&n<=500);
+      if(nums.length===1){p.totalReps=nums[0];}
+    }
+    if(!p)return;
+    if(target){
+      if(!found[target.label])found[target.label]=p;
+    }else if(!untagged){
+      untagged=p;
+    }
+  });
+  /* Eintrag ohne Kürzel gehört zur Hauptübung (erste Komponente) */
+  const primary=comps[0].label;
+  if(!found[primary]&&untagged)found[primary]=untagged;
+  const out=Object.keys(found)
+    .filter(l=>found[l].totalReps!=null||found[l].weight!=null)
+    .map(l=>({label:l,p:found[l]}));
+  if(out.length)return out;
+  return[{label:primary,p:{raw:raw.trim()}}];
+}
+
 /* Übungen namensgleich über alle Blöcke zu 12-Wochen-Serien zusammenführen */
+const ANA_EXCLUDE=/circuit|ab routine|ruhetag/;
 function collectSeries(){
   const map={};
   for(let b=0;b<4;b++){
     (trainBlocks[b]||[]).forEach((day,di)=>{
       (day.exercises||[]).forEach((ex,ei)=>{
+        const nm=(ex.name||'').toLowerCase().trim();
+        if(!nm||ANA_EXCLUDE.test(nm))return;
         for(let w=1;w<=3;w++){
           const raw=trainLogs[b+'-'+di+'-'+ei+'-w'+w];
-          const p=parseLog(raw);
-          if(!p)continue;
-          const key=(ex.name||'').toLowerCase().trim();
-          if(!key)continue;
-          if(!map[key])map[key]={name:ex.name,day:day.label||day.day,pts:[]};
-          map[key].pts.push(Object.assign({week:b*3+w},p));
+          const res=parseComponents(raw,ex);
+          if(!res)continue;
+          res.forEach(r=>{
+            const label=r.label||ex.name;
+            const key=label.toLowerCase()+'|'+di; /* pro Wochentag getrennt */
+            if(!map[key])map[key]={name:label,day:day.label||day.day,parent:(r.label&&r.label!==ex.name)?ex.name:null,pts:[]};
+            map[key].pts.push(Object.assign({week:b*3+w},r.p));
+          });
         }
       });
     });
@@ -1001,7 +1061,7 @@ function renderAnalyse(){
       const arrow=s.pct>=5?'&#9650; ':(s.pct<=-5?'&#9660; ':'&#8594; ');
       out+='<div class="ana-ex">'
         +'<div class="ana-ex-head">'
-        +'<div><div class="ana-ex-name">'+esc(s.name)+'</div><div class="ana-ex-sub">'+esc(s.day)+' &middot; '+esc(s.metric.label)+' &middot; '+s.metric.pts.length+' Einträge</div></div>'
+        +'<div><div class="ana-ex-name">'+esc(s.name)+'</div><div class="ana-ex-sub">'+esc(s.day)+(s.parent?' &middot; aus &bdquo;'+esc(s.parent)+'&ldquo;':'')+' &middot; '+esc(s.metric.label)+' &middot; '+s.metric.pts.length+' Einträge</div></div>'
         +'<span class="ana-badge '+cls+'">'+arrow+(s.pct>0?'+':'')+s.pct+'&nbsp;%</span>'
         +'</div>'
         +sparkline(s.vals)
@@ -1020,7 +1080,7 @@ function renderAnalyse(){
     });
   }
 
-  out+='<div class="ana-insight" style="border-left-color:var(--text3);margin-top:18px"><b>Tipp für gut auswertbare Einträge:</b> Sätze&nbsp;&times;&nbsp;Wiederholungen plus Gewicht, z.&nbsp;B. <b>6x6 @ 2x24kg</b>, <b>5x5 24kg</b> oder AMRAP-Reihen wie <b>7 7 6 6 5 5</b>. Die Analyse berechnet daraus Wiederholungen und Trainingsvolumen (Wdh &times; kg) und vergleicht sie über die Wochen.</div>';
+  out+='<div class="ana-insight" style="border-left-color:var(--text3);margin-top:18px"><b>Tipp für gut auswertbare Einträge:</b> Sätze&nbsp;&times;&nbsp;Wiederholungen plus Gewicht, z.&nbsp;B. <b>6x6 @ 2x24kg</b> oder AMRAP-Reihen wie <b>7 7 6 6 5 5</b>. Bei Kombi-Übungen die Teile mit Kürzel und Schrägstrich trennen: <b>PU 5x5 / Rows 5x8 @24kg</b> oder <b>CP 6 6 5 5 5 5 @ 2x16kg / PU 90</b> &ndash; dann bekommt jede Teilübung ihre eigene Verlaufskurve. Die Analyse berechnet daraus Wiederholungen und Trainingsvolumen (Wdh &times; kg) und vergleicht sie über die Wochen.</div>';
 
   el.innerHTML=out;
 }
