@@ -9,6 +9,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="PM2">
 <title>Primal Mastery 2</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%3E%3Crect%20width%3D%2248%22%20height%3D%2248%22%20rx%3D%2211%22%20fill%3D%22%2314131a%22%2F%3E%3Cpath%20d%3D%22M17%2020a7%207%200%200%201%2014%200v3h-4v-3a3%203%200%200%200-6%200v3h-4z%22%20fill%3D%22%23ff4d00%22%2F%3E%3Cpath%20d%3D%22M24%2023c8%200%2013%206%2013%2012.5%200%204-2%207-5%207H16c-3%200-5-3-5-7C11%2029%2016%2023%2024%2023z%22%20fill%3D%22%23ff4d00%22%2F%3E%3C%2Fsvg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%3E%3Crect%20width%3D%2248%22%20height%3D%2248%22%20rx%3D%2211%22%20fill%3D%22%2314131a%22%2F%3E%3Cpath%20d%3D%22M17%2020a7%207%200%200%201%2014%200v3h-4v-3a3%203%200%200%200-6%200v3h-4z%22%20fill%3D%22%23ff4d00%22%2F%3E%3Cpath%20d%3D%22M24%2023c8%200%2013%206%2013%2012.5%200%204-2%207-5%207H16c-3%200-5-3-5-7C11%2029%2016%2023%2024%2023z%22%20fill%3D%22%23ff4d00%22%2F%3E%3C%2Fsvg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -107,6 +109,20 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 
 .tplan-date-cell input{font-size:11px;color:var(--text2);text-align:center;background:var(--bg3);border:1px solid var(--border);border-radius:7px;outline:none;width:100%;padding:5px 4px;box-shadow:none}
 .tplan-date-cell input:focus{border-color:var(--accent);color:var(--text)}
 .tplan-date-spacer{width:24px;flex-shrink:0}
+.tplan-day.is-today{border-color:var(--accent);box-shadow:0 0 0 3px rgba(255,77,0,.09),var(--shadow-sm)}
+.today-pill{font-size:9px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:#fff;background:var(--accent);padding:3px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.tplan-log-col.is-now .tplan-log-label{color:#fff;background:var(--accent);border-radius:5px;padding:1px 0}
+.tplan-log-col.is-now .tplan-log-input{border-color:var(--accent)}
+.tplan-log-input.has-val{background:var(--green-light);border-color:rgba(26,138,80,.3)}
+.tplan-day.is-light .tplan-exercises{padding-left:4px}
+.tplan-day.is-light .tplan-row{padding:6px 0}
+.tplan-day.is-light .tplan-log-input{min-height:44px}
+.tplan-day.is-light .tplan-add-btn{display:none}
+.day-collapse{font-size:11px;color:var(--text3);background:none;border:none;cursor:pointer;padding:4px 6px;flex-shrink:0}
+.day-collapse:hover{color:var(--accent)}
+.tplan-day.collapsed .tplan-exercises{display:none}
+.tplan-day.collapsed{padding-bottom:12px}
+.tplan-day.collapsed .tplan-day-head{margin-bottom:0;padding-bottom:0;border-bottom:none}
 .footer-tools{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:22px}
 .footer-tools button{font-size:12px;color:var(--text3);text-decoration:underline;background:none;border:none;cursor:pointer}
 .footer-tools button:hover{color:var(--text2)}
@@ -147,10 +163,8 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 
         <div>
           <svg width="36" height="36" viewBox="0 0 48 48" fill="none">
             <rect width="48" height="48" rx="13" fill="#14131a"/>
-            <rect x="11" y="11" width="11" height="11" rx="3" fill="#ff4d00"/>
-            <rect x="26" y="11" width="11" height="11" rx="3" fill="white" opacity=".6"/>
-            <rect x="11" y="26" width="11" height="11" rx="3" fill="white" opacity=".6"/>
-            <rect x="26" y="26" width="11" height="11" rx="3" fill="#ff4d00" opacity=".5"/>
+            <path d="M17 20a7 7 0 0 1 14 0v3h-4v-3a3 3 0 0 0-6 0v3h-4z" fill="#ff4d00"/>
+            <path d="M24 23c8 0 13 6 13 12.5 0 4-2 7-5 7H16c-3 0-5-3-5-7C11 29 16 23 24 23z" fill="#ff4d00"/>
           </svg>
         </div>
         <div>
@@ -537,28 +551,53 @@ function saveLog(key,val){
 function phFor(ex,focus){
   const n=(ex.name||'').toLowerCase(), t=(ex.note||'').toLowerCase(), f=(focus||'').toLowerCase();
   if(n.indexOf('pull-ups + kettlebell rows')>-1)return 'z.B. PU 5x5 / Rows 5x8 @24kg';
-  if(n.indexOf('clean and press')>-1)return 'z.B. CP 6 6 6 5 5 5 @ 2x16kg / PU 90';
-  if(n.indexOf('squat superset')>-1)return 'z.B. SQ 8 8 8 7 7 7 @ 2x16kg / PU 90';
+  if(n.indexOf('clean and press')>-1)return 'z.B. 5x 6CP/15PU @16kg';
+  if(n.indexOf('squat superset')>-1)return 'z.B. 5x 6SQ/15PU @16kg';
+  if(n.indexOf('100 snatches')>-1)return 'z.B. 80 in 7 Min @16kg';
   if(t.indexOf('amrap')>-1)return 'z.B. 7 7 6 6 5 5 @ 2x24kg';
   if(n.indexOf('mobility')>-1)return 'z.B. 3 Runden @12kg, 15 min';
   if(n.indexOf('ab routine')>-1||n.indexOf('ruhetag')>-1)return 'z.B. erledigt';
-  if(n.indexOf('swings + dips')>-1)return 'z.B. Dips 10x5 / Sw 10x10 @24kg';
-  if(n.indexOf('curl')>-1)return 'z.B. 10x10 @16kg';
+  if(n.indexOf('swings + dips')>-1)return 'z.B. 10x 10Sw/5Dips @24kg';
+  if(n.indexOf('leg raises')>-1)return '';
+  if(n.indexOf('circuit')>-1)return '';
+  if(n.indexOf('tricep')>-1)return 'z.B. 10x10 @20kg';
+  if(n.indexOf('curl')>-1)return 'z.B. 10x10 @20kg';
   if(f.indexOf('mace')>-1&&(n.indexOf('swing')>-1||n.indexOf('360')>-1||n.indexOf('pullover')>-1))return 'z.B. 10x20 @10kg';
   if(f.indexOf('club')>-1&&(n.indexOf('swing')>-1||n.indexOf('360')>-1||n.indexOf('pullover')>-1))return 'z.B. 10x20 @6kg';
   if(n.indexOf('swing')>-1||n.indexOf('snatch')>-1||n.indexOf('pullover')>-1)return 'z.B. 10x10 @24kg';
   return 'z.B. 5x5 @24kg';
 }
+/* Ermittelt aus dem Startdatum, welcher Tag/welche Woche heute ansteht */
+function todayPos(){
+  const sd=load('pm2_start_'+currentBlock,'')||'';
+  if(!sd)return null;
+  const start=new Date(sd);
+  if(isNaN(start.getTime()))return null;
+  start.setHours(0,0,0,0);
+  const now=new Date();now.setHours(0,0,0,0);
+  const diff=Math.round((now-start)/86400000);
+  if(diff<0||diff>20)return null;
+  return {di:diff%7,w:Math.floor(diff/7)+1};
+}
+const LIGHT_DAYS=/flow day|rest|recovery|ruhetag/;
+
 function renderTrainPlan(){
   const el=document.getElementById('train-plan-list');
   const plan=trainBlocks[currentBlock];
-  el.innerHTML=plan.map((day,di)=>`
-    <div class="tplan-day" style="margin-bottom:14px">
+  const tp=todayPos();
+  el.innerHTML=plan.map((day,di)=>{
+    const isToday=tp&&tp.di===di;
+    const light=LIGHT_DAYS.test((day.focus||'').toLowerCase());
+    const collapsed=light&&!isToday;
+    return `
+    <div class="tplan-day${isToday?' is-today':''}${light?' is-light':''}${collapsed?' collapsed':''}" style="margin-bottom:14px" id="tday-${di}">
       <div class="tplan-day-head" style="align-items:center">
         <span class="tplan-focus" contenteditable="true" spellcheck="false" style="flex:1"
           onblur="savePlanField(${di},'focus',this.textContent)"
           onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}"
         >${esc(day.focus)}</span>
+        ${isToday?'<span class="today-pill">Heute · Wo '+(currentBlock*3+tp.w)+'</span>':''}
+        ${light?'<button class="day-collapse" onclick="toggleDayCollapse('+di+')">'+(collapsed?'▾ öffnen':'▴ zuklappen')+'</button>':''}
       </div>
       <div class="tplan-exercises">
         <div class="mobile-week-tabs" id="pm2-week-tabs-${di}">
@@ -594,7 +633,8 @@ function renderTrainPlan(){
               const lkey=currentBlock+'-'+di+'-'+ei+'-w'+w;
               const lval=trainLogs[lkey]||'';
               const actualW=currentBlock*3+w;
-              return '<div class="tplan-log-col'+(w===mobileWeekPM2?' mobile-active':'')+'"><div class="tplan-log-label">Wo '+actualW+'</div><textarea class="tplan-log-input" placeholder="'+esc(phFor(ex,day.focus))+'" onblur="saveLog(\''+lkey+'\',this.value)">'+esc(lval)+'</textarea></div>';
+              const now=(isToday&&tp.w===w)?' is-now':'';
+              return '<div class="tplan-log-col'+(w===mobileWeekPM2?' mobile-active':'')+now+'"><div class="tplan-log-label">Wo '+actualW+'</div><textarea class="tplan-log-input'+(lval.trim()?' has-val':'')+'" placeholder="'+esc(phFor(ex,day.focus))+'" onblur="saveLog(\''+lkey+'\',this.value)">'+esc(lval)+'</textarea></div>';
             }).join('')}
             <button class="fi-del" onclick="deletePlanExercise(${di},${ei})">×</button>
           </div>`).join('')}
@@ -606,7 +646,14 @@ function renderTrainPlan(){
           <span class="tplan-date-spacer"></span>
         </div>
       </div>
-    </div>`).join('');
+    </div>`;}).join('');
+}
+function toggleDayCollapse(di){
+  const el=document.getElementById('tday-'+di);
+  if(!el)return;
+  const open=el.classList.toggle('collapsed');
+  const btn=el.querySelector('.day-collapse');
+  if(btn)btn.textContent=open?'▾ öffnen':'▴ zuklappen';
 }
 
 function savePlanField(di,field,val){
@@ -905,16 +952,30 @@ function parseComponents(raw,ex){
     const p=parseLog(raw);
     return p?[{label:null,p:p}]:null;
   }
+  const bodyweightSet={'push-ups':1,'dips':1,'pull-ups':1};
+  const lower=raw.toLowerCase().replace(/×/g,'x');
+  /* Gemeinsamer Satz-Multiplikator am Anfang, z.B. "5x 6CP/15PU @16kg" -> gilt für beide Teile */
+  const leadM=lower.match(/^\s*(\d+)\s*x\b/);
+  const sharedSets=leadM?parseInt(leadM[1],10):null;
+
   const segs=raw.split(/[\/|;·]+/).map(s=>s.trim()).filter(Boolean);
   const found={};
   let untagged=null;
-  segs.forEach(seg=>{
+  segs.forEach((seg,idx)=>{
     const target=segTag(seg,comps);
     let p=parseLog(seg);
-    if(target&&p&&p.totalReps==null&&p.weight==null){
-      /* Einzelzahl mit Kürzel gilt als Gesamt-Wdh, z.B. "PU 90" */
-      const nums=(seg.match(/\d+/g)||[]).map(Number).filter(n=>n>0&&n<=500);
-      if(nums.length===1){p.totalReps=nums[0];}
+    const segLower=seg.toLowerCase().replace(/×/g,'x');
+    const hasOwnSets=/\d+\s*x\s*\d+(?!(?:[.,]\d+)?\s*kg)/.test(segLower);
+    if(target&&!hasOwnSets){
+      /* Segment ohne eigenes "NxM": Einzelzahl gilt als Wdh pro Satz, mit gemeinsamem Multiplikator hochgerechnet */
+      const segClean=segLower.replace(/(\d+(?:[.,]\d+)?)\s*kg/,'');
+      const numsM=(segClean.match(/\d+/g)||[]).map(Number).filter(n=>n>0&&n<=500);
+      if(numsM.length===1){
+        const perSet=numsM[0];
+        if(!p)p={raw:seg,weight:null,sets:null,repsPer:null,totalReps:null,volume:null};
+        if(sharedSets&&idx>0){p.sets=sharedSets;p.repsPer=perSet;p.totalReps=sharedSets*perSet;}
+        else{p.totalReps=perSet;}
+      }
     }
     if(!p)return;
     if(target){
@@ -926,6 +987,27 @@ function parseComponents(raw,ex){
   /* Eintrag ohne Kürzel gehört zur Hauptübung (erste Komponente) */
   const primary=comps[0].label;
   if(!found[primary]&&untagged)found[primary]=untagged;
+
+  /* Bodyweight-Übungen (Push-Ups, Dips, Pull-Ups) tragen kein Gewicht zur Volumenberechnung –
+     ein dort versehentlich erkanntes Gewicht (z.B. aus einem endständigen "@16kg") gehört
+     der belasteten Schwester-Übung im selben Supersatz. */
+  comps.forEach(c=>{
+    const low=c.label.toLowerCase();
+    if(bodyweightSet[low]&&found[c.label]&&found[c.label].weight!=null){
+      const w=found[c.label].weight;
+      found[c.label].weight=null;
+      found[c.label].volume=null;
+      for(const c2 of comps){
+        const low2=c2.label.toLowerCase();
+        if(!bodyweightSet[low2]&&found[c2.label]&&found[c2.label].weight==null){
+          found[c2.label].weight=w;
+          if(found[c2.label].totalReps!=null)found[c2.label].volume=Math.round(found[c2.label].totalReps*w);
+          break;
+        }
+      }
+    }
+  });
+
   const out=Object.keys(found)
     .filter(l=>found[l].totalReps!=null||found[l].weight!=null)
     .map(l=>({label:l,p:found[l]}));
@@ -1163,10 +1245,32 @@ function initApp(){
   if(migrated)save('trainBlocks_v5',trainBlocks);
   trainLogs=load('trainLogs',{});
   workoutTimes=load('workoutTimes',{});
+  /* Beim Start automatisch den laufenden Block und die aktuelle Woche wählen */
+  for(let b=0;b<4;b++){
+    const sd=load('pm2_start_'+b,'')||'';
+    if(!sd)continue;
+    const st=new Date(sd);
+    if(isNaN(st.getTime()))continue;
+    st.setHours(0,0,0,0);
+    const now=new Date();now.setHours(0,0,0,0);
+    const diff=Math.round((now-st)/86400000);
+    if(diff>=0&&diff<=20){currentBlock=b;mobileWeekPM2=Math.floor(diff/7)+1;break;}
+  }
+  document.querySelectorAll('#week-block-tabs .tab').forEach((t,i)=>{
+    t.classList.toggle('active',i===currentBlock);
+  });
   const inp=document.getElementById('train-start-date');
   if(inp)inp.value=load('pm2_start_'+currentBlock,'')||'';
   renderHeaderDate();
   renderTrainPlan();
+  /* Sanft zum heutigen Trainingstag scrollen */
+  const tp=todayPos();
+  if(tp){
+    setTimeout(()=>{
+      const el=document.getElementById('tday-'+tp.di);
+      if(el)el.scrollIntoView({behavior:'smooth',block:'center'});
+    },350);
+  }
 }
 
 try {
