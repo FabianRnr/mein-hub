@@ -594,11 +594,17 @@ function renderTrainPlan(){
               const lkey=currentBlock+'-'+di+'-'+ei+'-w'+w;
               const lval=trainLogs[lkey]||'';
               const actualW=currentBlock*3+w;
-              return '<div class="tplan-log-col'+(w===mobileWeekPM2?' mobile-active':'')+'"><div class="tplan-log-label">Wo '+actualW+'</div><textarea class="tplan-log-input" placeholder="'+esc(phFor(ex,day.focus))+'" onblur="saveLog(\''+lkey+'\',this.value)">'+esc(lval)+'</textarea>'+wtRenderBar(di,w)+'</div>';
+              return '<div class="tplan-log-col'+(w===mobileWeekPM2?' mobile-active':'')+'"><div class="tplan-log-label">Wo '+actualW+'</div><textarea class="tplan-log-input" placeholder="'+esc(phFor(ex,day.focus))+'" onblur="saveLog(\''+lkey+'\',this.value)">'+esc(lval)+'</textarea></div>';
             }).join('')}
             <button class="fi-del" onclick="deletePlanExercise(${di},${ei})">×</button>
           </div>`).join('')}
         <button class="tplan-add-btn" onclick="addPlanExercise(${di})">+ Übung</button>
+        <div class="tplan-row tplan-date-row" style="border-top:1px solid var(--border);padding-top:10px;margin-top:2px">
+          <span class="tplan-num">#</span>
+          <div class="tplan-cell-wrap" style="font-size:11px;color:var(--text3);align-self:center">Timer</div>
+          ${[1,2,3].map(w=>'<div class="tplan-date-cell'+(w===mobileWeekPM2?' mobile-active':'')+'">'+wtRenderBar(di,w)+'</div>').join('')}
+          <span class="tplan-date-spacer"></span>
+        </div>
       </div>
     </div>`).join('');
 }
