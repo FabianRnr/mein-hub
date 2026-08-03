@@ -100,6 +100,13 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 
 .mobile-week-tabs{display:none;gap:4px;margin-bottom:12px}
 .mobile-week-tab{flex:1;text-align:center;padding:8px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;background:var(--bg4);color:var(--text2);border:1.5px solid transparent;transition:all .15s}
 .mobile-week-tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.tplan-date-row{align-items:flex-start;padding:0 0 10px}
+.tplan-date-row .tplan-num{visibility:hidden}
+.tplan-date-cell{display:flex;flex-direction:column;align-items:center;gap:3px;width:120px;flex-shrink:0;min-width:110px}
+.tplan-date-cell b{color:var(--accent);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.08em}
+.tplan-date-cell input{font-size:11px;color:var(--text2);text-align:center;background:var(--bg3);border:1px solid var(--border);border-radius:7px;outline:none;width:100%;padding:5px 4px;box-shadow:none}
+.tplan-date-cell input:focus{border-color:var(--accent);color:var(--text)}
+.tplan-date-spacer{width:24px;flex-shrink:0}
 .footer-tools{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:22px}
 .footer-tools button{font-size:12px;color:var(--text3);text-decoration:underline;background:none;border:none;cursor:pointer}
 .footer-tools button:hover{color:var(--text2)}
@@ -111,6 +118,10 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 
   .tplan-log-col{display:none}
   .tplan-log-col.mobile-active{display:flex;width:100%}
   .tplan-log-input{font-size:16px;min-height:110px}
+  .tplan-date-row .tplan-cell-wrap{display:none}
+  .tplan-date-cell{display:none;width:100%}
+  .tplan-date-cell.mobile-active{display:flex}
+  .tplan-date-cell input{font-size:15px;padding:8px 6px}
   .mobile-week-tab{padding:11px 8px}
   .wt-btn{font-size:12px;padding:9px 16px;border-radius:8px}
   .wt-saved{font-size:11px;padding:6px 11px}
@@ -457,25 +468,30 @@ const WDAYS_FULL = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freit
 const MONTHS_SHORT = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
 const MONTHS = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
 
-function getTrainDayLabel(di){
+function getTrainDayLabel(di,w){
   const sd=load('pm2_start_'+currentBlock,'')||'';
   if(!sd) return '';
   const d=new Date(sd);
   if(isNaN(d.getTime())) return '';
-  d.setDate(d.getDate()+di);
+  d.setDate(d.getDate()+di+((w||1)-1)*7);
   return WDAYS_FULL[d.getDay()]+', '+d.getDate()+'. '+MONTHS_SHORT[d.getMonth()];
 }
-function getDayDisplayValue(di){
-  const override=load('pm2_day_'+currentBlock+'_'+di,'');
-  if(override) return override;
-  return getTrainDayLabel(di);
+function getDayDisplayValue(di,w){
+  w=w||1;
+  const ov=load('pm2_day_'+currentBlock+'_'+di+'_w'+w,'');
+  if(ov) return ov;
+  if(w===1){
+    const legacy=load('pm2_day_'+currentBlock+'_'+di,'');
+    if(legacy) return legacy;
+  }
+  return getTrainDayLabel(di,w);
 }
-function savePM2DayOverride(di,val){
-  const key='pm2_day_'+currentBlock+'_'+di;
+function savePM2DayOverride(di,w,val){
+  const key='pm2_day_'+currentBlock+'_'+di+'_w'+w;
   const trimmed=val.trim();
-  if(!trimmed){
-    save(key,'');
-    localStorage.removeItem(key);
+  if(!trimmed||trimmed===getTrainDayLabel(di,w)){
+    save(key,'');localStorage.removeItem(key);
+    if(w===1){const lk='pm2_day_'+currentBlock+'_'+di;save(lk,'');localStorage.removeItem(lk);}
   } else {
     const parts=trimmed.split('.');
     if(parts.length===3&&parts[2].length===4){
@@ -486,7 +502,11 @@ function savePM2DayOverride(di,val){
 }
 function saveStartDate(val){
   save('pm2_start_'+currentBlock, val);
-  for(let i=0;i<6;i++){save('pm2_day_'+currentBlock+'_'+i,'');localStorage.removeItem('pm2_day_'+currentBlock+'_'+i);}
+  for(let i=0;i<6;i++){
+    const lk='pm2_day_'+currentBlock+'_'+i;
+    save(lk,'');localStorage.removeItem(lk);
+    for(let w=1;w<=3;w++){const k=lk+'_w'+w;save(k,'');localStorage.removeItem(k);}
+  }
   renderTrainPlan();
 }
 function clearTrainStartDate(){
@@ -535,22 +555,23 @@ function renderTrainPlan(){
   el.innerHTML=plan.map((day,di)=>`
     <div class="tplan-day" style="margin-bottom:14px">
       <div class="tplan-day-head" style="align-items:center">
-        <div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:0">
-          <span class="tplan-focus" contenteditable="true" spellcheck="false"
-            onblur="savePlanField(${di},'focus',this.textContent)"
-            onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}"
-          >${esc(day.focus)}</span>
-          <input type="text"
-            value="${esc(getDayDisplayValue(di))}"
-            placeholder="${esc(getTrainDayLabel(di))||'TT.MM.JJJJ'}"
-            onblur="savePM2DayOverride(${di},this.value)"
-            onkeydown="if(event.key==='Enter')this.blur()"
-            style="font-size:11px;color:var(--text3);background:none;border:none;border-bottom:1px solid rgba(128,128,128,.3);border-radius:0;outline:none;width:108px;padding:1px 2px;font-family:var(--font-sans);cursor:text;box-shadow:none">
-        </div>
+        <span class="tplan-focus" contenteditable="true" spellcheck="false" style="flex:1"
+          onblur="savePlanField(${di},'focus',this.textContent)"
+          onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}"
+        >${esc(day.focus)}</span>
       </div>
       <div class="tplan-exercises">
         <div class="mobile-week-tabs" id="pm2-week-tabs-${di}">
           ${[1,2,3].map(w=>{const actualW=currentBlock*3+w;return'<div class="mobile-week-tab'+(mobileWeekPM2===w?' active':'')+'" onclick="setMobileWeekPM2('+w+')">Wo '+actualW+'</div>';}).join('')}
+        </div>
+        <div class="tplan-row tplan-date-row">
+          <span class="tplan-num">#</span>
+          <div class="tplan-cell-wrap" style="font-size:11px;color:var(--text3);align-self:center">Datum</div>
+          ${[1,2,3].map(w=>{
+            const aw=currentBlock*3+w;
+            return '<div class="tplan-date-cell'+(w===mobileWeekPM2?' mobile-active':'')+'"><b>Wo '+aw+'</b><input type="text" value="'+esc(getDayDisplayValue(di,w))+'" placeholder="'+esc(getTrainDayLabel(di,w)||'TT.MM.JJJJ')+'" onblur="savePM2DayOverride('+di+','+w+',this.value)" onkeydown="if(event.key===\'Enter\')this.blur()"></div>';
+          }).join('')}
+          <span class="tplan-date-spacer"></span>
         </div>
         ${day.exercises.map((ex,ei)=>`
           <div class="tplan-row">
