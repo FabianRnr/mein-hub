@@ -61,6 +61,11 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 
 .ana-sec-title{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--text3);margin:22px 0 10px;font-weight:500;display:flex;align-items:center;gap:8px}
 .ana-sec-title::after{content:'';flex:1;height:1px;background:var(--border)}
 .ana-insight{font-size:13px;line-height:1.7;color:var(--text2);padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:8px;margin-bottom:8px}
+.mob-stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px}
+.mob-stat{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 12px;text-align:center}
+.mob-stat .v{font-family:var(--font-serif);font-size:19px;font-weight:700;color:var(--text)}
+.mob-stat .v span{font-size:12px;color:var(--text3)}
+.mob-stat .l{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-top:3px}
 .ana-stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px}
 .ana-stat{background:rgba(255,255,255,.06);border-radius:10px;padding:10px 12px;text-align:center}
 .ana-stat .v{font-family:var(--font-serif);font-size:19px;font-weight:700;color:#fff}
@@ -124,17 +129,17 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 
 .tplan-day.collapsed{padding-bottom:12px}
 .tplan-day.collapsed .tplan-day-head{margin-bottom:0;padding-bottom:0;border-bottom:none}
 .mob-cal-nav{display:flex;align-items:center;justify-content:space-between;margin-top:14px;margin-bottom:2px}
-.mob-cal-nav button{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.08);color:#fff;font-size:15px;display:flex;align-items:center;justify-content:center}
-.mob-cal-nav button:hover{background:rgba(255,255,255,.16)}
-.mob-cal-nav .lbl{font-size:13px;font-weight:600;color:#fff}
+.mob-cal-nav button{width:30px;height:30px;border-radius:8px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-size:15px;display:flex;align-items:center;justify-content:center}
+.mob-cal-nav button:hover{background:var(--bg4);color:var(--text)}
+.mob-cal-nav .lbl{font-size:13px;font-weight:600;color:var(--text)}
 .mob-cell.pad{background:transparent;cursor:default}
 .mob-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:8px}
-.mob-cal .hd{font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:rgba(255,255,255,.35);text-align:center;padding-bottom:2px}
-.mob-cell{aspect-ratio:1;border-radius:7px;background:rgba(255,255,255,.07);cursor:pointer;transition:background .15s;display:flex;align-items:center;justify-content:center;font-size:11px;color:rgba(255,255,255,.55)}
-.mob-cell:hover{background:rgba(255,255,255,.16)}
-.mob-cell.on{background:var(--accent);color:#fff}
-.mob-cell.today{box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.55)}
-.mob-cell.future{opacity:.3;cursor:default}
+.mob-cal .hd{font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);text-align:center;padding-bottom:2px}
+.mob-cell{aspect-ratio:1;border-radius:7px;background:var(--bg3);border:1px solid var(--border);cursor:pointer;transition:background .15s;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text2)}
+.mob-cell:hover{background:var(--bg4)}
+.mob-cell.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.mob-cell.today{box-shadow:inset 0 0 0 1.5px var(--accent)}
+.mob-cell.future{opacity:.4;cursor:default}
 #mob-lb{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:700;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(3px);cursor:zoom-out}
 #mob-lb.show{display:flex}
 #mob-lb img{max-width:100%;max-height:86vh;border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,.5)}
@@ -176,6 +181,32 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 
   .tplan-cell-wrap{width:100%;min-width:0}
   .tplan-day-head{flex-wrap:wrap;gap:6px}
 }
+/* ══ Micro-Interactions ══ */
+@keyframes logoPop{0%{transform:scale(.55) rotate(-8deg);opacity:0}70%{transform:scale(1.08) rotate(2deg);opacity:1}100%{transform:scale(1) rotate(0)}}
+.brand-logo{animation:logoPop .6s cubic-bezier(.34,1.56,.64,1) both;transition:transform .2s ease}
+@media(hover:hover) and (pointer:fine){
+  .brand-logo:hover{transform:scale(1.1) rotate(-4deg)}
+  .btn,.mini-btn,.wt-btn,.mob-cal-nav button,.tab,.mobile-week-tab,.week-head,.fi-del,.day-expand,.check,.fab,.footer-tools button,.tplan-add-btn,.mob-b-card,.week.current,#exportBtn,#importBtn,#resetBtn{
+    transition:transform .15s cubic-bezier(.34,1.56,.64,1),box-shadow .15s ease,background .15s ease,color .15s ease,border-color .15s ease;
+  }
+  .btn:hover,.mini-btn:hover,.wt-btn:hover,.mob-cal-nav button:hover,.tplan-add-btn:hover{transform:translateY(-1px) scale(1.035)}
+  .tab:hover:not(.active),.mobile-week-tab:hover:not(.active){transform:scale(1.04)}
+  .fi-del:hover{transform:scale(1.25)}
+  .day-expand:hover{transform:scale(1.2)}
+  .check:hover{transform:scale(1.12)}
+  .fab:hover{transform:scale(1.07);box-shadow:0 8px 26px rgba(245,165,36,.45)}
+  .week-head:hover{background:rgba(0,0,0,.015)}
+  .mob-cell{transition:transform .12s ease,background .15s ease}
+  .mob-cell:hover:not(.future):not(.pad){transform:scale(1.1)}
+  .mob-b-card{transition:transform .15s ease,box-shadow .15s ease}
+  .mob-b-card:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.08)}
+  .tplan-day{transition:box-shadow .2s ease}
+  .mob-thumb,img[onclick]{transition:transform .15s ease}
+  .mob-thumb:hover,img[onclick]:hover{transform:scale(1.015)}
+}
+@media (prefers-reduced-motion: reduce){
+  .brand-logo{animation:none}
+}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 </head>
@@ -185,7 +216,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 
     <div id="header-left">
       <div style="display:flex;align-items:center;gap:11px">
         <div>
-          <svg width="36" height="36" viewBox="0 0 48 48" fill="none">
+          <svg class="brand-logo" width="36" height="36" viewBox="0 0 48 48" fill="none">
             <rect width="48" height="48" rx="13" fill="#14131a"/>
             <path d="M17 20a7 7 0 0 1 14 0v3h-4v-3a3 3 0 0 0-6 0v3h-4z" fill="#ff4d00"/>
             <path d="M24 23c8 0 13 6 13 12.5 0 4-2 7-5 7H16c-3 0-5-3-5-7C11 29 16 23 24 23z" fill="#ff4d00"/>
@@ -987,24 +1018,24 @@ function renderMobility(){
   for(let i=0;i<30;i++){const d=new Date(today);d.setDate(d.getDate()-i);if(mobDays[isoDay(d)])last30++;}
 
   let out='';
-  out+='<div class="card" style="background:var(--nav-bg);border-color:rgba(255,77,0,.2)">'
+  out+='<div class="card" style="border-color:rgba(255,77,0,.25)">'
     +'<div style="display:flex;align-items:baseline;gap:10px;margin-bottom:6px;flex-wrap:wrap">'
-    +'<div style="font-family:var(--font-serif);font-size:17px;font-weight:700;color:#fff">Dehn-Routine</div>'
-    +'<div style="font-size:11px;color:rgba(255,255,255,.4);background:rgba(255,77,0,.2);padding:2px 8px;border-radius:20px;white-space:nowrap">Ziel: '
-    +'<input type="number" min="1" max="7" value="'+mobGoal+'" onchange="mobSetGoal(this.value)" style="width:34px;background:none;border:none;color:#fff;font-size:11px;font-weight:600;padding:0 2px;text-align:center;outline:none">\u00d7 / Woche</div>'
+    +'<div style="font-family:var(--font-serif);font-size:17px;font-weight:700;color:var(--text)">Dehn-Routine</div>'
+    +'<div style="font-size:11px;color:var(--accent);background:var(--accent-light);padding:2px 8px;border-radius:20px;white-space:nowrap">Ziel: '
+    +'<input type="number" min="1" max="7" value="'+mobGoal+'" onchange="mobSetGoal(this.value)" style="width:34px;background:none;border:none;color:var(--accent);font-size:11px;font-weight:600;padding:0 2px;text-align:center;outline:none">\u00d7 / Woche</div>'
     +'</div>'
-    +'<div style="font-size:12px;color:rgba(255,255,255,.5);line-height:1.6;margin-bottom:12px">Abends, immer dieselbe Abfolge. Tag antippen zum Abhaken.</div>'
+    +'<div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:12px">Abends, immer dieselbe Abfolge. Tag antippen zum Abhaken.</div>'
     +'<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px">'
-    +'<label style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.4);white-space:nowrap">Startdatum:</label>'
-    +'<input type="date" id="mob-start-date" value="'+esc(mobStart)+'" onchange="mobSaveStart(this.value)" style="font-size:13px;padding:6px 10px;border-radius:8px;background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.15);outline:none;color-scheme:dark">'
-    +'<button onclick="mobClearStart()" style="font-size:11px;color:rgba(255,255,255,.35);background:none;border:none;cursor:pointer;padding:0;white-space:nowrap" onmouseover="this.style.color=\'#ff6b6b\'" onmouseout="this.style.color=\'rgba(255,255,255,.35)\'">Datum löschen</button>'
-    +(mobStart?'<span style="font-size:11px;color:rgba(255,255,255,.45)">seit '+mobDaysSince(mobStart)+' Tagen</span>':'')
+    +'<label style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);white-space:nowrap">Startdatum:</label>'
+    +'<input type="date" id="mob-start-date" value="'+esc(mobStart)+'" onchange="mobSaveStart(this.value)" style="font-size:13px;padding:6px 10px;border-radius:8px;background:var(--bg3);color:var(--text);border:1.5px solid var(--border);outline:none">'
+    +'<button onclick="mobClearStart()" style="font-size:11px;color:var(--text3);background:none;border:none;cursor:pointer;padding:0;white-space:nowrap" onmouseover="this.style.color=\'var(--red)\'" onmouseout="this.style.color=\'var(--text3)\'">Datum löschen</button>'
+    +(mobStart?'<span style="font-size:11px;color:var(--text3)">seit '+mobDaysSince(mobStart)+' Tagen</span>':'')
     +'</div>'
-    +'<div class="ana-stat-grid">'
-    +'<div class="ana-stat"><div class="v">'+thisWeek+'<span style="font-size:12px;color:rgba(255,255,255,.4)"> / '+mobGoal+'</span></div><div class="l">Diese Woche</div></div>'
-    +'<div class="ana-stat"><div class="v">'+streak+'</div><div class="l">Wochen-Serie</div></div>'
-    +'<div class="ana-stat"><div class="v">'+last30+'<span style="font-size:12px;color:rgba(255,255,255,.4)"> / 30</span></div><div class="l">Letzte 30 Tage</div></div>'
-    +'<div class="ana-stat"><div class="v">'+total+'</div><div class="l">Einheiten gesamt</div></div>'
+    +'<div class="mob-stat-grid">'
+    +'<div class="mob-stat"><div class="v">'+thisWeek+'<span> / '+mobGoal+'</span></div><div class="l">Diese Woche</div></div>'
+    +'<div class="mob-stat"><div class="v">'+streak+'</div><div class="l">Wochen-Serie</div></div>'
+    +'<div class="mob-stat"><div class="v">'+last30+'<span> / 30</span></div><div class="l">Letzte 30 Tage</div></div>'
+    +'<div class="mob-stat"><div class="v">'+total+'</div><div class="l">Einheiten gesamt</div></div>'
     +'</div>';
 
   if(mobViewY===null){mobViewY=today.getFullYear();mobViewM=today.getMonth();}
