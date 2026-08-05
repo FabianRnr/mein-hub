@@ -541,35 +541,44 @@ const WDAYS_FULL = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freit
 const MONTHS_SHORT = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
 const MONTHS = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
 
-function getTrainDayLabel(di,w){
+function getDefaultDayISO(di,w){
   const sd=load('pm2_start_'+currentBlock,'')||'';
   if(!sd) return '';
   const d=new Date(sd);
   if(isNaN(d.getTime())) return '';
   d.setDate(d.getDate()+di+((w||1)-1)*7);
-  return WDAYS_FULL[d.getDay()]+', '+d.getDate()+'. '+MONTHS_SHORT[d.getMonth()];
+  return isoDay(d);
 }
-function getDayDisplayValue(di,w){
+function dotToISO(s){
+  if(!s) return null;
+  const t=String(s).trim();
+  if(/^\d{4}-\d{2}-\d{2}$/.test(t)) return t;
+  const m=t.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+  if(m) return m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0');
+  return null;
+}
+function getDayISO(di,w){
   w=w||1;
-  const ov=load('pm2_day_'+currentBlock+'_'+di+'_w'+w,'');
-  if(ov) return ov;
-  if(w===1){
-    const legacy=load('pm2_day_'+currentBlock+'_'+di,'');
-    if(legacy) return legacy;
-  }
-  return getTrainDayLabel(di,w);
+  let ov=load('pm2_day_'+currentBlock+'_'+di+'_w'+w,'');
+  if(!ov&&w===1){ov=load('pm2_day_'+currentBlock+'_'+di,'');}
+  const ovIso=dotToISO(ov);
+  if(ovIso) return ovIso;
+  return getDefaultDayISO(di,w);
+}
+function wdHint(iso){
+  if(!iso) return '';
+  const d=new Date(iso+'T00:00:00');
+  if(isNaN(d.getTime())) return '';
+  return WDAYS_FULL[d.getDay()].slice(0,2);
 }
 function savePM2DayOverride(di,w,val){
   const key='pm2_day_'+currentBlock+'_'+di+'_w'+w;
-  const trimmed=val.trim();
-  if(!trimmed||trimmed===getTrainDayLabel(di,w)){
+  const def=getDefaultDayISO(di,w);
+  if(!val||val===def){
     save(key,'');localStorage.removeItem(key);
     if(w===1){const lk='pm2_day_'+currentBlock+'_'+di;save(lk,'');localStorage.removeItem(lk);}
   } else {
-    const parts=trimmed.split('.');
-    if(parts.length===3&&parts[2].length===4){
-      save(key,trimmed);
-    }
+    save(key,val);
   }
   renderTrainPlan();
 }
@@ -667,7 +676,7 @@ function renderTrainPlan(){
           <div class="tplan-cell-wrap" style="font-size:11px;color:var(--text3);align-self:center">Datum</div>
           ${[1,2,3].map(w=>{
             const aw=currentBlock*3+w;
-            return '<div class="tplan-date-cell'+(w===mobileWeekPM2?' mobile-active':'')+'"><b>Wo '+aw+'</b><input type="text" value="'+esc(getDayDisplayValue(di,w))+'" placeholder="'+esc(getTrainDayLabel(di,w)||'TT.MM.JJJJ')+'" onblur="savePM2DayOverride('+di+','+w+',this.value)" onkeydown="if(event.key===\'Enter\')this.blur()"></div>';
+            return '<div class="tplan-date-cell'+(w===mobileWeekPM2?' mobile-active':'')+'"><b>Wo '+aw+(wdHint(getDayISO(di,w))?' · '+wdHint(getDayISO(di,w)):'')+'</b><input type="date" value="'+getDayISO(di,w)+'" onchange="savePM2DayOverride('+di+','+w+',this.value)"></div>';
           }).join('')}
           <span class="tplan-date-spacer"></span>
         </div>
