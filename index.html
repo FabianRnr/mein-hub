@@ -635,8 +635,16 @@ function phFor(ex,focus){
   if(n.indexOf('swing')>-1||n.indexOf('snatch')>-1||n.indexOf('pullover')>-1)return 'z.B. 10x10 @24kg';
   return 'z.B. 5x5 @24kg';
 }
-/* Ermittelt aus dem Startdatum, welcher Tag/welche Woche heute ansteht */
+/* Ermittelt, welcher Tag/welche Woche heute ansteht – berücksichtigt manuell verschobene Termine */
 function todayPos(){
+  const todayIso=isoDay(new Date());
+  /* 1. Bevorzugt: exakte Übereinstimmung mit einem (ggf. verschobenen) Termin im aktuellen Block */
+  for(let w=1;w<=3;w++){
+    for(let di=0;di<6;di++){
+      if(getDayISO(di,w)===todayIso)return{di:di,w:w};
+    }
+  }
+  /* 2. Fallback: reine Offset-Berechnung ab Startdatum, falls kein Termin exakt passt */
   const sd=load('pm2_start_'+currentBlock,'')||'';
   if(!sd)return null;
   const start=new Date(sd);
