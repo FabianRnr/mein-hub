@@ -147,6 +147,34 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 
 .mob-b-row input{font-size:14px;padding:6px 9px;border-radius:8px;width:100%}
 .mob-b-prev{font-size:11px;color:var(--text3);margin-top:5px}
 .mob-b-prev b{color:var(--green);font-weight:600}
+.ana-hero{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:24px 20px;text-align:center;box-shadow:var(--shadow-sm);position:relative;overflow:hidden;margin-bottom:14px}
+.ana-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% -10%,rgba(255,77,0,.12),transparent 62%);pointer-events:none}
+.ana-hero-label{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);font-weight:600;position:relative}
+.ana-hero-num{font-family:var(--font-serif);font-size:54px;font-weight:700;color:var(--text);line-height:1.05;margin:6px 0 3px;letter-spacing:-.02em;position:relative}
+.ana-hero-num.pulse{animation:heroPulse .5s ease}
+@keyframes heroPulse{0%{transform:scale(1)}45%{transform:scale(1.09)}100%{transform:scale(1)}}
+.ana-hero-sub{font-size:12.5px;color:var(--text2);position:relative}
+.ana-hero-bar-bg{height:6px;background:var(--bg4);border-radius:3px;margin-top:16px;overflow:hidden;position:relative}
+.ana-hero-bar-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:3px;transition:width 1.1s cubic-bezier(.22,1,.36,1)}
+.hdr-stats{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.hdr-stat{display:flex;align-items:center;gap:12px;background:var(--bg3);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:12px;padding:10px 20px 10px 16px;cursor:default}
+.hdr-stat .ico{width:28px;height:28px;flex-shrink:0;color:var(--accent)}
+.hdr-stat .ico svg{width:100%;height:100%;display:block}
+.hdr-stat .txt{display:flex;flex-direction:column;line-height:1.1}
+.hdr-stat .v{font-family:var(--font-serif);font-size:27px;font-weight:700;color:var(--text);letter-spacing:-.01em;white-space:nowrap}
+.hdr-stat .v span{font-size:16px;color:var(--text3);font-weight:500;margin-left:3px}
+.hdr-stat .l{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--text2);font-weight:700;margin-top:2px;white-space:nowrap}
+@media(hover:hover) and (pointer:fine){
+  .hdr-stat{transition:transform .15s cubic-bezier(.34,1.56,.64,1),background .15s ease,box-shadow .15s ease,border-color .15s ease}
+  .hdr-stat:hover{transform:translateY(-2px) scale(1.04);background:var(--accent-light);box-shadow:0 6px 16px rgba(255,77,0,.16)}
+}
+@media(max-width:600px){
+  .hdr-stat{padding:8px 16px 8px 13px;gap:9px}
+  .hdr-stat .ico{width:23px;height:23px}
+  .hdr-stat .v{font-size:22px}
+  .hdr-stat .v span{font-size:14px}
+  .hdr-stat .l{font-size:11.5px}
+}
 .footer-tools{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:22px}
 .footer-tools button{font-size:12px;color:var(--text3);text-decoration:underline;background:none;border:none;cursor:pointer}
 .footer-tools button:hover{color:var(--text2)}
@@ -250,8 +278,9 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 
           </svg>
         </div>
         <div>
-          <div style="display:flex;align-items:center;gap:8px">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
             <h1>Primal Mastery 2<span>.</span></h1>
+            <div class="hdr-stats" id="hdr-stats"></div>
             <div id="sync-dot" title="Synchronisiert" style="width:7px;height:7px;border-radius:50%;background:rgba(0,0,0,0);transition:background .4s;flex-shrink:0"></div>
           </div>
           <div class="date" id="header-date"></div>
@@ -693,6 +722,7 @@ function saveLog(key,val){
   trainLogs[key]=val;
   save('trainLogs',trainLogs);
   showSaveHint();
+  renderHeaderStats();
 }
 
 function phFor(ex,focus){
@@ -800,6 +830,7 @@ function renderTrainPlan(){
         </div>
       </div>
     </div>`;}).join('');
+  renderHeaderStats();
 }
 function savePlanField(di,field,val){
   trainBlocks[currentBlock][di][field]=val.trim();
@@ -1110,12 +1141,14 @@ function mobToggle(iso){
   save('mobDays',mobDays);
   showSaveHint();
   renderMobility();
+  renderHeaderStats();
 }
 function mobSetGoal(v){
   const n=parseInt(v,10);
   mobGoal=(isNaN(n)||n<1)?5:Math.min(7,n);
   save('mobGoal',mobGoal);
   renderMobility();
+  renderHeaderStats();
 }
 function mobSaveBench(id,val){
   const v=val.trim();
@@ -1154,6 +1187,16 @@ function renderMobility(){
   let last30=0;
   for(let i=0;i<30;i++){const d=new Date(today);d.setDate(d.getDate()-i);if(mobDays[isoDay(d)])last30++;}
 
+  /* Durchschnitt der letzten 2 Wochen (inkl. laufender Woche) */
+  function mobWeekCount(back){
+    const mon=new Date(thisMon);mon.setDate(mon.getDate()-back*7);
+    let c=0;
+    for(let i=0;i<7;i++){const d=new Date(mon);d.setDate(d.getDate()+i);if(mobDays[isoDay(d)])c++;}
+    return c;
+  }
+  const avg2=(mobWeekCount(0)+mobWeekCount(1))/2;
+  const avg2Str=avg2.toLocaleString('de-DE',{maximumFractionDigits:1,minimumFractionDigits:avg2%1?1:0});
+
   let out='';
   out+='<div class="card" style="border-color:rgba(255,77,0,.25)">'
     +'<div style="display:flex;align-items:baseline;gap:10px;margin-bottom:6px;flex-wrap:wrap">'
@@ -1170,6 +1213,7 @@ function renderMobility(){
     +'</div>'
     +'<div class="mob-stat-grid">'
     +'<div class="mob-stat"><div class="v">'+thisWeek+'<span> / '+mobGoal+'</span></div><div class="l">Diese Woche</div></div>'
+    +'<div class="mob-stat"><div class="v">'+avg2Str+'<span> / '+mobGoal+'</span></div><div class="l">&Oslash; letzte 2 Wo.</div></div>'
     +'<div class="mob-stat"><div class="v">'+streak+'</div><div class="l">Wochen-Serie</div></div>'
     +'<div class="mob-stat"><div class="v">'+last30+'<span> / 30</span></div><div class="l">Letzte 30 Tage</div></div>'
     +'<div class="mob-stat"><div class="v">'+total+'</div><div class="l">Einheiten gesamt</div></div>'
@@ -1232,6 +1276,7 @@ function renderMobility(){
   out+='</div>';
 
   el.innerHTML=out;
+  renderHeaderStats();
 }
 function mobZoomFull(){
   document.getElementById('mob-lb-img').src=MOB_IMG_FULL;
@@ -1346,7 +1391,7 @@ function parseComponents(raw,ex){
   const bodyweightSet={'push-ups':1,'dips':1,'pull-ups':1};
   const lower=raw.toLowerCase().replace(/×/g,'x');
   /* Gemeinsamer Satz-Multiplikator am Anfang, z.B. "5x 6CP/15PU @16kg" -> gilt für beide Teile */
-  const leadM=lower.match(/^\s*(\d+)\s*x\b/);
+  const leadM=lower.match(/^\s*(\d+)\s*x\s*(?=\d)/);
   const sharedSets=leadM?parseInt(leadM[1],10):null;
 
   const segs=raw.split(/[\/|;·]+/).map(s=>s.trim()).filter(Boolean);
@@ -1406,6 +1451,37 @@ function parseComponents(raw,ex){
   return[{label:primary,p:{raw:raw.trim()}}];
 }
 
+/* Mehrzeilige Einträge (z.B. zusätzliche Extra-Runden in Zeile 2) werden zeilenweise
+   geparst und pro Übungslabel aufsummiert. Einzeilige Einträge verhalten sich wie bisher. */
+function mergeParsedPoints(list){
+  const map={};
+  list.forEach(item=>{
+    const l=item.label,p=item.p;
+    if(!map[l])map[l]={raw:'',weight:null,sets:null,repsPer:null,totalReps:null,volume:null};
+    const m=map[l];
+    if(p.totalReps!=null)m.totalReps=(m.totalReps||0)+p.totalReps;
+    if(p.weight!=null&&m.weight==null)m.weight=p.weight;
+    if(p.raw)m.raw=(m.raw?m.raw+' + ':'')+p.raw;
+  });
+  Object.keys(map).forEach(l=>{
+    const m=map[l];
+    if(m.totalReps!=null&&m.weight!=null)m.volume=Math.round(m.totalReps*m.weight);
+  });
+  return Object.keys(map).map(l=>({label:l,p:map[l]}));
+}
+function parseComponentsMulti(raw,ex){
+  if(!raw||!raw.trim())return null;
+  const lines=raw.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+  if(lines.length<=1)return parseComponents(raw,ex);
+  let all=[];
+  lines.forEach(line=>{
+    const res=parseComponents(line,ex);
+    if(res)all=all.concat(res);
+  });
+  if(!all.length)return null;
+  return mergeParsedPoints(all);
+}
+
 /* Übungen namensgleich über alle Blöcke zu 12-Wochen-Serien zusammenführen */
 const ANA_EXCLUDE=/circuit|ab routine|ruhetag/;
 function collectSeries(){
@@ -1417,7 +1493,7 @@ function collectSeries(){
         if(!nm||ANA_EXCLUDE.test(nm))return;
         for(let w=1;w<=3;w++){
           const raw=trainLogs[b+'-'+di+'-'+ei+'-w'+w];
-          const res=parseComponents(raw,ex);
+          const res=parseComponentsMulti(raw,ex);
           if(!res)continue;
           res.forEach(r=>{
             const label=r.label||ex.name;
@@ -1539,6 +1615,17 @@ function renderAnalyse(){
 
   /* Zusammenbauen */
   let out='';
+  const totalPossible=possible||72;
+  const pct72=Math.round(filled/totalPossible*100);
+  let heroSub=filled+' von '+totalPossible+' möglichen Einheiten &middot; '+pct72+'&nbsp;% des Programms';
+  if(filled>0&&filled%10===0)heroSub='🔥 Runde '+filled+' &ndash; '+heroSub;
+  else if(filled===totalPossible&&totalPossible>0)heroSub='🏁 Programm komplett! &ndash; '+heroSub;
+  out+='<div class="ana-hero">'
+    +'<div class="ana-hero-label">Workouts absolviert</div>'
+    +'<div class="ana-hero-num" id="ana-hero-num" data-target="'+filled+'">0</div>'
+    +'<div class="ana-hero-sub">'+heroSub+'</div>'
+    +'<div class="ana-hero-bar-bg"><div class="ana-hero-bar-fill" id="ana-hero-bar" data-pct="'+pct72+'"></div></div>'
+    +'</div>';
   out+='<div class="card" style="background:var(--nav-bg);border-color:rgba(255,77,0,.2)">'
     +'<div style="font-family:var(--font-serif);font-size:17px;font-weight:700;color:#fff;margin-bottom:4px">Fortschritts-Analyse</div>'
     +'<div style="font-size:12px;color:rgba(255,255,255,.5);line-height:1.6;margin-bottom:14px">Automatisch ausgewertet aus deinen Wo-Einträgen und gestoppten Zeiten. Aktualisiert sich bei jedem Öffnen.</div>'
@@ -1583,6 +1670,27 @@ function renderAnalyse(){
   out+='<div class="ana-insight" style="border-left-color:var(--text3);margin-top:18px"><b>Tipp für gut auswertbare Einträge:</b> Sätze&nbsp;&times;&nbsp;Wiederholungen plus Gewicht, z.&nbsp;B. <b>6x6 @ 2x24kg</b> oder AMRAP-Reihen wie <b>7 7 6 6 5 5</b>. Bei Kombi-Übungen die Teile mit Kürzel und Schrägstrich trennen: <b>PU 5x5 / Rows 5x8 @24kg</b> oder <b>CP 6 6 5 5 5 5 @ 2x16kg / PU 90</b> &ndash; dann bekommt jede Teilübung ihre eigene Verlaufskurve. Die Analyse berechnet daraus Wiederholungen und Trainingsvolumen (Wdh &times; kg) und vergleicht sie über die Wochen.</div>';
 
   el.innerHTML=out;
+  animateHeroCounter();
+}
+function animateHeroCounter(){
+  const numEl=document.getElementById('ana-hero-num');
+  const barEl=document.getElementById('ana-hero-bar');
+  if(!numEl)return;
+  const target=parseInt(numEl.dataset.target,10)||0;
+  const dur=Math.min(1100,300+target*18);
+  const start=performance.now();
+  function step(now){
+    const t=Math.min(1,(now-start)/dur);
+    const eased=1-Math.pow(1-t,3);
+    numEl.textContent=Math.round(eased*target);
+    if(t<1)requestAnimationFrame(step);
+    else{numEl.textContent=target;numEl.classList.add('pulse');}
+  }
+  requestAnimationFrame(step);
+  if(barEl){
+    const pct=barEl.dataset.pct||0;
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{barEl.style.width=pct+'%';}));
+  }
 }
 
 /* ══ INIT ══ */
@@ -1593,6 +1701,58 @@ function renderHeaderDate(){
   if(!el)return;
   const d=new Date();
   el.textContent=WDAYS_FULL[d.getDay()]+', '+d.getDate()+'. '+MONTHS[d.getMonth()]+' '+d.getFullYear();
+}
+
+/* ══ Header-Kennzahlen (unabhängig vom aktiven Tab immer sichtbar) ══ */
+function computeWorkoutStats(){
+  let filled=0,possible=0;
+  for(let b=0;b<4;b++){
+    (trainBlocks[b]||[]).forEach((day,di)=>{
+      if(di===6)return;
+      for(let w=1;w<=3;w++){
+        possible++;
+        const has=(day.exercises||[]).some((ex,ei)=>{
+          const v=trainLogs[b+'-'+di+'-'+ei+'-w'+w];
+          return v&&v.trim();
+        });
+        if(has)filled++;
+      }
+    });
+  }
+  return{filled,possible};
+}
+function computeMobAvg2(){
+  const today=new Date();today.setHours(0,0,0,0);
+  const thisMon=mondayOf(today);
+  function count(back){
+    const mon=new Date(thisMon);mon.setDate(mon.getDate()-back*7);
+    let c=0;
+    for(let i=0;i<7;i++){const d=new Date(mon);d.setDate(d.getDate()+i);if(mobDays[isoDay(d)])c++;}
+    return c;
+  }
+  return(count(0)+count(1))/2;
+}
+const HDR_ICO_DUMBBELL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6M2 10.5v3M20 9v6M22 10.5v3M7 12h10"/><rect x="4.5" y="7" width="3" height="10" rx="1"/><rect x="16.5" y="7" width="3" height="10" rx="1"/></svg>';
+const HDR_ICO_STRETCH='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4.2" r="1.8"/><path d="M12 7v6M12 13l-4.5 5M12 13l4.5 5M7.5 9.5 12 11l4.5-1.5"/></svg>';
+function renderHeaderStats(){
+  const el=document.getElementById('hdr-stats');
+  if(!el)return;
+  const {filled,possible}=computeWorkoutStats();
+  const pct=possible?Math.round(filled/possible*100):0;
+  const avg2=computeMobAvg2();
+  const avg2Str=avg2.toLocaleString('de-DE',{maximumFractionDigits:1,minimumFractionDigits:avg2%1?1:0});
+  let html='';
+  if(possible){
+    html+='<div class="hdr-stat" title="Absolvierte Trainingseinheiten seit Programmstart">'
+      +'<span class="ico">'+HDR_ICO_DUMBBELL+'</span>'
+      +'<span class="txt"><span class="v">'+filled+'<span>/'+possible+'</span></span><span class="l">Workouts · '+pct+'%</span></span>'
+      +'</div>';
+  }
+  html+='<div class="hdr-stat" title="Dehnroutine: Durchschnitt der letzten 2 Wochen">'
+    +'<span class="ico">'+HDR_ICO_STRETCH+'</span>'
+    +'<span class="txt"><span class="v">'+avg2Str+'<span>/'+mobGoal+'</span></span><span class="l">Mobility &Oslash; Wo.</span></span>'
+    +'</div>';
+  el.innerHTML=html;
 }
 
 /* ══ Schritte-Challenge (temporär, endet automatisch) ══ */
