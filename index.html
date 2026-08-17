@@ -104,6 +104,10 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 
 .tplan-add-btn:hover{color:var(--accent);opacity:1}
 .fi-del{color:var(--text3);font-size:18px;line-height:1;width:24px;text-align:center;flex-shrink:0;opacity:.4;transition:opacity .2s}
 .fi-del:hover{opacity:1;color:var(--red)}
+.fuel-add-btn{font-size:12px;font-weight:600;color:#fff;background:var(--accent);border:none;border-radius:8px;padding:8px 14px;cursor:pointer;white-space:nowrap;transition:background .15s,transform .15s}
+.fuel-add-btn:hover{background:var(--accent2)}
+.fuel-mini-btn{font-size:11.5px;font-weight:600;color:var(--text3);background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 12px;cursor:pointer;white-space:nowrap;transition:color .15s,background .15s}
+.fuel-mini-btn:hover{color:var(--text);background:var(--bg4)}
 .mobile-week-tabs{display:none;gap:4px;margin-bottom:12px}
 .mobile-week-tab{flex:1;text-align:center;padding:8px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;background:var(--bg4);color:var(--text2);border:1.5px solid transparent;transition:all .15s}
 .mobile-week-tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
@@ -295,6 +299,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 
     <div id="main-tabs">
       <div class="tab active" onclick="switchView('training',this)">Training</div>
       <div class="tab" onclick="switchView('mobility',this)">Mobility</div>
+      <div class="tab" onclick="switchView('ernaehrung',this)">Ernährung</div>
       <div class="tab" onclick="switchView('analyse',this)">Analyse</div>
     </div>
 
@@ -332,6 +337,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 
     </div><!-- /view-training -->
 
     <div id="view-mobility" style="display:none"></div>
+    <div id="view-ernaehrung" style="display:none"></div>
     <div id="view-analyse" style="display:none"></div>
 
   </div>
@@ -1304,15 +1310,353 @@ function mobClearStart(){
   renderMobility();
 }
 
+/* ══ ERNÄHRUNG (Fuel Protocol) ══ */
+const DEFAULT_MEALS=[
+  {id:'egg-skillet',name:'Primal Egg Skillet',subtitle:'Frühstück',
+    note:'Eiklar-Mix statt nur Vollei – über 50 g Protein bei kontrolliertem Fett.',
+    items:[
+      {name:'Eiklar flüssig',menge:'250 g',kcal:130,p:32,f:0.5,kh:2},
+      {name:'Eier Größe M',menge:'3 Stück',kcal:255,p:21,f:18,kh:1},
+      {name:'Butter',menge:'5 g',kcal:37,p:0,f:4,kh:0}
+    ]},
+  {id:'recovery-oats',name:'Recovery Oats & Shake',subtitle:'Post-Workout',
+    note:'Direkt nach dem Kettlebell-Training – Whey + Banane schnell, Haferflocken für Glykogen.',
+    items:[
+      {name:'Whey Protein (Konzentrat)',menge:'50 g',kcal:200,p:40,f:3,kh:4},
+      {name:'Banane',menge:'1 Stück (~120 g)',kcal:105,p:1,f:0,kh:27},
+      {name:'Milch 3,5 %',menge:'300 ml',kcal:195,p:9.9,f:10.5,kh:14.4},
+      {name:'Haferflocken',menge:'100 g',kcal:370,p:13,f:7,kh:59}
+    ]},
+  {id:'skyr-bowl',name:'Skyr Night Bowl',subtitle:'Abends',
+    note:'Casein-lastig vor dem Schlafen – langsame Aminosäure-Versorgung über Nacht.',
+    items:[
+      {name:'Skyr natur',menge:'450 g',kcal:283.5,p:49.5,f:0.9,kh:18},
+      {name:'Honig',menge:'2 EL (~30 g)',kcal:90,p:0,f:0,kh:24},
+      {name:'Nüsse gemischt',menge:'15 g',kcal:95,p:2.5,f:8.5,kh:2}
+    ]},
+  {id:'tuna-tomato',name:'Thunfisch-Tomaten-Teller',subtitle:'Mittags',
+    note:'Schnelle, proteinreiche Low-Carb-Option. Werte geschätzt (Standard-Nährwerttabelle) – bitte bei Bedarf an Packungsangabe/tatsächliche Menge anpassen.',
+    items:[
+      {name:'Thunfisch (Dose, im Wasser, abgetropft)',menge:'140 g',kcal:162,p:35.7,f:1.1,kh:0},
+      {name:'Olivenöl',menge:'10 g (1 EL)',kcal:88,p:0,f:10,kh:0},
+      {name:'Tomaten',menge:'150 g',kcal:27,p:1.4,f:0.3,kh:5.9}
+    ]},
+  {id:'snack-nuesse',name:'Nüsse',subtitle:'Snack',
+    note:'Fett- und energiereich – gut geeignet, um an Ruhetagen die Tagesfettmenge zu erhöhen.',
+    items:[{name:'Nüsse gemischt',menge:'30 g',kcal:180,p:4.5,f:16,kh:4}]},
+  {id:'snack-apfel',name:'Apfel',subtitle:'Snack',
+    note:'Leichter, ballaststoffreicher Snack zwischendurch.',
+    items:[{name:'Apfel',menge:'1 Stück (~150 g)',kcal:80,p:0.4,f:0.3,kh:21}]},
+  {id:'snack-banane',name:'Banane',subtitle:'Snack',
+    note:'Schnelle Kohlenhydrate – z. B. direkt vor oder nach dem Training.',
+    items:[{name:'Banane',menge:'1 Stück (~120 g)',kcal:105,p:1,f:0,kh:27}]}
+];
+const DEFAULT_FUEL_INSIGHTS=[
+  '<b>Warme Hauptmahlzeit fehlt noch:</b> bei zu aggressivem Defizit 150–200 g Reis/Kartoffeln + mageres Protein + Gemüse ergänzen.',
+  '<b>Fett am unteren Rand</b> (~47 g): an Ruhetagen 1 Ei mehr oder Nüsse auf 25–30 g steigern.',
+  '<b>Ruhetage:</b> Haferflocken auf 60–70 g reduzieren.',
+  '<b>Gemüse-Ziel</b> 300–500 g/Tag ergänzen – fehlt aktuell komplett.'
+];
+let mealsData=[];
+let fuelLog={}; // { '2026-08-17': ['egg-skillet','tuna-tomato', ...] }
+let fuelSelectedDate=null;
+/* Bewusst getrennt von load()/save(): Ernährungsdaten bleiben vorerst NUR lokal
+   auf dem Gerät (kein Supabase-Sync). Sync bauen wir später separat aus. */
+function fuelSaveLocal(){
+  try{localStorage.setItem('mealsData_local',JSON.stringify(mealsData));}catch(e){}
+}
+function fuelLoadLocal(){
+  try{const v=localStorage.getItem('mealsData_local');return v?JSON.parse(v):null;}catch(e){return null;}
+}
+function fuelSaveLogLocal(){
+  try{localStorage.setItem('fuelLog_local',JSON.stringify(fuelLog));}catch(e){}
+}
+function fuelLoadLogLocal(){
+  try{const v=localStorage.getItem('fuelLog_local');return v?JSON.parse(v):null;}catch(e){return null;}
+}
+
+function fmtG(n){
+  n=Number(n)||0;
+  const r=Math.round(n*10)/10;
+  return (r%1===0?r.toFixed(0):r.toFixed(1)).replace('.',',');
+}
+function fuelSumMeal(meal){
+  return(meal.items||[]).reduce((s,it)=>{
+    s.kcal+=Number(it.kcal)||0;s.p+=Number(it.p)||0;s.f+=Number(it.f)||0;s.kh+=Number(it.kh)||0;
+    return s;
+  },{kcal:0,p:0,f:0,kh:0});
+}
+function fuelFindDish(id){
+  return mealsData.find(m=>m.id===id)||null;
+}
+function fuelDayEntries(dateIso){
+  return fuelLog[dateIso]||[];
+}
+function fuelDaySum(dateIso){
+  return fuelDayEntries(dateIso).reduce((s,id)=>{
+    const dish=fuelFindDish(id);
+    if(!dish)return s;
+    const ms=fuelSumMeal(dish);
+    s.kcal+=ms.kcal;s.p+=ms.p;s.f+=ms.f;s.kh+=ms.kh;
+    return s;
+  },{kcal:0,p:0,f:0,kh:0});
+}
+function fuelMacroPct(sum){
+  const pKcal=sum.p*4,fKcal=sum.f*9,khKcal=sum.kh*4;
+  const total=pKcal+fKcal+khKcal;
+  if(!total)return{p:0,f:0,kh:0};
+  return{p:Math.round(pKcal/total*100),f:Math.round(fKcal/total*100),kh:Math.round(khKcal/total*100)};
+}
+function fuelBarHtml(sum){
+  const m=fuelMacroPct(sum);
+  return '<div style="display:flex;height:10px;border-radius:6px;overflow:hidden;background:var(--bg4);margin-top:9px">'
+    +(m.p?'<div style="width:'+m.p+'%;background:var(--green2)"></div>':'')
+    +(m.f?'<div style="width:'+m.f+'%;background:var(--accent)"></div>':'')
+    +(m.kh?'<div style="width:'+m.kh+'%;background:#3b82f6"></div>':'')
+    +'</div>'
+    +'<div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:6px;font-size:11px;color:var(--text3)">'
+    +'<span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--green2);margin-right:4px"></span>Protein '+m.p+'%</span>'
+    +'<span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--accent);margin-right:4px"></span>Fett '+m.f+'%</span>'
+    +'<span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#3b82f6;margin-right:4px"></span>KH '+m.kh+'%</span>'
+    +'</div>';
+}
+/* Erkennt die maßgebliche Zahl in einer Mengenangabe – bevorzugt Gramm, dann ml,
+   sonst die führende Zahl (z.B. bei "3 Stück"). Dient als Skalierungs-Referenz. */
+function fuelParseQty(mengeStr){
+  if(!mengeStr)return null;
+  let m=String(mengeStr).match(/(\d+(?:[.,]\d+)?)\s*g\b/);
+  if(m)return parseFloat(m[1].replace(',','.'));
+  m=String(mengeStr).match(/(\d+(?:[.,]\d+)?)\s*ml\b/);
+  if(m)return parseFloat(m[1].replace(',','.'));
+  m=String(mengeStr).match(/^\D*(\d+(?:[.,]\d+)?)/);
+  if(m)return parseFloat(m[1].replace(',','.'));
+  return null;
+}
+function fuelSaveItem(mi,ii,field,val){
+  const it=mealsData[mi].items[ii];
+  if(field==='name'){
+    it.name=val.trim();
+  }else if(field==='menge'){
+    const newQty=fuelParseQty(val);
+    const oldQty=it.qty;
+    it.menge=val.trim();
+    if(newQty!=null&&oldQty!=null&&oldQty>0&&newQty!==oldQty){
+      const ratio=newQty/oldQty;
+      it.kcal=Math.round((Number(it.kcal)||0)*ratio*10)/10;
+      it.p=Math.round((Number(it.p)||0)*ratio*10)/10;
+      it.f=Math.round((Number(it.f)||0)*ratio*10)/10;
+      it.kh=Math.round((Number(it.kh)||0)*ratio*10)/10;
+    }
+    it.qty=newQty!=null?newQty:oldQty;
+  }else{
+    const n=parseFloat(String(val).replace(',','.').replace(/[^0-9.\-]/g,''));
+    it[field]=isNaN(n)?0:n;
+  }
+  fuelSaveLocal();
+  showSaveHint();
+  renderFuel();
+}
+function fuelSaveMealField(mi,field,val){
+  mealsData[mi][field]=val.trim();
+  fuelSaveLocal();
+  showSaveHint();
+}
+function fuelAddItem(mi){
+  mealsData[mi].items.push({name:'Neue Zutat',menge:'',kcal:0,p:0,f:0,kh:0});
+  fuelSaveLocal();
+  renderFuel();
+}
+function fuelDelItem(mi,ii){
+  if(!confirm('Zutat "'+(mealsData[mi].items[ii].name||'')+'" löschen?'))return;
+  mealsData[mi].items.splice(ii,1);
+  fuelSaveLocal();
+  renderFuel();
+}
+function fuelAddMeal(){
+  mealsData.push({id:'d'+Date.now(),name:'Neues Gericht',subtitle:'',note:'',items:[]});
+  fuelSaveLocal();
+  renderFuel();
+}
+function fuelDelMeal(mi){
+  if(!confirm('Ganzes Gericht "'+(mealsData[mi].name||'')+'" aus der Bibliothek löschen? Bereits protokollierte Tage bleiben mit dem Namen erhalten, zählen aber nicht mehr in neue Summen.'))return;
+  mealsData.splice(mi,1);
+  fuelSaveLocal();
+  renderFuel();
+}
+function fuelResetDefault(){
+  if(!confirm('Gerichte-Bibliothek auf die Ausgangsdaten zurücksetzen? Dein Tagesprotokoll bleibt erhalten.'))return;
+  mealsData=deepCopy(DEFAULT_MEALS);
+  fuelSaveLocal();
+  renderFuel();
+}
+function fuelSetDate(val){
+  fuelSelectedDate=val||isoDay(new Date());
+  renderFuel();
+}
+function fuelShiftDate(delta){
+  const d=new Date(fuelSelectedDate+'T00:00:00');
+  d.setDate(d.getDate()+delta);
+  fuelSelectedDate=isoDay(d);
+  renderFuel();
+}
+function fuelAddToDay(dishId){
+  if(!fuelLog[fuelSelectedDate])fuelLog[fuelSelectedDate]=[];
+  fuelLog[fuelSelectedDate].push(dishId);
+  fuelSaveLogLocal();
+  showSaveHint();
+  renderFuel();
+}
+function fuelRemoveFromDay(idx){
+  const arr=fuelLog[fuelSelectedDate];
+  if(!arr)return;
+  arr.splice(idx,1);
+  if(!arr.length)delete fuelLog[fuelSelectedDate];
+  fuelSaveLogLocal();
+  renderFuel();
+}
+function renderFuel(){
+  const el=document.getElementById('view-ernaehrung');
+  if(!el)return;
+  if(!fuelSelectedDate)fuelSelectedDate=isoDay(new Date());
+  const dateIso=fuelSelectedDate;
+  const todayIso=isoDay(new Date());
+  const entries=fuelDayEntries(dateIso);
+  const daySum=fuelDaySum(dateIso);
+  const dateObj=new Date(dateIso+'T00:00:00');
+  const dateLabel=WDAYS_FULL[dateObj.getDay()]+', '+dateObj.getDate()+'. '+MONTHS[dateObj.getMonth()];
+
+  let out='';
+
+  /* Datumsnavigation */
+  out+='<div class="mob-cal-nav" style="margin-top:0">'
+    +'<button onclick="fuelShiftDate(-1)" aria-label="Vorheriger Tag">\u2039</button>'
+    +'<span class="lbl">'+dateLabel+(dateIso===todayIso?' <span style="color:var(--accent);font-weight:700">· Heute</span>':'')+'</span>'
+    +'<button onclick="fuelShiftDate(1)" aria-label="Nächster Tag">\u203a</button>'
+    +'</div>'
+    +'<input type="date" value="'+dateIso+'" onchange="fuelSetDate(this.value)" style="width:100%;margin-top:8px;margin-bottom:4px">';
+
+  /* Tages-Dashboard */
+  out+='<div class="card">'
+    +'<div style="font-family:var(--font-serif);font-size:17px;font-weight:700;color:var(--text);margin-bottom:3px">Tagesbilanz</div>'
+    +'<div style="font-size:12px;color:var(--text3);margin-bottom:12px">Automatisch berechnet aus den unten protokollierten Gerichten.</div>'
+    +'<div class="mob-stat-grid">'
+    +'<div class="mob-stat"><div class="v">'+Math.round(daySum.kcal)+'</div><div class="l">kcal</div></div>'
+    +'<div class="mob-stat"><div class="v">'+fmtG(daySum.p)+'<span> g</span></div><div class="l">Protein</div></div>'
+    +'<div class="mob-stat"><div class="v">'+fmtG(daySum.f)+'<span> g</span></div><div class="l">Fett</div></div>'
+    +'<div class="mob-stat"><div class="v">'+fmtG(daySum.kh)+'<span> g</span></div><div class="l">KH</div></div>'
+    +'</div>'
+    +fuelBarHtml(daySum)
+    +'</div>';
+
+  /* Protokoll des Tages */
+  out+='<div class="ana-sec-title">Protokoll · '+dateLabel+'</div>';
+  if(!entries.length){
+    out+='<div class="ana-insight" style="border-left-color:var(--text3)">Noch nichts eingetragen. Wähle unten ein Gericht aus deiner Bibliothek – ein Klick trägt es für diesen Tag ein.</div>';
+  }else{
+    entries.forEach((id,idx)=>{
+      const dish=fuelFindDish(id);
+      const s=dish?fuelSumMeal(dish):null;
+      out+='<div class="card" style="padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:10px">'
+        +'<div style="min-width:0">'
+        +'<div style="font-weight:600;font-size:13.5px;color:var(--text)">'+(dish?esc(dish.name)+(dish.subtitle?' · '+esc(dish.subtitle):''):'<span style="color:var(--text3);font-style:italic">Gericht gelöscht</span>')+'</div>'
+        +(s?'<div style="font-size:11.5px;color:var(--text3);margin-top:2px">'+Math.round(s.kcal)+' kcal · P '+fmtG(s.p)+' · F '+fmtG(s.f)+' · KH '+fmtG(s.kh)+'</div>':'')
+        +'</div>'
+        +'<button class="fi-del" onclick="fuelRemoveFromDay('+idx+')" title="Aus dem Protokoll entfernen">×</button>'
+        +'</div>';
+    });
+  }
+
+  /* Gerichte-Bibliothek zum Anklicken */
+  out+='<div class="ana-sec-title">Meine Gerichte</div>';
+  out+='<div class="ana-insight" style="border-left-color:var(--text3)">Auf „+ Hinzufügen” klicken, um ein Gericht für den oben gewählten Tag einzutragen. Über „Bearbeiten” lassen sich Zutaten und Mengen anpassen – änderst du die Grammzahl (z. B. 250 g → 300 g), werden kcal/P/F/KH automatisch mit hochgerechnet. Trägst du stattdessen einen Nährwert direkt ein, gilt genau dieser Wert.</div>';
+
+  mealsData.forEach((meal,mi)=>{
+    const sum=fuelSumMeal(meal);
+    out+='<div class="card">'
+      +'<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap">'
+      +'<div style="flex:1;min-width:160px">'
+      +'<div style="font-family:var(--font-serif);font-size:15px;font-weight:700;color:var(--text)">'+esc(meal.name)+(meal.subtitle?' <span style="font-weight:400;color:var(--text3);font-size:12.5px">· '+esc(meal.subtitle)+'</span>':'')+'</div>'
+      +(meal.items.length?'<div style="font-size:11.5px;color:var(--text2);margin-top:4px;line-height:1.45">'+meal.items.map(it=>esc(it.name)+(it.menge?' <span style="color:var(--text3)">('+esc(it.menge)+')</span>':'')).join(', ')+'</div>':'')
+      +'<div style="font-size:11.5px;color:var(--text3);margin-top:4px">'+Math.round(sum.kcal)+' kcal · P '+fmtG(sum.p)+' · F '+fmtG(sum.f)+' · KH '+fmtG(sum.kh)+'</div>'
+      +'</div>'
+      +'<div style="display:flex;gap:8px;flex-shrink:0">'
+      +'<button class="fuel-add-btn" onclick="fuelAddToDay(\''+meal.id+'\')">+ Hinzufügen</button>'
+      +'<button class="fuel-mini-btn" onclick="fuelToggleEdit('+mi+')" id="fuel-edit-btn-'+mi+'">Bearbeiten</button>'
+      +'</div>'
+      +'</div>';
+
+    out+='<div id="fuel-edit-'+mi+'" style="display:none;margin-top:12px">';
+    out+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">'
+      +'<div class="tplan-focus" contenteditable="true" spellcheck="false" style="font-size:13px;flex:1" onblur="fuelSaveMealField('+mi+',\'name\',this.textContent)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur()}">'+esc(meal.name)+'</div>'
+      +'<button class="fi-del" onclick="fuelDelMeal('+mi+')" title="Gericht aus der Bibliothek löschen">×</button>'
+      +'</div>'
+      +'<div contenteditable="true" spellcheck="false" style="font-size:12px;color:var(--text3);outline:none;margin-bottom:10px;padding:2px 4px;border-radius:4px" onblur="fuelSaveMealField('+mi+',\'subtitle\',this.textContent)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur()}">'+esc(meal.subtitle||'')+'</div>';
+
+    out+='<div style="overflow-x:auto">'
+      +'<table style="width:100%;border-collapse:collapse;font-size:12.5px">'
+      +'<thead><tr style="text-align:left;color:var(--text3);font-size:9.5px;text-transform:uppercase;letter-spacing:.05em">'
+      +'<th style="padding:0 6px 6px 0;font-weight:600">Zutat</th>'
+      +'<th style="padding:0 6px 6px;font-weight:600">Menge</th>'
+      +'<th style="padding:0 6px 6px;font-weight:600;text-align:right">kcal</th>'
+      +'<th style="padding:0 6px 6px;font-weight:600;text-align:right">P</th>'
+      +'<th style="padding:0 6px 6px;font-weight:600;text-align:right">F</th>'
+      +'<th style="padding:0 6px 6px;font-weight:600;text-align:right">KH</th>'
+      +'<th></th>'
+      +'</tr></thead><tbody>';
+    meal.items.forEach((it,ii)=>{
+      out+='<tr style="border-top:1px solid var(--border)">'
+        +'<td style="padding:6px 6px 6px 0"><div contenteditable="true" spellcheck="false" style="outline:none" onblur="fuelSaveItem('+mi+','+ii+',\'name\',this.textContent)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur()}">'+esc(it.name)+'</div></td>'
+        +'<td style="padding:6px"><div contenteditable="true" spellcheck="false" style="outline:none;color:var(--text2);white-space:nowrap" onblur="fuelSaveItem('+mi+','+ii+',\'menge\',this.textContent)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur()}">'+esc(it.menge||'')+'</div></td>'
+        +'<td style="padding:6px;text-align:right"><div contenteditable="true" spellcheck="false" style="outline:none;text-align:right" onblur="fuelSaveItem('+mi+','+ii+',\'kcal\',this.textContent)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur()}">'+fmtG(it.kcal)+'</div></td>'
+        +'<td style="padding:6px;text-align:right"><div contenteditable="true" spellcheck="false" style="outline:none;text-align:right" onblur="fuelSaveItem('+mi+','+ii+',\'p\',this.textContent)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur()}">'+fmtG(it.p)+'</div></td>'
+        +'<td style="padding:6px;text-align:right"><div contenteditable="true" spellcheck="false" style="outline:none;text-align:right" onblur="fuelSaveItem('+mi+','+ii+',\'f\',this.textContent)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur()}">'+fmtG(it.f)+'</div></td>'
+        +'<td style="padding:6px;text-align:right"><div contenteditable="true" spellcheck="false" style="outline:none;text-align:right" onblur="fuelSaveItem('+mi+','+ii+',\'kh\',this.textContent)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur()}">'+fmtG(it.kh)+'</div></td>'
+        +'<td style="padding:6px;text-align:center"><button class="fi-del" onclick="fuelDelItem('+mi+','+ii+')">×</button></td>'
+        +'</tr>';
+    });
+    out+='<tr style="border-top:2px solid var(--border2);font-weight:700">'
+      +'<td style="padding:8px 6px 4px 0">Summe</td><td></td>'
+      +'<td style="padding:8px 6px 4px;text-align:right">'+Math.round(sum.kcal)+'</td>'
+      +'<td style="padding:8px 6px 4px;text-align:right">'+fmtG(sum.p)+'</td>'
+      +'<td style="padding:8px 6px 4px;text-align:right">'+fmtG(sum.f)+'</td>'
+      +'<td style="padding:8px 6px 4px;text-align:right">'+fmtG(sum.kh)+'</td>'
+      +'<td></td>'
+      +'</tr>';
+    out+='</tbody></table></div>';
+    out+='<button class="tplan-add-btn" onclick="fuelAddItem('+mi+')">+ Zutat</button>';
+    out+=fuelBarHtml(sum);
+    out+='<div class="tplan-note" contenteditable="true" spellcheck="false" data-placeholder="Notiz zum Gericht …" style="margin-top:10px" onblur="fuelSaveMealField('+mi+',\'note\',this.textContent)" onkeydown="if(event.key===\'Enter\'&&!event.shiftKey){event.preventDefault();this.blur()}">'+esc(meal.note||'')+'</div>';
+    out+='</div>'; // /fuel-edit
+    out+='</div>'; // /card
+  });
+
+  out+='<div class="footer-tools"><button onclick="fuelAddMeal()">+ Neues Gericht</button><button onclick="fuelResetDefault()">Bibliothek auf Ausgangsdaten zurücksetzen</button></div>';
+
+  out+='<div class="ana-sec-title">Optimierungs-Hinweise</div>';
+  DEFAULT_FUEL_INSIGHTS.forEach(t=>{out+='<div class="ana-insight">'+t+'</div>';});
+
+  el.innerHTML=out;
+}
+function fuelToggleEdit(mi){
+  const box=document.getElementById('fuel-edit-'+mi);
+  const btn=document.getElementById('fuel-edit-btn-'+mi);
+  if(!box)return;
+  const open=box.style.display!=='none';
+  box.style.display=open?'none':'block';
+  if(btn)btn.textContent=open?'Bearbeiten':'Fertig';
+}
+
 /* ══ ANALYSE ══ */
 function switchView(v,el){
   document.querySelectorAll('#main-tabs .tab').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
   document.getElementById('view-training').style.display=v==='training'?'':'none';
   document.getElementById('view-mobility').style.display=v==='mobility'?'':'none';
+  document.getElementById('view-ernaehrung').style.display=v==='ernaehrung'?'':'none';
   document.getElementById('view-analyse').style.display=v==='analyse'?'':'none';
   if(v==='analyse')renderAnalyse();
   if(v==='mobility')renderMobility();
+  if(v==='ernaehrung')renderFuel();
 }
 
 function parseTimeLabel(s){
@@ -1924,6 +2268,13 @@ function initApp(){
   mobGoal=load('mobGoal',5);
   mobBench=load('mobBench',{});
   stepsLog=load('stepsLog',{});
+  /* Ernährung: bewusst NUR lokal, kein Supabase-Sync (siehe fuelSaveLocal/fuelLoadLocal) */
+  const savedMeals=fuelLoadLocal();
+  mealsData=(savedMeals&&savedMeals.length)?savedMeals:deepCopy(DEFAULT_MEALS);
+  /* Skalierungs-Referenz (qty) für bereits gespeicherte Zutaten ohne dieses Feld nachrüsten */
+  mealsData.forEach(m=>(m.items||[]).forEach(it=>{if(it.qty==null)it.qty=fuelParseQty(it.menge);}));
+  fuelLog=fuelLoadLogLocal()||{};
+  fuelSelectedDate=isoDay(new Date());
   /* Beim Start automatisch den laufenden Block und die aktuelle Woche wählen */
   for(let b=0;b<4;b++){
     const sd=load('pm2_start_'+b,'')||'';
