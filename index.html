@@ -546,6 +546,7 @@ function isTrainKey(k){
   return k==='trainBlocks_v5'||k==='trainLogs'||k==='workoutTimes'||
          k==='mobRoutine'||k==='mobDays'||k==='mobGoal'||k==='mobBench'||k==='mobStartDate'||
          k==='stepsLog'||k==='stepsDismiss'||
+         k==='mealsData_local'||k==='fuelLog_local'||
          k.indexOf('pm2_start_')===0||k.indexOf('pm2_day_')===0;
 }
 
@@ -1465,16 +1466,16 @@ const DEFAULT_FUEL_INSIGHTS=[
 let mealsData=[];
 let fuelLog={}; // { '2026-08-17': ['egg-skillet','tuna-tomato', ...] }
 let fuelSelectedDate=null;
-/* Bewusst getrennt von load()/save(): Ernährungsdaten bleiben vorerst NUR lokal
-   auf dem Gerät (kein Supabase-Sync). Sync bauen wir später separat aus. */
+/* Ernährung läuft jetzt über save() und wird wie Training/Mobility
+   mit Supabase synchronisiert (Keys: mealsData_local, fuelLog_local). */
 function fuelSaveLocal(){
-  try{localStorage.setItem('mealsData_local',JSON.stringify(mealsData));}catch(e){}
+  save('mealsData_local',mealsData);
 }
 function fuelLoadLocal(){
   try{const v=localStorage.getItem('mealsData_local');return v?JSON.parse(v):null;}catch(e){return null;}
 }
 function fuelSaveLogLocal(){
-  try{localStorage.setItem('fuelLog_local',JSON.stringify(fuelLog));}catch(e){}
+  save('fuelLog_local',fuelLog);
 }
 function fuelLoadLogLocal(){
   try{const v=localStorage.getItem('fuelLog_local');return v?JSON.parse(v):null;}catch(e){return null;}
@@ -2366,7 +2367,7 @@ function initApp(){
   mobGoal=load('mobGoal',5);
   mobBench=load('mobBench',{});
   stepsLog=load('stepsLog',{});
-  /* Ernährung: bewusst NUR lokal, kein Supabase-Sync (siehe fuelSaveLocal/fuelLoadLocal) */
+  /* Ernährung: wird via syncFromSupabase() vor initApp in localStorage geladen */
   const savedMeals=fuelLoadLocal();
   mealsData=(savedMeals&&savedMeals.length)?savedMeals:deepCopy(DEFAULT_MEALS);
   /* Skalierungs-Referenz (qty) für bereits gespeicherte Zutaten ohne dieses Feld nachrüsten */
