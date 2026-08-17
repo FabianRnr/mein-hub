@@ -12,7 +12,7 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%3E%3Crect%20width%3D%2248%22%20height%3D%2248%22%20rx%3D%2211%22%20fill%3D%22%2314131a%22%2F%3E%3Cpath%20d%3D%22M17%2020a7%207%200%200%201%2014%200v3h-4v-3a3%203%200%200%200-6%200v3h-4z%22%20fill%3D%22%23ff4d00%22%2F%3E%3Cpath%20d%3D%22M24%2023c8%200%2013%206%2013%2012.5%200%204-2%207-5%207H16c-3%200-5-3-5-7C11%2029%2016%2023%2024%2023z%22%20fill%3D%22%23ff4d00%22%2F%3E%3C%2Fsvg%3E">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%3E%3Crect%20width%3D%2248%22%20height%3D%2248%22%20rx%3D%2211%22%20fill%3D%22%2314131a%22%2F%3E%3Cpath%20d%3D%22M17%2020a7%207%200%200%201%2014%200v3h-4v-3a3%203%200%200%200-6%200v3h-4z%22%20fill%3D%22%23ff4d00%22%2F%3E%3Cpath%20d%3D%22M24%2023c8%200%2013%206%2013%2012.5%200%204-2%207-5%207H16c-3%200-5-3-5-7C11%2029%2016%2023%2024%2023z%22%20fill%3D%22%23ff4d00%22%2F%3E%3C%2Fsvg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
@@ -58,7 +58,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 
 .ana-weeks{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .ana-wk{font-size:11px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:4px 8px;color:var(--text2)}
 .ana-wk b{color:var(--accent);font-weight:600;margin-right:4px}
-.ana-sec-title{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--text3);margin:22px 0 10px;font-weight:500;display:flex;align-items:center;gap:8px}
+.ana-sec-title{font-family:var(--font-sans);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.11em;color:var(--accent);margin:22px 0 10px;display:flex;align-items:center;gap:8px}
 .ana-sec-title::after{content:'';flex:1;height:1px;background:var(--border)}
 .ana-insight{font-size:13px;line-height:1.7;color:var(--text2);padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:8px;margin-bottom:8px}
 .mob-stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px}
@@ -104,10 +104,6 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 
 .tplan-add-btn:hover{color:var(--accent);opacity:1}
 .fi-del{color:var(--text3);font-size:18px;line-height:1;width:24px;text-align:center;flex-shrink:0;opacity:.4;transition:opacity .2s}
 .fi-del:hover{opacity:1;color:var(--red)}
-.fuel-add-btn{font-size:12px;font-weight:600;color:#fff;background:var(--accent);border:none;border-radius:8px;padding:8px 14px;cursor:pointer;white-space:nowrap;transition:background .15s,transform .15s}
-.fuel-add-btn:hover{background:var(--accent2)}
-.fuel-mini-btn{font-size:11.5px;font-weight:600;color:var(--text3);background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 12px;cursor:pointer;white-space:nowrap;transition:color .15s,background .15s}
-.fuel-mini-btn:hover{color:var(--text);background:var(--bg4)}
 .mobile-week-tabs{display:none;gap:4px;margin-bottom:12px}
 .mobile-week-tab{flex:1;text-align:center;padding:8px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;background:var(--bg4);color:var(--text2);border:1.5px solid transparent;transition:all .15s}
 .mobile-week-tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
@@ -161,7 +157,8 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 
 .ana-hero-bar-bg{height:6px;background:var(--bg4);border-radius:3px;margin-top:16px;overflow:hidden;position:relative}
 .ana-hero-bar-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:3px;transition:width 1.1s cubic-bezier(.22,1,.36,1)}
 .hdr-stats{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.hdr-stat{display:flex;align-items:center;gap:12px;background:var(--bg3);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:12px;padding:10px 20px 10px 16px;cursor:default}
+.hdr-stat{position:relative;display:flex;align-items:center;gap:12px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:10px 20px 10px 20px;cursor:default;overflow:hidden}
+.hdr-stat::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--accent),var(--accent2))}
 .hdr-stat .ico{width:28px;height:28px;flex-shrink:0;color:var(--accent)}
 .hdr-stat .ico svg{width:100%;height:100%;display:block}
 .hdr-stat .txt{display:flex;flex-direction:column;line-height:1.1}
@@ -173,7 +170,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 
   .hdr-stat:hover{transform:translateY(-2px) scale(1.04);background:var(--accent-light);box-shadow:0 6px 16px rgba(255,77,0,.16)}
 }
 @media(max-width:600px){
-  .hdr-stat{padding:8px 16px 8px 13px;gap:9px}
+  .hdr-stat{padding:8px 16px 8px 17px;gap:9px}
   .hdr-stat .ico{width:23px;height:23px}
   .hdr-stat .v{font-size:22px}
   .hdr-stat .v span{font-size:14px}
@@ -254,8 +251,8 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 
 .steps-day-row input{flex:1;font-size:16px;padding:10px 12px;text-align:right}
 .steps-bar-wrap{margin:14px 0 18px}
 .steps-bar-bg{height:8px;background:var(--bg4);border-radius:4px;overflow:hidden}
-.steps-bar-fill{height:100%;background:var(--accent);border-radius:4px;transition:width .3s ease}
-.steps-bar-fill.full{background:var(--green2)}
+.steps-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px;transition:width .3s ease}
+.steps-bar-fill.full{background:linear-gradient(90deg,var(--green),var(--green2))}
 .steps-bar-txt{font-size:11px;color:var(--text3);margin-top:5px;text-align:center}
 .steps-hist{display:flex;flex-direction:column;gap:5px;max-height:220px;overflow-y:auto}
 .steps-hist-row{display:flex;align-items:center;justify-content:space-between;font-size:12.5px;padding:6px 10px;border-radius:8px;background:var(--bg3);cursor:pointer;transition:background .15s}
@@ -266,6 +263,114 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 
 .steps-hist-empty{font-size:12px;color:var(--text3);padding:8px 2px}
 .steps-end-hint{font-size:10px;color:var(--text3);text-align:center;margin-top:14px}
 @media(max-width:600px){.steps-fab{font-size:13px;padding:10px 16px 10px 12px}}
+/* ══════════════════ FUEL PROTOCOL (Ernährung-Tab) ══════════════════
+   Eigenständiges dunkles Theme, exakt nach fuel-protocol.html.
+   Alle Variablen/Klassen sind unter .fuel-page gekapselt und wirken
+   sich nicht auf Training/Mobility/Analyse aus. */
+.fuel-page{
+  --fbg:var(--bg);--fpanel:var(--bg2);--fpanel2:var(--bg3);--fline:var(--border);
+  --fbone:var(--text);--fmuted:var(--text3);--famber:var(--accent);
+  --fprotein:var(--green2);--ffat:var(--accent);--fcarb:#3b82f6;
+  background:var(--fbg);color:var(--fbone);
+  font-family:var(--font-sans);
+  line-height:1.55;
+  border-radius:18px;
+  padding:0;
+  margin-bottom:0;
+}
+.fuel-page .fp-eyebrow{font-family:var(--font-sans);font-weight:700;letter-spacing:.16em;text-transform:uppercase;font-size:.72rem;color:var(--famber)}
+.fuel-page .fp-h1{font-family:var(--font-serif);font-weight:700;font-size:clamp(1.7rem,6vw,2.2rem);line-height:1.08;letter-spacing:-.01em;margin:.3rem 0 .4rem;color:var(--fbone)}
+.fuel-page .fp-sub{color:var(--fmuted);font-size:.85rem;max-width:46ch;margin-bottom:1.5rem}
+
+.fuel-page .datebar{display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem}
+.fuel-page .datebar button{width:32px;height:32px;border-radius:8px;background:var(--fpanel);border:1px solid var(--fline);color:var(--fbone);font-size:16px;cursor:pointer}
+.fuel-page .datebar button:hover{background:var(--fpanel2)}
+.fuel-page .datebar .lbl{font-family:var(--font-serif);font-weight:700;letter-spacing:.01em;font-size:1.05rem;color:var(--fbone);text-align:center}
+.fuel-page input[type=date].fuel-date{width:100%;margin-bottom:1.5rem;background:var(--fpanel);border:1.5px solid var(--fline);color:var(--fbone);border-radius:var(--radiusS);padding:.55rem .7rem;font-family:var(--font-sans);font-size:.85rem}
+.fuel-page input[type=date].fuel-date:focus{border-color:var(--famber);box-shadow:none}
+
+.fuel-page .dash{display:grid;grid-template-columns:repeat(4,1fr);gap:.65rem;margin-bottom:1rem}
+.fuel-page .dash .card{background:var(--fpanel);border:1px solid var(--fline);border-radius:12px;padding:.8rem .8rem .7rem;box-shadow:none}
+.fuel-page .dash .label{font-family:var(--font-sans);font-weight:700;letter-spacing:.09em;text-transform:uppercase;font-size:.62rem;color:var(--fmuted)}
+.fuel-page .dash .val{font-family:var(--font-serif);font-weight:700;font-size:1.5rem;line-height:1.1;color:var(--fbone)}
+.fuel-page .dash .unit{font-size:.78rem;color:var(--fmuted);font-weight:500}
+.fuel-page .dash .protein .val{color:var(--fprotein)}
+.fuel-page .dash .fat .val{color:var(--ffat)}
+.fuel-page .dash .carb .val{color:var(--fcarb)}
+
+.fuel-page .daybar{height:9px;border-radius:5px;overflow:hidden;display:flex;border:1px solid var(--fline);margin-bottom:.45rem}
+.fuel-page .daybar div{height:100%}
+.fuel-page .legend{display:flex;gap:1rem;flex-wrap:wrap;font-size:.72rem;color:var(--fmuted);margin-bottom:1.4rem}
+.fuel-page .legend span::before{content:"";display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:.35rem;vertical-align:-1px}
+.fuel-page .legend .lp::before{background:var(--fprotein)}
+.fuel-page .legend .lf::before{background:var(--ffat)}
+.fuel-page .legend .lc::before{background:var(--fcarb)}
+
+.fuel-page .fp-sec-title{font-family:var(--font-sans);font-weight:700;text-transform:uppercase;letter-spacing:.1em;font-size:.72rem;color:var(--famber);margin:1.4rem 0 .7rem;display:flex;align-items:center;gap:8px}
+.fuel-page .fp-sec-title::after{content:'';flex:1;height:1px;background:var(--fline)}
+.fuel-page .fp-hint{background:var(--fpanel);border:1px solid var(--fline);border-left:3px solid var(--famber);border-radius:12px;padding:.85rem 1.05rem;font-size:.82rem;color:var(--fmuted);margin-bottom:.9rem;line-height:1.55}
+
+.fuel-page .log-row{background:var(--fpanel);border:1px solid var(--fline);border-radius:12px;padding:.7rem 1rem;margin-bottom:.55rem;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.fuel-page .log-row .n{font-weight:600;font-size:.88rem;color:var(--fbone)}
+.fuel-page .log-row .m{font-size:.74rem;color:var(--fmuted);margin-top:2px}
+.fuel-page .log-row button{color:var(--fmuted);font-size:19px;background:none;border:none;cursor:pointer;line-height:1;flex-shrink:0;padding:2px 4px}
+.fuel-page .log-row button:hover{color:var(--red)}
+
+section.fp-meal{background:var(--fpanel);border:1px solid var(--fline);border-radius:14px;margin-bottom:1rem;overflow:hidden}
+.fp-meal .meal-head{display:flex;justify-content:space-between;align-items:flex-start;gap:.8rem;padding:1rem 1.1rem .3rem;flex-wrap:wrap}
+.fp-meal .meal-slot{font-family:var(--font-sans);font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-size:.62rem;color:var(--famber)}
+.fp-meal .meal-name{font-family:var(--font-serif);font-weight:700;font-size:1.2rem;letter-spacing:-.005em;line-height:1.2;color:var(--fbone)}
+.fp-meal .meal-summary{font-size:.76rem;color:var(--fmuted);margin-top:2px}
+.fp-meal .meal-actions{display:flex;gap:.45rem;flex-shrink:0}
+.fp-meal .btn-add{font-family:var(--font-sans);font-weight:700;letter-spacing:.02em;font-size:.75rem;background:var(--famber);color:#fff;border:none;border-radius:8px;padding:.5rem .85rem;cursor:pointer;white-space:nowrap}
+.fp-meal .btn-add:hover{opacity:.86}
+.fp-meal .btn-edit{font-family:var(--font-sans);font-weight:600;letter-spacing:.02em;font-size:.75rem;background:none;color:var(--fmuted);border:1px solid var(--fline);border-radius:8px;padding:.5rem .75rem;cursor:pointer;white-space:nowrap}
+.fp-meal .btn-edit:hover{color:var(--fbone);border-color:var(--fmuted)}
+
+.fp-meal .fp-edit-box{padding:0 1.1rem 1rem}
+.fp-meal .fp-name-edit{font-family:var(--font-serif);font-weight:700;font-size:1rem;color:var(--fbone);outline:none;padding:2px 3px;border-radius:4px}
+.fp-meal .fp-name-edit:focus{background:var(--fpanel2)}
+.fp-meal .fp-sub-edit{font-size:.78rem;color:var(--fmuted);outline:none;padding:2px 3px;border-radius:4px;margin-bottom:.6rem}
+.fp-meal .fp-sub-edit:focus{background:var(--fpanel2)}
+.fp-meal .del-meal{color:var(--fmuted);font-size:19px;background:none;border:none;cursor:pointer;flex-shrink:0;padding:2px 4px}
+.fp-meal .del-meal:hover{color:var(--red)}
+
+.fp-meal table{width:100%;border-collapse:collapse;font-size:.82rem}
+.fp-meal thead th{text-align:right;font-weight:600;color:var(--fmuted);font-size:.62rem;text-transform:uppercase;letter-spacing:.08em;padding:.5rem 1.1rem .4rem 0;border-bottom:1px solid var(--fline)}
+.fp-meal thead th:first-child{text-align:left;padding-left:1.1rem}
+.fp-meal tbody td{padding:.42rem 1.1rem .42rem 0;text-align:right;border-bottom:1px solid var(--fline);color:var(--fbone);font-variant-numeric:tabular-nums}
+.fp-meal tbody td:first-child{text-align:left;padding-left:1.1rem}
+.fp-meal tbody td div[contenteditable]{outline:none;cursor:text;border-radius:4px;padding:1px 2px}
+.fp-meal tbody td div[contenteditable]:focus{background:var(--fpanel2)}
+.fp-meal .amount-cell{color:var(--fmuted);font-size:.78rem}
+.fp-meal tfoot td{padding:.55rem 1.1rem .55rem 0;text-align:right;font-weight:700;font-variant-numeric:tabular-nums;background:var(--fpanel2);color:var(--fbone)}
+.fp-meal tfoot td:first-child{text-align:left;padding-left:1.1rem;font-family:var(--font-sans);text-transform:uppercase;letter-spacing:.08em;font-size:.68rem;color:var(--fmuted);font-weight:700}
+.fp-meal .mealbar{height:6px;display:flex}
+.fp-meal .mealbar div{height:100%}
+.fp-meal .meal-note{padding:.7rem 1.1rem .9rem;font-size:.78rem;color:var(--fmuted);outline:none}
+.fp-meal .meal-note:focus{background:var(--fpanel2)}
+.fp-meal .add-ingredient{font-size:.72rem;color:var(--fmuted);background:none;border:none;cursor:pointer;padding:.5rem 1.1rem;display:block}
+.fp-meal .add-ingredient:hover{color:var(--famber)}
+.fp-meal .del-ing{color:var(--fmuted);font-size:15px;background:none;border:none;cursor:pointer}
+.fp-meal .del-ing:hover{color:var(--red)}
+
+.fuel-page .fp-opt{background:var(--fpanel);border:1px solid var(--fline);border-left:3px solid var(--famber);border-radius:14px;padding:1.1rem 1.2rem;margin-top:.4rem}
+.fuel-page .fp-opt ul{list-style:none}
+.fuel-page .fp-opt li{padding:.4rem 0 .4rem 1.2rem;position:relative;font-size:.83rem;color:var(--fbone);border-bottom:1px solid var(--fline)}
+.fuel-page .fp-opt li:last-child{border-bottom:none}
+.fuel-page .fp-opt li::before{content:"→";position:absolute;left:0;color:var(--famber);font-weight:700}
+.fuel-page .fp-opt li strong,.fuel-page .fp-opt li b{color:var(--famber)}
+
+.fuel-page .fp-footer-tools{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:1.4rem}
+.fuel-page .fp-footer-tools button{font-family:'Inter',sans-serif;font-size:.75rem;color:var(--fmuted);text-decoration:underline;background:none;border:none;cursor:pointer}
+.fuel-page .fp-footer-tools button:hover{color:var(--fbone)}
+@media(hover:hover) and (pointer:fine){
+  .fuel-page .btn-add,.fuel-page .btn-edit,.fuel-page .datebar button{transition:transform .15s cubic-bezier(.34,1.56,.64,1),opacity .15s ease,background .15s ease}
+  .fuel-page .btn-add:hover,.fuel-page .datebar button:hover{transform:translateY(-1px) scale(1.04)}
+}
+@media(max-width:480px){
+  .fuel-page .dash{grid-template-columns:repeat(2,1fr)}
+}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 </head>
@@ -1407,17 +1512,12 @@ function fuelMacroPct(sum){
   if(!total)return{p:0,f:0,kh:0};
   return{p:Math.round(pKcal/total*100),f:Math.round(fKcal/total*100),kh:Math.round(khKcal/total*100)};
 }
-function fuelBarHtml(sum){
+function fuelBarHtml(sum,cls){
   const m=fuelMacroPct(sum);
-  return '<div style="display:flex;height:10px;border-radius:6px;overflow:hidden;background:var(--bg4);margin-top:9px">'
-    +(m.p?'<div style="width:'+m.p+'%;background:var(--green2)"></div>':'')
-    +(m.f?'<div style="width:'+m.f+'%;background:var(--accent)"></div>':'')
-    +(m.kh?'<div style="width:'+m.kh+'%;background:#3b82f6"></div>':'')
-    +'</div>'
-    +'<div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:6px;font-size:11px;color:var(--text3)">'
-    +'<span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--green2);margin-right:4px"></span>Protein '+m.p+'%</span>'
-    +'<span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--accent);margin-right:4px"></span>Fett '+m.f+'%</span>'
-    +'<span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#3b82f6;margin-right:4px"></span>KH '+m.kh+'%</span>'
+  return '<div class="'+(cls||'mealbar')+'">'
+    +(m.p?'<div style="width:'+m.p+'%;background:var(--fprotein)"></div>':'')
+    +(m.f?'<div style="width:'+m.f+'%;background:var(--ffat)"></div>':'')
+    +(m.kh?'<div style="width:'+m.kh+'%;background:var(--fcarb)"></div>':'')
     +'</div>';
 }
 /* Erkennt die maßgebliche Zahl in einer Mengenangabe – bevorzugt Gramm, dann ml,
@@ -1525,116 +1625,114 @@ function renderFuel(){
   const dateObj=new Date(dateIso+'T00:00:00');
   const dateLabel=WDAYS_FULL[dateObj.getDay()]+', '+dateObj.getDate()+'. '+MONTHS[dateObj.getMonth()];
 
-  let out='';
+  let out='<div class="fuel-page">';
+
+  /* Kopf */
+  out+='<div class="fp-eyebrow">Cutting-Phase · Ziel ~10 % KFA</div>'
+    +'<div class="fp-h1">Fuel Protocol</div>'
+    +'<div class="fp-sub">Trainings-Ernährungsplan — hohe Proteindichte, Kohlenhydrate ums Training, moderates Fett.</div>';
 
   /* Datumsnavigation */
-  out+='<div class="mob-cal-nav" style="margin-top:0">'
+  out+='<div class="datebar">'
     +'<button onclick="fuelShiftDate(-1)" aria-label="Vorheriger Tag">\u2039</button>'
-    +'<span class="lbl">'+dateLabel+(dateIso===todayIso?' <span style="color:var(--accent);font-weight:700">· Heute</span>':'')+'</span>'
+    +'<span class="lbl">'+dateLabel+(dateIso===todayIso?' <span style="color:var(--famber)">· Heute</span>':'')+'</span>'
     +'<button onclick="fuelShiftDate(1)" aria-label="Nächster Tag">\u203a</button>'
     +'</div>'
-    +'<input type="date" value="'+dateIso+'" onchange="fuelSetDate(this.value)" style="width:100%;margin-top:8px;margin-bottom:4px">';
+    +'<input type="date" class="fuel-date" value="'+dateIso+'" onchange="fuelSetDate(this.value)">';
 
   /* Tages-Dashboard */
-  out+='<div class="card">'
-    +'<div style="font-family:var(--font-serif);font-size:17px;font-weight:700;color:var(--text);margin-bottom:3px">Tagesbilanz</div>'
-    +'<div style="font-size:12px;color:var(--text3);margin-bottom:12px">Automatisch berechnet aus den unten protokollierten Gerichten.</div>'
-    +'<div class="mob-stat-grid">'
-    +'<div class="mob-stat"><div class="v">'+Math.round(daySum.kcal)+'</div><div class="l">kcal</div></div>'
-    +'<div class="mob-stat"><div class="v">'+fmtG(daySum.p)+'<span> g</span></div><div class="l">Protein</div></div>'
-    +'<div class="mob-stat"><div class="v">'+fmtG(daySum.f)+'<span> g</span></div><div class="l">Fett</div></div>'
-    +'<div class="mob-stat"><div class="v">'+fmtG(daySum.kh)+'<span> g</span></div><div class="l">KH</div></div>'
-    +'</div>'
-    +fuelBarHtml(daySum)
+  out+='<div class="dash">'
+    +'<div class="card"><div class="label">Kalorien</div><div class="val">'+Math.round(daySum.kcal)+'<span class="unit"> kcal</span></div></div>'
+    +'<div class="card protein"><div class="label">Protein</div><div class="val">'+fmtG(daySum.p)+'<span class="unit"> g</span></div></div>'
+    +'<div class="card fat"><div class="label">Fett</div><div class="val">'+fmtG(daySum.f)+'<span class="unit"> g</span></div></div>'
+    +'<div class="card carb"><div class="label">Kohlenhydrate</div><div class="val">'+fmtG(daySum.kh)+'<span class="unit"> g</span></div></div>'
     +'</div>';
+  out+=fuelBarHtml(daySum,'daybar');
+  out+='<div class="legend"><span class="lp">Protein</span><span class="lf">Fett</span><span class="lc">Kohlenhydrate</span></div>';
 
   /* Protokoll des Tages */
-  out+='<div class="ana-sec-title">Protokoll · '+dateLabel+'</div>';
+  out+='<div class="fp-sec-title">Protokoll · '+dateLabel+'</div>';
   if(!entries.length){
-    out+='<div class="ana-insight" style="border-left-color:var(--text3)">Noch nichts eingetragen. Wähle unten ein Gericht aus deiner Bibliothek – ein Klick trägt es für diesen Tag ein.</div>';
+    out+='<div class="fp-hint">Noch nichts eingetragen. Wähle unten ein Gericht aus deiner Bibliothek – ein Klick trägt es für diesen Tag ein.</div>';
   }else{
     entries.forEach((id,idx)=>{
       const dish=fuelFindDish(id);
       const s=dish?fuelSumMeal(dish):null;
-      out+='<div class="card" style="padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:10px">'
+      out+='<div class="log-row">'
         +'<div style="min-width:0">'
-        +'<div style="font-weight:600;font-size:13.5px;color:var(--text)">'+(dish?esc(dish.name)+(dish.subtitle?' · '+esc(dish.subtitle):''):'<span style="color:var(--text3);font-style:italic">Gericht gelöscht</span>')+'</div>'
-        +(s?'<div style="font-size:11.5px;color:var(--text3);margin-top:2px">'+Math.round(s.kcal)+' kcal · P '+fmtG(s.p)+' · F '+fmtG(s.f)+' · KH '+fmtG(s.kh)+'</div>':'')
+        +'<div class="n">'+(dish?esc(dish.name)+(dish.subtitle?' · '+esc(dish.subtitle):''):'<span style="color:var(--fmuted);font-style:italic">Gericht gelöscht</span>')+'</div>'
+        +(s?'<div class="m">'+Math.round(s.kcal)+' kcal · P '+fmtG(s.p)+' · F '+fmtG(s.f)+' · KH '+fmtG(s.kh)+'</div>':'')
         +'</div>'
-        +'<button class="fi-del" onclick="fuelRemoveFromDay('+idx+')" title="Aus dem Protokoll entfernen">×</button>'
+        +'<button onclick="fuelRemoveFromDay('+idx+')" title="Aus dem Protokoll entfernen">×</button>'
         +'</div>';
     });
   }
 
-  /* Gerichte-Bibliothek zum Anklicken */
-  out+='<div class="ana-sec-title">Meine Gerichte</div>';
-  out+='<div class="ana-insight" style="border-left-color:var(--text3)">Auf „+ Hinzufügen” klicken, um ein Gericht für den oben gewählten Tag einzutragen. Über „Bearbeiten” lassen sich Zutaten und Mengen anpassen – änderst du die Grammzahl (z. B. 250 g → 300 g), werden kcal/P/F/KH automatisch mit hochgerechnet. Trägst du stattdessen einen Nährwert direkt ein, gilt genau dieser Wert.</div>';
+  /* Gerichte-Bibliothek */
+  out+='<div class="fp-sec-title">Meine Gerichte</div>';
+  out+='<div class="fp-hint">„+ Hinzufügen” trägt ein Gericht für den oben gewählten Tag ein. Über „Bearbeiten” lassen sich Zutaten und Mengen anpassen – änderst du die Grammzahl (z. B. 250 g → 300 g), werden kcal/P/F/KH automatisch mit hochgerechnet.</div>';
 
   mealsData.forEach((meal,mi)=>{
     const sum=fuelSumMeal(meal);
-    out+='<div class="card">'
-      +'<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap">'
-      +'<div style="flex:1;min-width:160px">'
-      +'<div style="font-family:var(--font-serif);font-size:15px;font-weight:700;color:var(--text)">'+esc(meal.name)+(meal.subtitle?' <span style="font-weight:400;color:var(--text3);font-size:12.5px">· '+esc(meal.subtitle)+'</span>':'')+'</div>'
-      +(meal.items.length?'<div style="font-size:11.5px;color:var(--text2);margin-top:4px;line-height:1.45">'+meal.items.map(it=>esc(it.name)+(it.menge?' <span style="color:var(--text3)">('+esc(it.menge)+')</span>':'')).join(', ')+'</div>':'')
-      +'<div style="font-size:11.5px;color:var(--text3);margin-top:4px">'+Math.round(sum.kcal)+' kcal · P '+fmtG(sum.p)+' · F '+fmtG(sum.f)+' · KH '+fmtG(sum.kh)+'</div>'
+    out+='<section class="fp-meal">'
+      +'<div class="meal-head">'
+      +'<div style="min-width:160px;flex:1">'
+      +'<div class="meal-slot">'+esc(meal.subtitle||'Gericht')+'</div>'
+      +'<div class="meal-name">'+esc(meal.name)+'</div>'
+      +(meal.items.length?'<div class="meal-summary">'+meal.items.map(it=>esc(it.name)+(it.menge?' ('+esc(it.menge)+')':'')).join(', ')+'</div>':'')
+      +'<div class="meal-summary">'+Math.round(sum.kcal)+' kcal · P '+fmtG(sum.p)+' · F '+fmtG(sum.f)+' · KH '+fmtG(sum.kh)+'</div>'
       +'</div>'
-      +'<div style="display:flex;gap:8px;flex-shrink:0">'
-      +'<button class="fuel-add-btn" onclick="fuelAddToDay(\''+meal.id+'\')">+ Hinzufügen</button>'
-      +'<button class="fuel-mini-btn" onclick="fuelToggleEdit('+mi+')" id="fuel-edit-btn-'+mi+'">Bearbeiten</button>'
+      +'<div class="meal-actions">'
+      +'<button class="btn-add" onclick="fuelAddToDay(\''+meal.id+'\')">+ Hinzufügen</button>'
+      +'<button class="btn-edit" onclick="fuelToggleEdit('+mi+')" id="fuel-edit-btn-'+mi+'">Bearbeiten</button>'
       +'</div>'
       +'</div>';
 
-    out+='<div id="fuel-edit-'+mi+'" style="display:none;margin-top:12px">';
-    out+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">'
-      +'<div class="tplan-focus" contenteditable="true" spellcheck="false" style="font-size:13px;flex:1" onblur="fuelSaveMealField('+mi+',\'name\',this.textContent)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur()}">'+esc(meal.name)+'</div>'
-      +'<button class="fi-del" onclick="fuelDelMeal('+mi+')" title="Gericht aus der Bibliothek löschen">×</button>'
+    out+='<div id="fuel-edit-'+mi+'" class="fp-edit-box" style="display:none">';
+    out+='<div style="display:flex;align-items:center;gap:8px">'
+      +'<div class="fp-name-edit" contenteditable="true" spellcheck="false" style="flex:1" onblur="fuelSaveMealField('+mi+',\'name\',this.textContent)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur()}">'+esc(meal.name)+'</div>'
+      +'<button class="del-meal" onclick="fuelDelMeal('+mi+')" title="Gericht aus der Bibliothek löschen">×</button>'
       +'</div>'
-      +'<div contenteditable="true" spellcheck="false" style="font-size:12px;color:var(--text3);outline:none;margin-bottom:10px;padding:2px 4px;border-radius:4px" onblur="fuelSaveMealField('+mi+',\'subtitle\',this.textContent)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur()}">'+esc(meal.subtitle||'')+'</div>';
+      +'<div class="fp-sub-edit" contenteditable="true" spellcheck="false" onblur="fuelSaveMealField('+mi+',\'subtitle\',this.textContent)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur()}">'+esc(meal.subtitle||'')+'</div>';
 
     out+='<div style="overflow-x:auto">'
-      +'<table style="width:100%;border-collapse:collapse;font-size:12.5px">'
-      +'<thead><tr style="text-align:left;color:var(--text3);font-size:9.5px;text-transform:uppercase;letter-spacing:.05em">'
-      +'<th style="padding:0 6px 6px 0;font-weight:600">Zutat</th>'
-      +'<th style="padding:0 6px 6px;font-weight:600">Menge</th>'
-      +'<th style="padding:0 6px 6px;font-weight:600;text-align:right">kcal</th>'
-      +'<th style="padding:0 6px 6px;font-weight:600;text-align:right">P</th>'
-      +'<th style="padding:0 6px 6px;font-weight:600;text-align:right">F</th>'
-      +'<th style="padding:0 6px 6px;font-weight:600;text-align:right">KH</th>'
-      +'<th></th>'
+      +'<table><thead><tr>'
+      +'<th>Zutat</th><th>kcal</th><th>P (g)</th><th>F (g)</th><th>KH (g)</th><th></th>'
       +'</tr></thead><tbody>';
     meal.items.forEach((it,ii)=>{
-      out+='<tr style="border-top:1px solid var(--border)">'
-        +'<td style="padding:6px 6px 6px 0"><div contenteditable="true" spellcheck="false" style="outline:none" onblur="fuelSaveItem('+mi+','+ii+',\'name\',this.textContent)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur()}">'+esc(it.name)+'</div></td>'
-        +'<td style="padding:6px"><div contenteditable="true" spellcheck="false" style="outline:none;color:var(--text2);white-space:nowrap" onblur="fuelSaveItem('+mi+','+ii+',\'menge\',this.textContent)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur()}">'+esc(it.menge||'')+'</div></td>'
-        +'<td style="padding:6px;text-align:right"><div contenteditable="true" spellcheck="false" style="outline:none;text-align:right" onblur="fuelSaveItem('+mi+','+ii+',\'kcal\',this.textContent)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur()}">'+fmtG(it.kcal)+'</div></td>'
-        +'<td style="padding:6px;text-align:right"><div contenteditable="true" spellcheck="false" style="outline:none;text-align:right" onblur="fuelSaveItem('+mi+','+ii+',\'p\',this.textContent)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur()}">'+fmtG(it.p)+'</div></td>'
-        +'<td style="padding:6px;text-align:right"><div contenteditable="true" spellcheck="false" style="outline:none;text-align:right" onblur="fuelSaveItem('+mi+','+ii+',\'f\',this.textContent)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur()}">'+fmtG(it.f)+'</div></td>'
-        +'<td style="padding:6px;text-align:right"><div contenteditable="true" spellcheck="false" style="outline:none;text-align:right" onblur="fuelSaveItem('+mi+','+ii+',\'kh\',this.textContent)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur()}">'+fmtG(it.kh)+'</div></td>'
-        +'<td style="padding:6px;text-align:center"><button class="fi-del" onclick="fuelDelItem('+mi+','+ii+')">×</button></td>'
+      out+='<tr>'
+        +'<td><div contenteditable="true" spellcheck="false" onblur="fuelSaveItem('+mi+','+ii+',\'name\',this.textContent)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur()}">'+esc(it.name)+'</div>'
+        +'<div class="amount-cell" contenteditable="true" spellcheck="false" onblur="fuelSaveItem('+mi+','+ii+',\'menge\',this.textContent)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur()}">'+esc(it.menge||'')+'</div></td>'
+        +'<td><div contenteditable="true" spellcheck="false" onblur="fuelSaveItem('+mi+','+ii+',\'kcal\',this.textContent)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur()}">'+fmtG(it.kcal)+'</div></td>'
+        +'<td><div contenteditable="true" spellcheck="false" onblur="fuelSaveItem('+mi+','+ii+',\'p\',this.textContent)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur()}">'+fmtG(it.p)+'</div></td>'
+        +'<td><div contenteditable="true" spellcheck="false" onblur="fuelSaveItem('+mi+','+ii+',\'f\',this.textContent)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur()}">'+fmtG(it.f)+'</div></td>'
+        +'<td><div contenteditable="true" spellcheck="false" onblur="fuelSaveItem('+mi+','+ii+',\'kh\',this.textContent)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur()}">'+fmtG(it.kh)+'</div></td>'
+        +'<td><button class="del-ing" onclick="fuelDelItem('+mi+','+ii+')">×</button></td>'
         +'</tr>';
     });
-    out+='<tr style="border-top:2px solid var(--border2);font-weight:700">'
-      +'<td style="padding:8px 6px 4px 0">Summe</td><td></td>'
-      +'<td style="padding:8px 6px 4px;text-align:right">'+Math.round(sum.kcal)+'</td>'
-      +'<td style="padding:8px 6px 4px;text-align:right">'+fmtG(sum.p)+'</td>'
-      +'<td style="padding:8px 6px 4px;text-align:right">'+fmtG(sum.f)+'</td>'
-      +'<td style="padding:8px 6px 4px;text-align:right">'+fmtG(sum.kh)+'</td>'
+    out+='<tfoot><tr>'
+      +'<td>Summe</td>'
+      +'<td>'+Math.round(sum.kcal)+'</td>'
+      +'<td>'+fmtG(sum.p)+'</td>'
+      +'<td>'+fmtG(sum.f)+'</td>'
+      +'<td>'+fmtG(sum.kh)+'</td>'
       +'<td></td>'
-      +'</tr>';
-    out+='</tbody></table></div>';
-    out+='<button class="tplan-add-btn" onclick="fuelAddItem('+mi+')">+ Zutat</button>';
-    out+=fuelBarHtml(sum);
-    out+='<div class="tplan-note" contenteditable="true" spellcheck="false" data-placeholder="Notiz zum Gericht …" style="margin-top:10px" onblur="fuelSaveMealField('+mi+',\'note\',this.textContent)" onkeydown="if(event.key===\'Enter\'&&!event.shiftKey){event.preventDefault();this.blur()}">'+esc(meal.note||'')+'</div>';
-    out+='</div>'; // /fuel-edit
-    out+='</div>'; // /card
+      +'</tr></tfoot>';
+    out+='</table></div>';
+    out+='<button class="add-ingredient" onclick="fuelAddItem('+mi+')">+ Zutat</button>';
+    out+=fuelBarHtml(sum,'mealbar');
+    out+='<div class="meal-note" contenteditable="true" spellcheck="false" onblur="fuelSaveMealField('+mi+',\'note\',this.textContent)" onkeydown="if(event.key===\'Enter\'&&!event.shiftKey){event.preventDefault();this.blur()}">'+esc(meal.note||'')+'</div>';
+    out+='</div>'; // /fp-edit-box
+    out+='</section>';
   });
 
-  out+='<div class="footer-tools"><button onclick="fuelAddMeal()">+ Neues Gericht</button><button onclick="fuelResetDefault()">Bibliothek auf Ausgangsdaten zurücksetzen</button></div>';
+  out+='<div class="fp-footer-tools"><button onclick="fuelAddMeal()">+ Neues Gericht</button><button onclick="fuelResetDefault()">Bibliothek auf Ausgangsdaten zurücksetzen</button></div>';
 
-  out+='<div class="ana-sec-title">Optimierungs-Hinweise</div>';
-  DEFAULT_FUEL_INSIGHTS.forEach(t=>{out+='<div class="ana-insight">'+t+'</div>';});
+  out+='<div class="fp-opt"><div class="fp-sec-title" style="margin-top:0">Optimierungen</div><ul>';
+  DEFAULT_FUEL_INSIGHTS.forEach(t=>{out+='<li>'+t+'</li>';});
+  out+='</ul></div>';
 
+  out+='</div>'; // /fuel-page
   el.innerHTML=out;
 }
 function fuelToggleEdit(mi){
